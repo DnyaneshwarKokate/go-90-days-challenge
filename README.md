@@ -68,7 +68,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day | Topic | Status |
 |---|---|---|
 | Day 01 | Go Setup, Variables, Data Types | ✅ |
-| Day 02 | Functions, Conditions, Loops | ⏳ |
+| Day 02 | Functions, Conditions, Loops | ✅ |
 | Day 03 | Arrays, Slices, Maps | ⏳ |
 | Day 04 | Structs | ⏳ |
 | Day 05 | Pointers | ⏳ |
