@@ -84,45 +84,34 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 
 ---
 
-# ✅ Day 01 — Go Setup, Variables, Data Types
-
-## ❓ Q1: What is Go Language?
-
-### ✅ Answer:
-Go (Golang) is an open-source programming language developed by Google.  
-It is designed for building fast, scalable, and high-performance backend applications.
-
-### ⭐ Features:
-- Simple syntax
-- Fast compilation
-- Built-in concurrency
-- Garbage collection
-- Cross-platform support
+# ✅ Day 01 — Go Setup, Variables & Data Types
 
 ---
 
-## ❓ Q2: Why is Go popular for Backend Development?
+# 📖 Introduction to Go
 
-### ✅ Answer:
-Go is popular because:
+Go (Golang) is an open-source programming language developed by Google.
+
+It is designed for:
 - High performance
-- Lightweight goroutines
-- Fast APIs
-- Easy concurrency handling
-- Excellent for microservices
-
-### ⭐ Companies using Go:
-- Google
-- Uber
-- Netflix
-- Docker
-- Kubernetes
+- Scalability
+- Backend development
+- Cloud-native applications
+- Microservices
 
 ---
 
-## ❓ Q3: What is the structure of a Go program?
+# ⭐ Features of Go
 
-### ✅ Answer:
+✅ Simple Syntax  
+✅ Fast Compilation  
+✅ Built-in Concurrency  
+✅ Garbage Collection  
+✅ Cross-platform Support
+
+---
+
+# 📌 First Go Program
 
 ```go
 package main
@@ -130,41 +119,60 @@ package main
 import "fmt"
 
 func main() {
-    fmt.Println("Hello")
+
+	fmt.Println("Hello Go Lang")
 }
 ```
 
-### Explanation:
-- `package main` → Entry package
-- `import` → Import packages
-- `func main()` → Starting point of program
-- `fmt.Println()` → Print output
+---
+
+# 📌 Explanation
+
+| Code | Meaning |
+|---|---|
+| package main | Entry package |
+| import "fmt" | Import fmt package |
+| func main() | Main function |
+| fmt.Println() | Print output |
 
 ---
 
-## ❓ Q4: What are variables in Go?
+# 📌 Variables in Go
 
-### ✅ Answer:
 Variables are used to store data.
 
-### Example:
+---
+
+# ✅ Variable Example
 
 ```go
-var name string = "Dnyaneshwar"
-var age int = 24
-```
+package main
 
-Short declaration:
+import "fmt"
 
-```go
-city := "Pune"
+func main() {
+
+	var name string = "Dnyaneshwar"
+	var age int = 24
+
+	fmt.Println(name)
+	fmt.Println(age)
+}
 ```
 
 ---
 
-## ❓ Q5: What are data types in Go?
+# 📌 Short Variable Declaration
 
-### ✅ Answer:
+```go
+city := "Nashik"
+```
+
+Go automatically detects datatype.
+
+---
+
+# 📌 Data Types in Go
 
 | Data Type | Example |
 |---|---|
@@ -172,40 +180,6 @@ city := "Pune"
 | string | "Go" |
 | bool | true |
 | float64 | 10.5 |
-
----
-
-## ❓ Q6: Difference between var and := ?
-
-### ✅ Answer:
-
-| var | := |
-|---|---|
-| Explicit declaration | Short declaration |
-| Used globally/local | Used only inside function |
-| Requires datatype optional | Datatype auto detected |
-
-### Example:
-
-```go
-var name string = "Go"
-
-city := "Pune"
-```
-
----
-
-## ❓ Q7: What is fmt package?
-
-### ✅ Answer:
-`fmt` package is used for formatted input and output.
-
-### Example:
-
-```go
-fmt.Println("Hello")
-fmt.Printf("Age: %d", age)
-```
 
 ---
 
@@ -229,11 +203,56 @@ func main() {
 	fmt.Println("Developer:", isDeveloper)
 
 	city := "Pune"
+
 	fmt.Println("City:", city)
 }
 ```
 
 ---
+
+# 📘 Day 01 Interview Questions
+
+---
+
+## ❓ Q1: What is Go Language?
+
+### ✅ Answer:
+Go is an open-source programming language developed by Google.
+
+---
+
+## ❓ Q2: What are variables?
+
+### ✅ Answer:
+Variables are used to store data.
+
+---
+
+## ❓ Q3: Difference between var and := ?
+
+| var | := |
+|---|---|
+| Explicit declaration | Short declaration |
+| Can use globally | Inside function only |
+
+---
+
+## ❓ Q4: What is fmt package?
+
+### ✅ Answer:
+fmt package is used for input and output operations.
+
+---
+
+# 📚 Day 01 Summary
+
+Today I learned:
+- Go setup
+- Variables
+- Data types
+- fmt package
+- First Go program
+
 ---
 
 # ✅ Day 02 — Functions, Conditions & Loops
@@ -245,22 +264,20 @@ func main() {
 - Functions
 - Parameters
 - Return Values
-- Multiple Return Values
-- If-Else Conditions
-- Switch Case
+- If-Else
+- Switch
 - Loops
-- Break & Continue
 - Variable Scope
 
 ---
 
 # 📌 Functions in Go
 
-Functions are reusable blocks of code used to perform a specific task.
+Functions are reusable blocks of code.
 
 ---
 
-## ✅ Simple Function Example
+# ✅ Simple Function
 
 ```go
 package main
@@ -268,10 +285,12 @@ package main
 import "fmt"
 
 func greet() {
+
 	fmt.Println("Welcome to Go Lang")
 }
 
 func main() {
+
 	greet()
 }
 ```
@@ -280,20 +299,18 @@ func main() {
 
 # 📌 Function with Parameters
 
-Parameters allow passing values into functions.
-
-## ✅ Example
-
 ```go
 package main
 
 import "fmt"
 
 func greetWithName(name string) {
+
 	fmt.Println("Welcome", name)
 }
 
 func main() {
+
 	greetWithName("Dnyaneshwar")
 }
 ```
@@ -302,16 +319,13 @@ func main() {
 
 # 📌 Function with Return Type
 
-Functions can return values.
-
-## ✅ Example
-
 ```go
 package main
 
 import "fmt"
 
 func add(a int, b int) int {
+
 	return a + b
 }
 
@@ -319,7 +333,7 @@ func main() {
 
 	result := add(10, 20)
 
-	fmt.Println("Addition:", result)
+	fmt.Println(result)
 }
 ```
 
@@ -327,16 +341,13 @@ func main() {
 
 # 📌 Multiple Return Values
 
-Go supports multiple return values.
-
-## ✅ Example
-
 ```go
 package main
 
 import "fmt"
 
 func calculate(a int, b int) (int, int) {
+
 	return a + b, a - b
 }
 
@@ -344,18 +355,14 @@ func main() {
 
 	sum, sub := calculate(20, 10)
 
-	fmt.Println("Sum:", sum)
-	fmt.Println("Subtraction:", sub)
+	fmt.Println(sum)
+	fmt.Println(sub)
 }
 ```
 
 ---
 
 # 📌 If-Else Condition
-
-Used for decision making.
-
-## ✅ Example
 
 ```go
 package main
@@ -367,16 +374,18 @@ func main() {
 	age := 20
 
 	if age >= 18 {
-		fmt.Println("Eligible for voting")
+
+		fmt.Println("Eligible")
 	} else {
-		fmt.Println("Not eligible")
+
+		fmt.Println("Not Eligible")
 	}
 }
 ```
 
 ---
 
-# 📌 Else If Example
+# 📌 Switch Case
 
 ```go
 package main
@@ -385,34 +394,7 @@ import "fmt"
 
 func main() {
 
-	marks := 75
-
-	if marks >= 90 {
-		fmt.Println("Grade A")
-	} else if marks >= 70 {
-		fmt.Println("Grade B")
-	} else {
-		fmt.Println("Grade C")
-	}
-}
-```
-
----
-
-# 📌 Switch Statement
-
-Switch is cleaner than multiple if-else conditions.
-
-## ✅ Example
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-
-	day := 3
+	day := 2
 
 	switch day {
 
@@ -422,11 +404,8 @@ func main() {
 	case 2:
 		fmt.Println("Tuesday")
 
-	case 3:
-		fmt.Println("Wednesday")
-
 	default:
-		fmt.Println("Invalid Day")
+		fmt.Println("Invalid")
 	}
 }
 ```
@@ -436,11 +415,11 @@ func main() {
 # 📌 Loops in Go
 
 Go has only one loop:
-## ✅ for loop
+# ✅ for loop
 
 ---
 
-# ✅ Simple Loop
+# ✅ Loop Example
 
 ```go
 package main
@@ -450,6 +429,7 @@ import "fmt"
 func main() {
 
 	for i := 1; i <= 5; i++ {
+
 		fmt.Println(i)
 	}
 }
@@ -457,27 +437,7 @@ func main() {
 
 ---
 
-# ✅ While Loop Style
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-
-	i := 1
-
-	for i <= 5 {
-		fmt.Println(i)
-		i++
-	}
-}
-```
-
----
-
-# 📌 Break Statement
+# 📌 Break Example
 
 ```go
 package main
@@ -499,7 +459,7 @@ func main() {
 
 ---
 
-# 📌 Continue Statement
+# 📌 Continue Example
 
 ```go
 package main
@@ -523,24 +483,7 @@ func main() {
 
 # 📌 Variable Scope
 
-Scope defines where a variable can be accessed.
-
-## ✅ Local Scope Example
-
-```go
-package main
-
-import "fmt"
-
-func test() {
-	name := "Go"
-	fmt.Println(name)
-}
-
-func main() {
-	test()
-}
-```
+Scope defines where variable can be accessed.
 
 ---
 
@@ -551,35 +494,29 @@ package main
 
 import "fmt"
 
-// Simple Function Example
 func greet() {
+
 	fmt.Println("Welcome to go lang")
 }
 
-// Function with Parameters
 func greetWithName(name string) {
-	fmt.Println("Welcome", name, "to go lang")
+
+	fmt.Println("Welcome", name)
 }
 
-// Function with return type
 func add(a int, b int) int {
+
 	return a + b
 }
 
-// Multiple Return Values
-func calculate(a int, b int) (int, int) {
-	return a + b, a - b
-}
-
-// if-else condition
 func checkAge(age int) {
 
-	if age < 18 {
-		fmt.Println("You are a minor.")
-	} else if age >= 18 && age < 65 {
-		fmt.Println("You are an adult.")
+	if age >= 18 {
+
+		fmt.Println("Eligible")
 	} else {
-		fmt.Println("You are a senior citizen.")
+
+		fmt.Println("Not Eligible")
 	}
 }
 
@@ -591,183 +528,99 @@ func main() {
 
 	result := add(10, 20)
 
-	fmt.Println("The sum is:", result)
+	fmt.Println(result)
 
-	sum, sub := calculate(10, 5)
-
-	fmt.Println("Sum:", sum)
-	fmt.Println("Subtraction:", sub)
-
-	age := 25
-
-	checkAge(age)
-
-	fmt.Println("Age:", age)
+	checkAge(24)
 
 	for i := 1; i <= 5; i++ {
-		fmt.Println("Number:", i)
+
+		fmt.Println(i)
 	}
 }
 ```
 
 ---
 
-# 📘 Day 02 Interview Questions & Answers
+# 📘 Day 02 Interview Questions
 
 ---
 
-## ❓ Q1: What is a function in Go?
+## ❓ Q1: What is function?
 
 ### ✅ Answer:
-A function is a reusable block of code used to perform a specific task.
-
-### Example:
-
-```go
-func greet() {
-	fmt.Println("Hello")
-}
-```
+Function is reusable block of code.
 
 ---
 
-## ❓ Q2: How to pass parameters in Go function?
+## ❓ Q2: Can Go return multiple values?
 
 ### ✅ Answer:
-
-```go
-func add(a int, b int) int {
-	return a + b
-}
-```
-
-Parameters:
-- `a int`
-- `b int`
+Yes.
 
 ---
 
-## ❓ Q3: Can Go return multiple values?
+## ❓ Q3: Which loop available in Go?
 
 ### ✅ Answer:
-Yes, Go supports multiple return values.
-
-### Example:
-
-```go
-func calculate(a int, b int) (int, int) {
-	return a+b, a-b
-}
-```
+Only for loop.
 
 ---
 
-## ❓ Q4: Difference between if-else and switch?
-
-| if-else | switch |
-|---|---|
-| Multiple conditions | Cleaner for fixed cases |
-| Complex logic | Better readability |
-
----
-
-## ❓ Q5: Which loop is available in Go?
+## ❓ Q4: What is break statement?
 
 ### ✅ Answer:
-Go has only one loop:
-```go
-for
-```
-
-It can behave like:
-- for loop
-- while loop
-- infinite loop
+Stops loop immediately.
 
 ---
 
-## ❓ Q6: What is break statement?
+## ❓ Q5: What is continue statement?
 
 ### ✅ Answer:
-`break` stops loop execution immediately.
+Skips current iteration.
 
 ---
 
-## ❓ Q7: What is continue statement?
+# 📚 Day 02 Summary
 
-### ✅ Answer:
-`continue` skips current iteration and moves to next iteration.
+Today I learned:
+- Functions
+- Parameters
+- Return values
+- Conditions
+- Switch
+- Loops
 
----
-
-## ❓ Q8: What is variable scope in Go?
-
-### ✅ Answer:
-Scope defines where a variable can be accessed.
-
-### Types:
-- Local Scope
-- Global Scope
-
-### Example:
-
-```go
-var company = "Google"
-
-func main() {
-	name := "Dnyaneshwar"
-}
-```
-
----
-
-# 🧠 Mini Practice Tasks
-
-✅ Create multiplication function  
-✅ Create calculator using switch  
-✅ Print numbers 1–100  
-✅ Check even/odd using if-else  
-✅ Create voting eligibility checker
-
----
 ---
 
 # ✅ Day 03 — Arrays, Slices & Maps
 
 ---
 
-# 📖 What You Will Learn
+# 📖 Introduction to Arrays, Slices & Maps
 
-- Arrays
-- Slices
-- Maps
-- Range Keyword
-- Slice Operations
-- Append Function
-- Length & Capacity
-- Iteration
-- Interview Questions
+In backend development, we often need to store and manage multiple values.
+
+Examples:
+- Student marks
+- Product names
+- User data
+- Cities list
+- Employee records
+
+Go provides:
+- Arrays → Fixed-size collection
+- Slices → Dynamic collection
+- Maps → Key-value storage
 
 ---
 
 # 📌 Arrays in Go
 
-An array is a fixed-size collection of elements of the same data type.
+An array is a fixed-size collection of elements of same datatype.
 
 ---
 
-## ✅ Array Syntax
-
-```go
-var numbers [5]int
-```
-
-- `5` → size of array
-- `int` → data type
-
----
-
-## ✅ Array Example
+# 📌 Array Example
 
 ```go
 package main
@@ -776,30 +629,7 @@ import "fmt"
 
 func main() {
 
-	var numbers [5]int
-
-	numbers[0] = 10
-	numbers[1] = 20
-	numbers[2] = 30
-	numbers[3] = 40
-	numbers[4] = 50
-
-	fmt.Println(numbers)
-}
-```
-
----
-
-# 📌 Short Array Declaration
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-
-	numbers := [5]int{1, 2, 3, 4, 5}
+	numbers := [5]int{10,20,30,40,50}
 
 	fmt.Println(numbers)
 }
@@ -810,23 +640,17 @@ func main() {
 # 📌 Access Array Elements
 
 ```go
-package main
+fmt.Println(numbers[2])
+```
 
-import "fmt"
-
-func main() {
-
-	numbers := [3]int{10, 20, 30}
-
-	fmt.Println(numbers[0])
-	fmt.Println(numbers[1])
-	fmt.Println(numbers[2])
-}
+Output:
+```text
+30
 ```
 
 ---
 
-# 📌 Array Length
+# 📌 Loop with Array
 
 ```go
 package main
@@ -835,26 +659,10 @@ import "fmt"
 
 func main() {
 
-	numbers := [5]int{1, 2, 3, 4, 5}
-
-	fmt.Println("Length:", len(numbers))
-}
-```
-
----
-
-# 📌 Loops with Arrays
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-
-	numbers := [5]int{10, 20, 30, 40, 50}
+	numbers := [5]int{10,20,30,40,50}
 
 	for i := 0; i < len(numbers); i++ {
+
 		fmt.Println(numbers[i])
 	}
 }
@@ -864,24 +672,11 @@ func main() {
 
 # 📌 Slices in Go
 
-Slices are dynamic and flexible versions of arrays.
-
-Unlike arrays:
-✅ Dynamic size  
-✅ More powerful  
-✅ Used most in real projects
+Slices are dynamic arrays.
 
 ---
 
-# ✅ Slice Syntax
-
-```go
-numbers := []int{1, 2, 3}
-```
-
----
-
-# ✅ Slice Example
+# 📌 Slice Example
 
 ```go
 package main
@@ -890,17 +685,17 @@ import "fmt"
 
 func main() {
 
-	numbers := []int{10, 20, 30, 40}
+	cities := []string{"Pune","Mumbai"}
 
-	fmt.Println(numbers)
+	cities = append(cities, "Nashik")
+
+	fmt.Println(cities)
 }
 ```
 
 ---
 
-# 📌 Append in Slice
-
-Used to add elements dynamically.
+# 📌 len() and cap()
 
 ```go
 package main
@@ -909,77 +704,22 @@ import "fmt"
 
 func main() {
 
-	numbers := []int{1, 2, 3}
+	numbers := []int{1,2,3,4,5}
 
-	numbers = append(numbers, 4)
-	numbers = append(numbers, 5)
-
-	fmt.Println(numbers)
+	fmt.Println(len(numbers))
+	fmt.Println(cap(numbers))
 }
-```
-
----
-
-# 📌 Slice Length & Capacity
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-
-	numbers := []int{1, 2, 3, 4, 5}
-
-	fmt.Println("Length:", len(numbers))
-	fmt.Println("Capacity:", cap(numbers))
-}
-```
-
----
-
-# 📌 Slice from Array
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-
-	arr := [5]int{10, 20, 30, 40, 50}
-
-	slice := arr[1:4]
-
-	fmt.Println(slice)
-}
-```
-
-Output:
-```text
-[20 30 40]
 ```
 
 ---
 
 # 📌 Maps in Go
 
-Maps store data in key-value format.
+Maps store key-value data.
 
 ---
 
-# ✅ Map Syntax
-
-```go
-student := map[string]string{
-	"name": "Dnyaneshwar",
-	"city": "Pune",
-}
-```
-
----
-
-# ✅ Map Example
+# 📌 Map Example
 
 ```go
 package main
@@ -990,9 +730,8 @@ func main() {
 
 	student := map[string]string{
 
-		"name": "Dnyaneshwar",
-		"city": "Pune",
-		"role": "Developer",
+		"name":"Dnyaneshwar",
+		"city":"Nashik",
 	}
 
 	fmt.Println(student)
@@ -1001,67 +740,18 @@ func main() {
 
 ---
 
-# 📌 Access Map Values
+# 📌 Add Values in Map
 
 ```go
-package main
-
-import "fmt"
-
-func main() {
-
-	student := map[string]string{
-
-		"name": "Dnyaneshwar",
-		"city": "Pune",
-	}
-
-	fmt.Println(student["name"])
-	fmt.Println(student["city"])
-}
+student["role"] = "Developer"
 ```
 
 ---
 
-# 📌 Add Values to Map
+# 📌 Delete Values from Map
 
 ```go
-package main
-
-import "fmt"
-
-func main() {
-
-	student := map[string]string{}
-
-	student["name"] = "Dnyaneshwar"
-	student["city"] = "Pune"
-
-	fmt.Println(student)
-}
-```
-
----
-
-# 📌 Delete from Map
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-
-	student := map[string]string{
-
-		"name": "Dnyaneshwar",
-		"city": "Pune",
-	}
-
-	delete(student, "city")
-
-	fmt.Println(student)
-}
+delete(student, "city")
 ```
 
 ---
@@ -1072,7 +762,7 @@ Used for iteration.
 
 ---
 
-# ✅ Range with Array
+# 📌 Range Example
 
 ```go
 package main
@@ -1081,55 +771,11 @@ import "fmt"
 
 func main() {
 
-	numbers := [5]int{10, 20, 30, 40, 50}
+	numbers := []int{10,20,30,40,50}
 
 	for index, value := range numbers {
 
 		fmt.Println(index, value)
-	}
-}
-```
-
----
-
-# ✅ Range with Slice
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-
-	numbers := []int{1, 2, 3, 4, 5}
-
-	for index, value := range numbers {
-
-		fmt.Println(index, value)
-	}
-}
-```
-
----
-
-# ✅ Range with Map
-
-```go
-package main
-
-import "fmt"
-
-func main() {
-
-	student := map[string]string{
-
-		"name": "Dnyaneshwar",
-		"city": "Pune",
-	}
-
-	for key, value := range student {
-
-		fmt.Println(key, value)
 	}
 }
 ```
@@ -1146,29 +792,29 @@ import "fmt"
 func main() {
 
 	// Array
-	numbers := [5]int{10, 20, 30, 40, 50}
+	marks := [5]int{80,75,90,85,70}
 
-	fmt.Println("Array:", numbers)
+	fmt.Println(marks)
 
 	// Slice
-	cities := []string{"Pune", "Mumbai", "Nashik"}
+	cities := []string{"Pune","Mumbai"}
 
-	cities = append(cities, "Delhi")
+	cities = append(cities, "Nashik")
 
-	fmt.Println("Cities:", cities)
+	fmt.Println(cities)
 
 	// Map
 	student := map[string]string{
 
-		"name": "Dnyaneshwar",
-		"city": "Nashik",
-		"role": "Developer",
+		"name":"Dnyaneshwar",
+		"city":"Nashik",
+		"role":"Developer",
 	}
 
 	fmt.Println(student)
 
-	// Range Loop
-	for index, value := range numbers {
+	// Range
+	for index, value := range marks {
 
 		fmt.Println(index, value)
 	}
@@ -1177,33 +823,21 @@ func main() {
 
 ---
 
-# 📘 Day 03 Interview Questions & Answers
+# 📘 Day 03 Interview Questions
 
 ---
 
-## ❓ Q1: What is an array in Go?
+## ❓ Q1: What is array?
 
 ### ✅ Answer:
-An array is a fixed-size collection of elements of the same data type.
-
-### Example:
-
-```go
-var numbers [5]int
-```
+Fixed-size collection of same datatype.
 
 ---
 
-## ❓ Q2: What is a slice in Go?
+## ❓ Q2: What is slice?
 
 ### ✅ Answer:
-A slice is a dynamic and flexible version of an array.
-
-### Example:
-
-```go
-numbers := []int{1,2,3}
-```
+Dynamic version of array.
 
 ---
 
@@ -1212,64 +846,39 @@ numbers := []int{1,2,3}
 | Array | Slice |
 |---|---|
 | Fixed size | Dynamic size |
-| Less flexible | More flexible |
-| Memory fixed | Dynamic memory |
 
 ---
 
-## ❓ Q4: What is append() in Go?
+## ❓ Q4: What is append()?
 
 ### ✅ Answer:
-`append()` is used to add elements into a slice.
-
-### Example:
-
-```go
-numbers = append(numbers, 10)
-```
+Used to add values in slice.
 
 ---
 
-## ❓ Q5: What is a map in Go?
+## ❓ Q5: What is map?
 
 ### ✅ Answer:
-Map stores data in key-value pairs.
-
-### Example:
-
-```go
-student := map[string]string{
-	"name": "Dnyaneshwar",
-}
-```
+Map stores key-value data.
 
 ---
 
-## ❓ Q6: What is range keyword?
+## ❓ Q6: What is range?
 
 ### ✅ Answer:
-`range` is used to iterate over:
+Used for iteration.
+
+---
+
+# 📚 Day 03 Summary
+
+Today I learned:
 - Arrays
 - Slices
 - Maps
-
----
-
-## ❓ Q7: Difference between len() and cap()?
-
-| len() | cap() |
-|---|---|
-| Current elements count | Total allocated capacity |
-
----
-
-# 🧠 Mini Practice Tasks
-
-✅ Create student marks array  
-✅ Create city slice  
-✅ Add values using append()  
-✅ Create employee map  
-✅ Print all values using range
+- append()
+- range
+- len() & cap()
 
 ---
 
@@ -1284,18 +893,6 @@ student := map[string]string{
 
 ---
 
-# 📌 Future Projects
-
-- Todo API
-- Student Management API
-- JWT Authentication API
-- E-Commerce Backend
-- URL Shortener
-- Chat Application
-- Microservices Architecture
-
----
-
 # 📫 Connect With Me
 
 📧 Email: dnyaneshwarkokatevip@gmail.com  
@@ -1305,8 +902,20 @@ student := map[string]string{
 
 ---
 
+# 🚀 GitHub Commands
+
+```bash
+git add .
+git commit -m "Day 1 to Day 3 completed"
+git push
+```
+
+---
 
 # ⭐ Challenge Progress
 
+✅ Day 01 Completed  
+✅ Day 02 Completed  
 ✅ Day 03 Completed  
+
 🚀 Next: Structs & Custom Types
