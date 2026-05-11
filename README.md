@@ -902,16 +902,6 @@ Today I learned:
 
 ---
 
-# 🚀 GitHub Commands
-
-```bash
-git add .
-git commit -m "Day 1 to Day 3 completed"
-git push
-```
-
----
-
 # ⭐ Challenge Progress
 
 ✅ Day 01 Completed  
