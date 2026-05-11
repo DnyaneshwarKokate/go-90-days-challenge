@@ -881,6 +881,566 @@ Today I learned:
 - len() & cap()
 
 ---
+---
+
+# ✅ Day 04 — Structs & Custom Types
+
+---
+
+# 📖 Introduction to Structs
+
+Struct is one of the most important concepts in Go.
+
+Structs are used to group related data together.
+
+In backend development, structs are used for:
+- API Models
+- Database Entities
+- JSON Handling
+- Request & Response Models
+- User Data
+- Product Data
+
+If you know C#, then:
+👉 Struct in Go is similar to a Model/Class in ASP.NET Core.
+
+---
+
+# 📖 What You Will Learn
+
+- Structs
+- Custom Types
+- Struct Initialization
+- Access Struct Fields
+- Nested Structs
+- Anonymous Structs
+- Struct with Functions
+- Exported vs Unexported Fields
+- Interview Questions
+
+---
+
+# 📌 What is Struct?
+
+Struct is a custom datatype used to group multiple related values together.
+
+---
+
+# 📌 Real Life Example
+
+Suppose we want to store:
+- Student Name
+- Age
+- City
+
+Without struct:
+
+```go
+name := "Dnyaneshwar"
+age := 24
+city := "Nashik"
+```
+
+This becomes difficult to manage.
+
+Using struct:
+
+```go
+type Student struct {
+
+	Name string
+	Age  int
+	City string
+}
+```
+
+This is cleaner and professional.
+
+---
+
+# 📌 Struct Syntax
+
+```go
+type Student struct {
+
+	Name string
+	Age  int
+	City string
+}
+```
+
+---
+
+# 📌 Explanation
+
+| Part | Meaning |
+|---|---|
+| type | Create custom datatype |
+| Student | Struct name |
+| struct | Keyword |
+| Name string | Field |
+
+---
+
+# 📌 Struct Example
+
+```go
+package main
+
+import "fmt"
+
+type Student struct {
+
+	Name string
+	Age  int
+	City string
+}
+
+func main() {
+
+	var student1 Student
+
+	student1.Name = "Dnyaneshwar"
+	student1.Age = 24
+	student1.City = "Nashik"
+
+	fmt.Println(student1)
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+{Dnyaneshwar 24 Nashik}
+```
+
+---
+
+# 📌 Access Struct Fields
+
+```go
+fmt.Println(student1.Name)
+fmt.Println(student1.Age)
+fmt.Println(student1.City)
+```
+
+---
+
+# 📌 Short Struct Initialization
+
+Instead of assigning values one by one:
+
+```go
+student := Student{
+
+	Name: "Dnyaneshwar",
+	Age: 24,
+	City: "Nashik",
+}
+```
+
+---
+
+# ✅ Complete Example
+
+```go
+package main
+
+import "fmt"
+
+type Student struct {
+
+	Name string
+	Age  int
+	City string
+}
+
+func main() {
+
+	student := Student{
+
+		Name: "Dnyaneshwar",
+		Age: 24,
+		City: "Nashik",
+	}
+
+	fmt.Println(student)
+}
+```
+
+---
+
+# 📌 Why Structs are Important?
+
+Structs are used in almost every backend application.
+
+Examples:
+- User Models
+- Product Models
+- Employee Records
+- Orders
+- API Responses
+- JSON Data
+
+---
+
+# 📌 Real Backend Example
+
+Suppose we are creating Student API.
+
+```go
+type Student struct {
+
+	Id    int
+	Name  string
+	Email string
+	Age   int
+}
+```
+
+This is similar to:
+- Entity Class in ASP.NET Core
+- Database Model
+
+---
+
+# 📌 Struct with Functions
+
+Struct data can be passed into functions.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+type Employee struct {
+
+	Name   string
+	Salary int
+}
+
+func printEmployee(emp Employee) {
+
+	fmt.Println("Employee Name:", emp.Name)
+	fmt.Println("Salary:", emp.Salary)
+}
+
+func main() {
+
+	employee := Employee{
+
+		Name: "Dnyaneshwar",
+		Salary: 50000,
+	}
+
+	printEmployee(employee)
+}
+```
+
+---
+
+# 📌 Anonymous Struct
+
+Struct without name.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	employee := struct {
+
+		Name string
+		Age  int
+	}{
+
+		Name: "Dnyaneshwar",
+		Age: 24,
+	}
+
+	fmt.Println(employee)
+}
+```
+
+---
+
+# 📌 Nested Struct
+
+Struct inside another struct.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+type Address struct {
+
+	City string
+	State string
+}
+
+type Employee struct {
+
+	Name string
+	Address Address
+}
+
+func main() {
+
+	employee := Employee{
+
+		Name: "Dnyaneshwar",
+
+		Address: Address{
+
+			City: "Nashik",
+			State: "Maharashtra",
+		},
+	}
+
+	fmt.Println(employee)
+}
+```
+
+---
+
+# 📌 Exported vs Unexported Fields
+
+Important for APIs & JSON.
+
+---
+
+# ✅ Exported Field
+
+Starts with Capital Letter:
+
+```go
+Name string
+```
+
+Accessible outside package.
+
+---
+
+# ❌ Unexported Field
+
+Starts with Small Letter:
+
+```go
+name string
+```
+
+Accessible only inside same package.
+
+---
+
+# 📌 Important for JSON APIs
+
+Correct:
+
+```go
+Name string
+```
+
+Wrong:
+
+```go
+name string
+```
+
+---
+
+# 📌 Why?
+
+JSON conversion only works properly with exported fields.
+
+---
+
+# 📌 Struct Comparison
+
+Structs can be compared if fields are comparable.
+
+```go
+student1 == student2
+```
+
+---
+
+# 💻 Day 04 Practice Program
+
+```go
+package main
+
+import "fmt"
+
+type Student struct {
+
+	Name string
+	Age  int
+	City string
+}
+
+type Employee struct {
+
+	Name   string
+	Role   string
+	Salary int
+}
+
+func printStudent(student Student) {
+
+	fmt.Println("Student Name:", student.Name)
+	fmt.Println("Age:", student.Age)
+	fmt.Println("City:", student.City)
+}
+
+func main() {
+
+	student := Student{
+
+		Name: "Dnyaneshwar",
+		Age: 24,
+		City: "Nashik",
+	}
+
+	employee := Employee{
+
+		Name: "Rahul",
+		Role: "Backend Developer",
+		Salary: 60000,
+	}
+
+	fmt.Println(student)
+
+	fmt.Println(employee)
+
+	printStudent(student)
+}
+```
+
+---
+
+# 📘 Day 04 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is struct in Go?
+
+### ✅ Answer:
+Struct is a custom datatype used to group related data together.
+
+---
+
+## ❓ Q2: Why structs are important?
+
+### ✅ Answer:
+Structs are used for:
+- API Models
+- Database Entities
+- JSON Handling
+- Backend Development
+
+---
+
+## ❓ Q3: Difference between struct and array?
+
+| Struct | Array |
+|---|---|
+| Different datatypes | Same datatype |
+| Represents object | Represents collection |
+
+---
+
+## ❓ Q4: What is nested struct?
+
+### ✅ Answer:
+Struct inside another struct.
+
+---
+
+## ❓ Q5: Why exported fields are important?
+
+### ✅ Answer:
+Exported fields are required for:
+- JSON conversion
+- Package access
+- API responses
+
+---
+
+## ❓ Q6: Difference between Name and name in Go?
+
+| Name | name |
+|---|---|
+| Exported | Unexported |
+| Public | Private |
+
+---
+
+## ❓ Q7: What is anonymous struct?
+
+### ✅ Answer:
+Struct without a name is called anonymous struct.
+
+---
+
+# 📚 Day 04 Summary
+
+Today I learned:
+- Structs
+- Custom Types
+- Nested Structs
+- Anonymous Structs
+- Struct Functions
+- Exported vs Unexported Fields
+
+I also practiced:
+- Creating models
+- Accessing fields
+- Passing structs into functions
+- Backend-style struct design
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create Student struct  
+✅ Create Product struct  
+✅ Create Employee struct  
+✅ Create nested Address struct  
+✅ Print struct fields  
+✅ Pass struct into function  
+✅ Create User API model structure
+
+---
+
+# 🚀 GitHub Commands
+
+```bash
+git add .
+git commit -m "Day 4 completed structs and custom types"
+git push
+```
+
+---
+
+
 
 # 🔥 My Learning Rules
 
@@ -907,5 +1467,5 @@ Today I learned:
 ✅ Day 01 Completed  
 ✅ Day 02 Completed  
 ✅ Day 03 Completed  
-
-🚀 Next: Structs & Custom Types
+✅ Day 04 Completed  
+🚀 Next: Pointers in Go
