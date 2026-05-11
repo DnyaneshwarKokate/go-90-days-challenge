@@ -731,16 +731,6 @@ func main() {
 
 ---
 
-# 🚀 GitHub Commands
-
-```bash
-git add .
-git commit -m "Day 2 completed functions conditions loops"
-git push
-```
-
----
-
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
@@ -770,19 +760,6 @@ git push
 💻 GitHub: https://github.com/Dnyanesh0902  
 🌐 Portfolio: https://dnyanesh.miracledevelopers.in  
 🔗 LinkedIn: https://www.linkedin.com/in/dnyaneshwar-kokate-04a12b258/
-
----
-
-# 🚀 GitHub Commands
-
-```bash
-git init
-git add .
-git commit -m "Day 1 completed with interview questions"
-git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/go-90-days-challenge.git
-git push -u origin main
-```
 
 ---
 
