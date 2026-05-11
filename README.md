@@ -1986,15 +1986,6 @@ I also practiced:
 
 ---
 
-# 🚀 GitHub Commands
-
-```bash
-git add .
-git commit -m "Day 5 completed pointers in Go"
-git push
-```
-
-
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
