@@ -730,6 +730,548 @@ func main() {
 ✅ Create voting eligibility checker
 
 ---
+---
+
+# ✅ Day 03 — Arrays, Slices & Maps
+
+---
+
+# 📖 What You Will Learn
+
+- Arrays
+- Slices
+- Maps
+- Range Keyword
+- Slice Operations
+- Append Function
+- Length & Capacity
+- Iteration
+- Interview Questions
+
+---
+
+# 📌 Arrays in Go
+
+An array is a fixed-size collection of elements of the same data type.
+
+---
+
+## ✅ Array Syntax
+
+```go
+var numbers [5]int
+```
+
+- `5` → size of array
+- `int` → data type
+
+---
+
+## ✅ Array Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	var numbers [5]int
+
+	numbers[0] = 10
+	numbers[1] = 20
+	numbers[2] = 30
+	numbers[3] = 40
+	numbers[4] = 50
+
+	fmt.Println(numbers)
+}
+```
+
+---
+
+# 📌 Short Array Declaration
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	numbers := [5]int{1, 2, 3, 4, 5}
+
+	fmt.Println(numbers)
+}
+```
+
+---
+
+# 📌 Access Array Elements
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	numbers := [3]int{10, 20, 30}
+
+	fmt.Println(numbers[0])
+	fmt.Println(numbers[1])
+	fmt.Println(numbers[2])
+}
+```
+
+---
+
+# 📌 Array Length
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	numbers := [5]int{1, 2, 3, 4, 5}
+
+	fmt.Println("Length:", len(numbers))
+}
+```
+
+---
+
+# 📌 Loops with Arrays
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	numbers := [5]int{10, 20, 30, 40, 50}
+
+	for i := 0; i < len(numbers); i++ {
+		fmt.Println(numbers[i])
+	}
+}
+```
+
+---
+
+# 📌 Slices in Go
+
+Slices are dynamic and flexible versions of arrays.
+
+Unlike arrays:
+✅ Dynamic size  
+✅ More powerful  
+✅ Used most in real projects
+
+---
+
+# ✅ Slice Syntax
+
+```go
+numbers := []int{1, 2, 3}
+```
+
+---
+
+# ✅ Slice Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	numbers := []int{10, 20, 30, 40}
+
+	fmt.Println(numbers)
+}
+```
+
+---
+
+# 📌 Append in Slice
+
+Used to add elements dynamically.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	numbers := []int{1, 2, 3}
+
+	numbers = append(numbers, 4)
+	numbers = append(numbers, 5)
+
+	fmt.Println(numbers)
+}
+```
+
+---
+
+# 📌 Slice Length & Capacity
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	numbers := []int{1, 2, 3, 4, 5}
+
+	fmt.Println("Length:", len(numbers))
+	fmt.Println("Capacity:", cap(numbers))
+}
+```
+
+---
+
+# 📌 Slice from Array
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	arr := [5]int{10, 20, 30, 40, 50}
+
+	slice := arr[1:4]
+
+	fmt.Println(slice)
+}
+```
+
+Output:
+```text
+[20 30 40]
+```
+
+---
+
+# 📌 Maps in Go
+
+Maps store data in key-value format.
+
+---
+
+# ✅ Map Syntax
+
+```go
+student := map[string]string{
+	"name": "Dnyaneshwar",
+	"city": "Pune",
+}
+```
+
+---
+
+# ✅ Map Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	student := map[string]string{
+
+		"name": "Dnyaneshwar",
+		"city": "Pune",
+		"role": "Developer",
+	}
+
+	fmt.Println(student)
+}
+```
+
+---
+
+# 📌 Access Map Values
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	student := map[string]string{
+
+		"name": "Dnyaneshwar",
+		"city": "Pune",
+	}
+
+	fmt.Println(student["name"])
+	fmt.Println(student["city"])
+}
+```
+
+---
+
+# 📌 Add Values to Map
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	student := map[string]string{}
+
+	student["name"] = "Dnyaneshwar"
+	student["city"] = "Pune"
+
+	fmt.Println(student)
+}
+```
+
+---
+
+# 📌 Delete from Map
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	student := map[string]string{
+
+		"name": "Dnyaneshwar",
+		"city": "Pune",
+	}
+
+	delete(student, "city")
+
+	fmt.Println(student)
+}
+```
+
+---
+
+# 📌 Range Keyword
+
+Used for iteration.
+
+---
+
+# ✅ Range with Array
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	numbers := [5]int{10, 20, 30, 40, 50}
+
+	for index, value := range numbers {
+
+		fmt.Println(index, value)
+	}
+}
+```
+
+---
+
+# ✅ Range with Slice
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	numbers := []int{1, 2, 3, 4, 5}
+
+	for index, value := range numbers {
+
+		fmt.Println(index, value)
+	}
+}
+```
+
+---
+
+# ✅ Range with Map
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	student := map[string]string{
+
+		"name": "Dnyaneshwar",
+		"city": "Pune",
+	}
+
+	for key, value := range student {
+
+		fmt.Println(key, value)
+	}
+}
+```
+
+---
+
+# 💻 Day 03 Practice Program
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	// Array
+	numbers := [5]int{10, 20, 30, 40, 50}
+
+	fmt.Println("Array:", numbers)
+
+	// Slice
+	cities := []string{"Pune", "Mumbai", "Nashik"}
+
+	cities = append(cities, "Delhi")
+
+	fmt.Println("Cities:", cities)
+
+	// Map
+	student := map[string]string{
+
+		"name": "Dnyaneshwar",
+		"city": "Nashik",
+		"role": "Developer",
+	}
+
+	fmt.Println(student)
+
+	// Range Loop
+	for index, value := range numbers {
+
+		fmt.Println(index, value)
+	}
+}
+```
+
+---
+
+# 📘 Day 03 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is an array in Go?
+
+### ✅ Answer:
+An array is a fixed-size collection of elements of the same data type.
+
+### Example:
+
+```go
+var numbers [5]int
+```
+
+---
+
+## ❓ Q2: What is a slice in Go?
+
+### ✅ Answer:
+A slice is a dynamic and flexible version of an array.
+
+### Example:
+
+```go
+numbers := []int{1,2,3}
+```
+
+---
+
+## ❓ Q3: Difference between array and slice?
+
+| Array | Slice |
+|---|---|
+| Fixed size | Dynamic size |
+| Less flexible | More flexible |
+| Memory fixed | Dynamic memory |
+
+---
+
+## ❓ Q4: What is append() in Go?
+
+### ✅ Answer:
+`append()` is used to add elements into a slice.
+
+### Example:
+
+```go
+numbers = append(numbers, 10)
+```
+
+---
+
+## ❓ Q5: What is a map in Go?
+
+### ✅ Answer:
+Map stores data in key-value pairs.
+
+### Example:
+
+```go
+student := map[string]string{
+	"name": "Dnyaneshwar",
+}
+```
+
+---
+
+## ❓ Q6: What is range keyword?
+
+### ✅ Answer:
+`range` is used to iterate over:
+- Arrays
+- Slices
+- Maps
+
+---
+
+## ❓ Q7: Difference between len() and cap()?
+
+| len() | cap() |
+|---|---|
+| Current elements count | Total allocated capacity |
+
+---
+
+# 🧠 Mini Practice Tasks
+
+✅ Create student marks array  
+✅ Create city slice  
+✅ Add values using append()  
+✅ Create employee map  
+✅ Print all values using range
+
+---
 
 # 🔥 My Learning Rules
 
@@ -763,7 +1305,8 @@ func main() {
 
 ---
 
+
 # ⭐ Challenge Progress
 
-✅ Day 02 Completed  
-🚀 Next: Arrays, Slices & Maps
+✅ Day 03 Completed  
+🚀 Next: Structs & Custom Types
