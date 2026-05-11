@@ -71,7 +71,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 02 | Functions, Conditions, Loops | ✅ |
 | Day 03 | Arrays, Slices, Maps | ✅ |
 | Day 04 | Structs | ✅ |
-| Day 05 | Pointers | ⏳ |
+| Day 05 | Pointers | ✅ |
 | Day 06 | Methods & Interfaces | ⏳ |
 | Day 07 | Mini Project | ⏳ |
 | Day 08 | Packages & Modules | ⏳ |
@@ -1429,6 +1429,571 @@ I also practiced:
 ✅ Create User API model structure
 
 ---
+---
+
+# ✅ Day 05 — Pointers in Go
+
+---
+
+# 📖 Introduction to Pointers
+
+Pointers are one of the most important concepts in Go.
+
+Pointers are used for:
+- Memory optimization
+- Backend development
+- Struct handling
+- APIs
+- Database operations
+
+Pointers help us:
+✅ Improve performance  
+✅ Reduce memory usage  
+✅ Modify original values directly
+
+---
+
+# 📖 What You Will Learn
+
+- Pointers
+- Memory Address
+- Address Operator (&)
+- Dereferencing (*)
+- Pass by Value
+- Pass by Pointer
+- Struct Pointers
+- new() Function
+- Nil Pointers
+- Interview Questions
+
+---
+
+# 📌 What is Pointer?
+
+A pointer stores the memory address of another variable.
+
+---
+
+# 📌 Real Life Example
+
+```go
+age := 24
+```
+
+This variable is stored somewhere in memory.
+
+A pointer stores:
+👉 Address of `age`
+
+---
+
+# 📌 Pointer Symbols
+
+| Symbol | Meaning |
+|---|---|
+| & | Address of variable |
+| * | Value at address |
+
+---
+
+# 📌 Get Memory Address
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	age := 24
+
+	fmt.Println(age)
+
+	fmt.Println(&age)
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+24
+0xc0000120a0
+```
+
+---
+
+# 📌 What is This?
+
+```text
+0xc0000120a0
+```
+
+This is:
+# ✅ Memory Address
+
+---
+
+# 📌 Pointer Variable
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	age := 24
+
+	var ptr *int
+
+	ptr = &age
+
+	fmt.Println(ptr)
+}
+```
+
+---
+
+# 📌 Explanation
+
+| Code | Meaning |
+|---|---|
+| *int | Pointer to integer |
+| &age | Address of age |
+| ptr | Stores address |
+
+---
+
+# 📌 Dereferencing Pointer
+
+Used to access actual value.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	age := 24
+
+	ptr := &age
+
+	fmt.Println(*ptr)
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+24
+```
+
+---
+
+# 📌 Understanding
+
+| Expression | Meaning |
+|---|---|
+| ptr | Memory Address |
+| *ptr | Actual Value |
+
+---
+
+# 📌 Modify Original Value Using Pointer
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	age := 24
+
+	ptr := &age
+
+	*ptr = 30
+
+	fmt.Println(age)
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+30
+```
+
+---
+
+# 📌 Why Value Changed?
+
+Because pointer directly modified original variable.
+
+Very important concept 🔥
+
+---
+
+# 📌 Pass by Value
+
+Without pointer:
+A copy of variable is sent.
+
+---
+
+# ❌ Example
+
+```go
+package main
+
+import "fmt"
+
+func update(age int) {
+
+	age = 50
+}
+
+func main() {
+
+	age := 24
+
+	update(age)
+
+	fmt.Println(age)
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+24
+```
+
+---
+
+# 📌 Why?
+
+Because:
+👉 Copy was modified, not original value.
+
+---
+
+# 📌 Pass by Pointer
+
+Using pointer:
+Original value gets modified.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+func update(age *int) {
+
+	*age = 50
+}
+
+func main() {
+
+	age := 24
+
+	update(&age)
+
+	fmt.Println(age)
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+50
+```
+
+---
+
+# 📌 Why Pointers are Important?
+
+Pointers:
+✅ Avoid unnecessary copying  
+✅ Improve performance  
+✅ Reduce memory usage  
+✅ Modify original values
+
+---
+
+# 📌 Pointer with Struct
+
+Very important for backend development.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+type Student struct {
+
+	Name string
+	Age  int
+}
+
+func updateStudent(student *Student) {
+
+	student.Name = "Rahul"
+	student.Age = 30
+}
+
+func main() {
+
+	student := Student{
+
+		Name: "Dnyaneshwar",
+		Age: 24,
+	}
+
+	updateStudent(&student)
+
+	fmt.Println(student)
+}
+```
+
+---
+
+# 📌 Why Struct Pointers Important?
+
+In real projects:
+- Large structs
+- API models
+- Database entities
+
+Copying them repeatedly is expensive.
+
+So Go developers mostly use:
+# ✅ Struct Pointers
+
+---
+
+# 📌 new() Function
+
+Used to create pointer.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	ptr := new(int)
+
+	*ptr = 100
+
+	fmt.Println(*ptr)
+}
+```
+
+---
+
+# 📌 Nil Pointer
+
+Pointer with no assigned value.
+
+```go
+var ptr *int
+```
+
+Default value:
+```text
+nil
+```
+
+---
+
+# 📌 Important Warning
+
+Never dereference nil pointer.
+
+❌ Wrong:
+
+```go
+fmt.Println(*ptr)
+```
+
+This causes runtime error.
+
+---
+
+# 💻 Day 05 Practice Program
+
+```go
+package main
+
+import "fmt"
+
+type Employee struct {
+
+	Name   string
+	Salary int
+}
+
+func updateSalary(emp *Employee) {
+
+	emp.Salary = 70000
+}
+
+func main() {
+
+	age := 24
+
+	ptr := &age
+
+	fmt.Println("Age:", age)
+	fmt.Println("Address:", ptr)
+	fmt.Println("Value using pointer:", *ptr)
+
+	*ptr = 30
+
+	fmt.Println("Updated Age:", age)
+
+	employee := Employee{
+
+		Name: "Dnyaneshwar",
+		Salary: 50000,
+	}
+
+	updateSalary(&employee)
+
+	fmt.Println(employee)
+}
+```
+
+---
+
+# 📘 Day 05 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is pointer in Go?
+
+### ✅ Answer:
+Pointer stores memory address of another variable.
+
+---
+
+## ❓ Q2: What does & operator do?
+
+### ✅ Answer:
+Returns memory address of variable.
+
+---
+
+## ❓ Q3: What does * operator do?
+
+### ✅ Answer:
+Used for:
+- Dereferencing pointer
+- Accessing actual value
+
+---
+
+## ❓ Q4: Why pointers are important?
+
+### ✅ Answer:
+Pointers:
+- Reduce memory usage
+- Improve performance
+- Modify original data
+
+---
+
+## ❓ Q5: Difference between pass by value and pass by pointer?
+
+| Pass by Value | Pass by Pointer |
+|---|---|
+| Copy sent | Address sent |
+| Original unchanged | Original modified |
+
+---
+
+## ❓ Q6: What is nil pointer?
+
+### ✅ Answer:
+Pointer with no assigned memory address.
+
+---
+
+## ❓ Q7: Why pointers used with structs?
+
+### ✅ Answer:
+To avoid copying large struct data and improve performance.
+
+---
+
+# 📚 Day 05 Summary
+
+Today I learned:
+- Pointers
+- Memory Address
+- Dereferencing
+- Pass by Value
+- Pass by Pointer
+- Struct Pointers
+- new() Function
+- Nil Pointers
+
+I also practiced:
+- Updating original values
+- Struct updates using pointers
+- Memory handling
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create integer pointer  
+✅ Print memory address  
+✅ Modify value using pointer  
+✅ Pass pointer to function  
+✅ Create struct pointer  
+✅ Update struct using pointer  
+✅ Create Employee update function
+
+---
+
+# 🚀 GitHub Commands
+
+```bash
+git add .
+git commit -m "Day 5 completed pointers in Go"
+git push
+```
+
 
 # 🔥 My Learning Rules
 
@@ -1456,4 +2021,5 @@ I also practiced:
 ✅ Day 02 Completed  
 ✅ Day 03 Completed  
 ✅ Day 04 Completed  
-🚀 Next: Pointers in Go
+✅ Day 05 Completed  
+🚀 Next: Methods & Interfaces
