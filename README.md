@@ -70,7 +70,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 01 | Go Setup, Variables, Data Types | ✅ |
 | Day 02 | Functions, Conditions, Loops | ✅ |
 | Day 03 | Arrays, Slices, Maps | ✅ |
-| Day 04 | Structs | ⏳ |
+| Day 04 | Structs | ✅ |
 | Day 05 | Pointers | ⏳ |
 | Day 06 | Methods & Interfaces | ⏳ |
 | Day 07 | Mini Project | ⏳ |
@@ -1429,18 +1429,6 @@ I also practiced:
 ✅ Create User API model structure
 
 ---
-
-# 🚀 GitHub Commands
-
-```bash
-git add .
-git commit -m "Day 4 completed structs and custom types"
-git push
-```
-
----
-
-
 
 # 🔥 My Learning Rules
 
