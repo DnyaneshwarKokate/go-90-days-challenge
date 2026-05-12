@@ -61,8 +61,6 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 - Kubernetes (Learning)
 - Postman
 
----
-
 # 📅 Go 90 Days Challenge Roadmap
 
 | Day | Topic | Status |
@@ -70,13 +68,69 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 01 | Go Setup, Variables, Data Types | ✅ |
 | Day 02 | Functions, Conditions, Loops | ✅ |
 | Day 03 | Arrays, Slices, Maps | ✅ |
-| Day 04 | Structs | ✅ |
-| Day 05 | Pointers | ✅ |
+| Day 04 | Structs & Custom Types | ✅ |
+| Day 05 | Pointers in Go | ✅ |
 | Day 06 | Methods & Interfaces | ✅ |
-| Day 07 | Mini Project | ✅ |
+| Day 07 | Student Management Mini Project | ✅ |
 | Day 08 | Packages & Modules | ✅ |
-| Day 09 | File Handling | ✅ |
-| Day 10 | Error Handling | ✅ |
+| Day 09 | File Handling in Go | ✅ |
+| Day 10 | Error Handling in Go | ✅ |
+| Day 11 | Goroutines & Concurrency | ✅ |
+| Day 12 | Channels in Go | ⏳ |
+| Day 13 | JSON Handling | ⏳ |
+| Day 14 | HTTP Package | ⏳ |
+| Day 15 | First REST API | ⏳ |
+| Day 16 | CRUD REST API | ⏳ |
+| Day 17 | Routing & URL Parameters | ⏳ |
+| Day 18 | Gin Framework | ⏳ |
+| Day 19 | PostgreSQL Integration | ⏳ |
+| Day 20 | GORM in Go | ⏳ |
+| Day 21 | JWT Authentication | ⏳ |
+| Day 22 | Middleware in Go | ⏳ |
+| Day 23 | Password Hashing | ⏳ |
+| Day 24 | Role-Based Authorization | ⏳ |
+| Day 25 | Environment Variables | ⏳ |
+| Day 26 | Clean Architecture | ⏳ |
+| Day 27 | Repository Pattern | ⏳ |
+| Day 28 | Dependency Injection | ⏳ |
+| Day 29 | Logging System | ⏳ |
+| Day 30 | Student Management REST API Project | ⏳ |
+| Day 31 | Advanced CRUD APIs | ⏳ |
+| Day 32 | Pagination & Filtering | ⏳ |
+| Day 33 | File Upload API | ⏳ |
+| Day 34 | Email Sending in Go | ⏳ |
+| Day 35 | REST Client & External APIs | ⏳ |
+| Day 36 | Redis Basics | ⏳ |
+| Day 37 | Redis Caching | ⏳ |
+| Day 38 | WebSockets in Go | ⏳ |
+| Day 39 | Real-Time Chat Backend | ⏳ |
+| Day 40 | Goroutine Worker Pools | ⏳ |
+| Day 41 | Rate Limiting | ⏳ |
+| Day 42 | Unit Testing in Go | ⏳ |
+| Day 43 | Benchmark Testing | ⏳ |
+| Day 44 | Docker Basics | ⏳ |
+| Day 45 | Dockerizing Go API | ⏳ |
+| Day 46 | Docker Compose | ⏳ |
+| Day 47 | Kubernetes Basics | ⏳ |
+| Day 48 | Deploy Go App on Kubernetes | ⏳ |
+| Day 49 | CI/CD Basics | ⏳ |
+| Day 50 | GitHub Actions CI/CD | ⏳ |
+| Day 51 | Microservices Introduction | ⏳ |
+| Day 52 | User Microservice | ⏳ |
+| Day 53 | Product Microservice | ⏳ |
+| Day 54 | API Gateway | ⏳ |
+| Day 55 | Service Communication | ⏳ |
+| Day 56 | gRPC Basics | ⏳ |
+| Day 57 | Kafka/RabbitMQ Basics | ⏳ |
+| Day 58 | Event-Driven Architecture | ⏳ |
+| Day 59 | Monitoring & Logging | ⏳ |
+| Day 60 | Production API Project | ⏳ |
+| Day 61–70 | Advanced Backend Projects | ⏳ |
+| Day 71–80 | Microservices Projects | ⏳ |
+| Day 81–85 | System Design Basics | ⏳ |
+| Day 86–88 | Interview Preparation | ⏳ |
+| Day 89 | Resume & Portfolio Update | ⏳ |
+| Day 90 | Final Production-Level Project | ⏳ |
 
 ---
 
