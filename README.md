@@ -4692,6 +4692,506 @@ I also practiced:
 
 ---
 
+# ✅ Day 11 — Goroutines & Concurrency in Go
+
+---
+
+# 📖 Introduction to Concurrency
+
+Concurrency is one of the biggest reasons why Go is famous.
+
+Go is widely used for:
+- High-performance APIs
+- Microservices
+- Real-time systems
+- Backend servers
+- Cloud-native applications
+
+Because Go provides:
+# ✅ Goroutines
+
+They are:
+- Lightweight
+- Fast
+- Efficient
+
+---
+
+# 📖 What You Will Learn
+
+- Concurrency
+- Goroutines
+- go Keyword
+- Concurrent Execution
+- Anonymous Goroutines
+- sync.WaitGroup
+- Sleep
+- Real Backend Examples
+- Interview Questions
+
+---
+
+# 📌 What is Concurrency?
+
+Concurrency means:
+👉 Multiple tasks running independently.
+
+Examples:
+- Sending email
+- Processing payment
+- Saving database
+- Generating logs
+
+All can run simultaneously.
+
+---
+
+# 📌 Why Go Famous for Concurrency?
+
+Because Go provides:
+# ✅ Goroutines
+
+Goroutines are lightweight threads managed by Go runtime.
+
+---
+
+# 📌 What is Goroutine?
+
+Goroutine is lightweight thread managed by Go runtime.
+
+---
+
+# 📌 Normal Function Example
+
+```go
+package main
+
+import "fmt"
+
+func printNumbers() {
+
+	for i := 1; i <= 5; i++ {
+
+		fmt.Println(i)
+	}
+}
+
+func main() {
+
+	printNumbers()
+
+	fmt.Println("Main Function")
+}
+```
+
+---
+
+# 📌 Goroutine Syntax
+
+```go
+go functionName()
+```
+
+---
+
+# 📌 First Goroutine Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func printNumbers() {
+
+	for i := 1; i <= 5; i++ {
+
+		fmt.Println(i)
+
+		time.Sleep(time.Millisecond * 500)
+	}
+}
+
+func main() {
+
+	go printNumbers()
+
+	time.Sleep(time.Second * 3)
+
+	fmt.Println("Main Function")
+}
+```
+
+---
+
+# 📌 What Happened?
+
+```text
+printNumbers() runs concurrently
+```
+
+---
+
+# 📌 Why time.Sleep Used?
+
+Because:
+👉 Main function exits quickly.
+
+If main exits:
+❌ Goroutines stop immediately.
+
+---
+
+# 📌 Important Rule
+
+Main function must stay alive until goroutines finish.
+
+---
+
+# 📌 Multiple Goroutines
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func taskOne() {
+
+	for i := 1; i <= 5; i++ {
+
+		fmt.Println("Task One:", i)
+
+		time.Sleep(time.Millisecond * 300)
+	}
+}
+
+func taskTwo() {
+
+	for i := 1; i <= 5; i++ {
+
+		fmt.Println("Task Two:", i)
+
+		time.Sleep(time.Millisecond * 300)
+	}
+}
+
+func main() {
+
+	go taskOne()
+
+	go taskTwo()
+
+	time.Sleep(time.Second * 3)
+}
+```
+
+---
+
+# 📌 Output
+
+Output order may change because:
+# ✅ Concurrent Execution
+
+---
+
+# 📌 Anonymous Goroutine
+
+Goroutine without separate function.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+
+	go func() {
+
+		fmt.Println("Anonymous Goroutine")
+	}()
+
+	time.Sleep(time.Second)
+}
+```
+
+---
+
+# 📌 What is sync.WaitGroup?
+
+Used to wait for goroutines.
+
+Instead of using:
+```go
+time.Sleep()
+```
+
+Professional developers use:
+# ✅ WaitGroup
+
+---
+
+# 📌 WaitGroup Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func printNumbers(wg *sync.WaitGroup) {
+
+	defer wg.Done()
+
+	for i := 1; i <= 5; i++ {
+
+		fmt.Println(i)
+	}
+}
+
+func main() {
+
+	var wg sync.WaitGroup
+
+	wg.Add(1)
+
+	go printNumbers(&wg)
+
+	wg.Wait()
+
+	fmt.Println("Main Finished")
+}
+```
+
+---
+
+# 📌 Understanding WaitGroup
+
+| Method | Purpose |
+|---|---|
+| Add() | Add goroutine count |
+| Done() | Reduce count |
+| Wait() | Wait until complete |
+
+---
+
+# 📌 defer wg.Done()
+
+```go
+defer wg.Done()
+```
+
+Means:
+👉 Mark goroutine completed.
+
+---
+
+# 📌 Real Backend Usage
+
+Concurrency used in:
+- API requests
+- Email sending
+- Notifications
+- Payment systems
+- Parallel database operations
+
+---
+
+# 📌 Backend Example
+
+Suppose:
+User places order.
+
+Backend can:
+- Save order
+- Send email
+- Generate invoice
+- Update inventory
+
+simultaneously using goroutines.
+
+Very powerful concept 🔥
+
+---
+
+# 📌 Goroutine vs Thread
+
+| Goroutine | Thread |
+|---|---|
+| Lightweight | Heavy |
+| Managed by Go | Managed by OS |
+| Faster | Slower |
+
+---
+
+# 📌 Important Warning
+
+Goroutines share memory.
+
+Incorrect handling may cause:
+# ❌ Race Conditions
+
+We will learn this later.
+
+---
+
+# 💻 Day 11 Practice Program
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
+func printNumbers(wg *sync.WaitGroup) {
+
+	defer wg.Done()
+
+	for i := 1; i <= 5; i++ {
+
+		fmt.Println("Numbers:", i)
+
+		time.Sleep(time.Millisecond * 300)
+	}
+}
+
+func printLetters(wg *sync.WaitGroup) {
+
+	defer wg.Done()
+
+	for i := 'A'; i <= 'E'; i++ {
+
+		fmt.Printf("Letters: %c\n", i)
+
+		time.Sleep(time.Millisecond * 300)
+	}
+}
+
+func main() {
+
+	var wg sync.WaitGroup
+
+	wg.Add(2)
+
+	go printNumbers(&wg)
+
+	go printLetters(&wg)
+
+	wg.Wait()
+
+	fmt.Println("✅ All Goroutines Completed")
+}
+```
+
+---
+
+# 📘 Day 11 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is concurrency?
+
+### ✅ Answer:
+Concurrency means executing multiple tasks independently.
+
+---
+
+## ❓ Q2: What is goroutine?
+
+### ✅ Answer:
+Goroutine is lightweight thread managed by Go runtime.
+
+---
+
+## ❓ Q3: How to create goroutine?
+
+### ✅ Answer:
+
+```go
+go functionName()
+```
+
+---
+
+## ❓ Q4: Why goroutines are faster?
+
+### ✅ Answer:
+Because they are lightweight and managed efficiently by Go runtime.
+
+---
+
+## ❓ Q5: What is sync.WaitGroup?
+
+### ✅ Answer:
+WaitGroup waits for goroutines to finish execution.
+
+---
+
+## ❓ Q6: Why wg.Done() used?
+
+### ✅ Answer:
+Marks goroutine as completed.
+
+---
+
+## ❓ Q7: Difference between goroutine and thread?
+
+| Goroutine | Thread |
+|---|---|
+| Lightweight | Heavy |
+| Faster | Slower |
+| Managed by Go | Managed by OS |
+
+---
+
+# 📚 Day 11 Summary
+
+Today I learned:
+- Concurrency
+- Goroutines
+- go keyword
+- Anonymous goroutines
+- sync.WaitGroup
+- Concurrent execution
+
+I also practiced:
+- Running multiple tasks
+- Synchronization
+- Backend concurrency logic
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create multiple goroutines  
+✅ Print numbers concurrently  
+✅ Print alphabets concurrently  
+✅ Use WaitGroup  
+✅ Create anonymous goroutine  
+✅ Simulate backend tasks
+
+---
+
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
@@ -4723,4 +5223,5 @@ I also practiced:
 ✅ Day 08 Completed  
 ✅ Day 09 Completed   
 ✅ Day 10 Completed  
-🚀 Next: Goroutines & Concurrency in Go
+✅ Day 11 Completed  
+🚀 Next: Channels in Go
