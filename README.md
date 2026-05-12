@@ -3285,7 +3285,6 @@ I also practiced:
 - Search Student
 
 ---
-
 # 🧠 Practice Tasks
 
 ✅ Add Email field  
@@ -3294,7 +3293,516 @@ I also practiced:
 ✅ Add Exit Confirmation  
 ✅ Add Validation  
 ✅ Prevent Duplicate IDs
+---
 
+# ✅ Day 08 — Packages & Modules in Go
+
+---
+
+# 📖 Introduction to Packages & Modules
+
+Packages and Modules are one of the most important concepts in Go backend development.
+
+Real-world Go applications are divided into:
+- Packages
+- Modules
+- Layers
+- Services
+
+Without packages:
+❌ Code becomes messy  
+❌ Difficult to maintain  
+❌ Hard to scale
+
+Using packages:
+✅ Clean architecture  
+✅ Better organization  
+✅ Reusable code  
+✅ Production-ready structure
+
+---
+
+# 📖 What You Will Learn
+
+- Packages
+- Main Package
+- Custom Packages
+- Modules
+- go.mod
+- Importing Packages
+- Exported Functions
+- Package Alias
+- Backend Project Structure
+- Interview Questions
+
+---
+
+# 📌 What is Package?
+
+A package is a collection of Go files.
+
+Packages help organize code into reusable components.
+
+---
+
+# 📌 Real Example
+
+Suppose you are building backend project.
+
+You can separate:
+- User logic
+- Product logic
+- Authentication
+- Database logic
+
+into different packages.
+
+---
+
+# 📌 Package Syntax
+
+```go
+package main
+```
+
+---
+
+# 📌 Important Rule
+
+Every Go file must belong to a package.
+
+---
+
+# 📌 Main Package
+
+```go
+package main
+```
+
+This is a special package.
+
+Program execution starts from:
+```go
+func main()
+```
+
+---
+
+# 📌 Simple Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	fmt.Println("Hello Go")
+}
+```
+
+---
+
+# 📌 Custom Package
+
+We can create our own packages.
+
+---
+
+# 📌 Project Structure
+
+```text
+Day-08/
+ ├── main.go
+ ├── calculator/
+ │    └── calculator.go
+ ├── go.mod
+```
+
+---
+
+# 📌 Step 1 — Create Project Folder
+
+```bash
+mkdir Day-08
+cd Day-08
+```
+
+---
+
+# 📌 Step 2 — Initialize Module
+
+```bash
+go mod init day08
+```
+
+---
+
+# 📌 What is go.mod?
+
+`go.mod` manages:
+- Project dependencies
+- Module name
+- Go version
+
+---
+
+# 📌 Example go.mod
+
+```go
+module day08
+
+go 1.24.0
+```
+
+---
+
+# 📌 Step 3 — Create Package Folder
+
+```bash
+mkdir calculator
+touch calculator/calculator.go
+```
+
+---
+
+# 📌 calculator.go
+
+```go
+package calculator
+
+func Add(a int, b int) int {
+
+	return a + b
+}
+
+func Subtract(a int, b int) int {
+
+	return a - b
+}
+```
+
+---
+
+# 📌 Important Point
+
+Functions starting with CAPITAL letter are:
+# ✅ Exported
+
+Accessible outside package.
+
+---
+
+# 📌 Lowercase Functions
+
+```go
+func add()
+```
+
+❌ Not accessible outside package.
+
+---
+
+# 📌 Step 4 — main.go
+
+```go
+package main
+
+import (
+	"fmt"
+	"day08/calculator"
+)
+
+func main() {
+
+	result := calculator.Add(10, 20)
+
+	fmt.Println("Addition:", result)
+
+	sub := calculator.Subtract(30, 10)
+
+	fmt.Println("Subtraction:", sub)
+}
+```
+
+---
+
+# 📌 Understanding Import
+
+```go
+import "day08/calculator"
+```
+
+Meaning:
+👉 Import calculator package from module.
+
+---
+
+# 📌 Run Project
+
+```bash
+go run .
+```
+
+---
+
+# 📌 Output
+
+```text
+Addition: 30
+Subtraction: 20
+```
+
+---
+
+# 📌 Why Packages are Important?
+
+Packages help:
+✅ Organize code  
+✅ Reuse code  
+✅ Separate business logic  
+✅ Build scalable backend systems
+
+---
+
+# 📌 Real Backend Structure
+
+Real Go backend projects look like:
+
+```text
+project/
+ ├── cmd/
+ ├── handlers/
+ ├── services/
+ ├── repositories/
+ ├── models/
+ ├── routes/
+ ├── database/
+ ├── go.mod
+ └── main.go
+```
+
+---
+
+# 📌 Package Alias
+
+We can rename imported package.
+
+---
+
+# ✅ Example
+
+```go
+import calc "day08/calculator"
+```
+
+Usage:
+
+```go
+calc.Add(10,20)
+```
+
+---
+
+# 📌 Blank Identifier Import
+
+Used when package initialization needed only.
+
+```go
+import _ "package_name"
+```
+
+Used in:
+- Database drivers
+- Side effects
+
+---
+
+# 📌 Multiple Packages
+
+One project can contain multiple packages.
+
+Example:
+- auth
+- user
+- product
+- payment
+
+---
+
+# 📌 Important Rule
+
+All files in same folder must belong to same package.
+
+---
+
+# ❌ Wrong
+
+```text
+folder/
+ ├── package user
+ ├── package product
+```
+
+---
+
+# ✅ Correct
+
+```text
+user/
+product/
+```
+
+---
+
+# 📌 Backend Understanding
+
+In real backend projects:
+- Package = Layer
+- Module = Project
+
+Example:
+- controllers package
+- services package
+- repositories package
+
+Exactly like:
+- ASP.NET Core Layers
+- Clean Architecture
+
+---
+
+# 💻 Day 08 Practice Program
+
+# 📌 calculator/calculator.go
+
+```go
+package calculator
+
+func Add(a int, b int) int {
+
+	return a + b
+}
+
+func Multiply(a int, b int) int {
+
+	return a * b
+}
+```
+
+---
+
+# 📌 main.go
+
+```go
+package main
+
+import (
+	"fmt"
+	"day08/calculator"
+)
+
+func main() {
+
+	sum := calculator.Add(10, 20)
+
+	multiply := calculator.Multiply(5, 5)
+
+	fmt.Println("Addition:", sum)
+
+	fmt.Println("Multiplication:", multiply)
+}
+```
+
+---
+
+# 📘 Day 08 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is package in Go?
+
+### ✅ Answer:
+Package is a collection of Go files used to organize code.
+
+---
+
+## ❓ Q2: What is main package?
+
+### ✅ Answer:
+Main package is special package where program execution starts.
+
+---
+
+## ❓ Q3: What is module in Go?
+
+### ✅ Answer:
+Module is collection of Go packages managed using go.mod.
+
+---
+
+## ❓ Q4: What is go.mod?
+
+### ✅ Answer:
+go.mod manages:
+- Dependencies
+- Module name
+- Go version
+
+---
+
+## ❓ Q5: Why exported functions are important?
+
+### ✅ Answer:
+Exported functions can be accessed outside package.
+
+---
+
+## ❓ Q6: Difference between Add() and add()?
+
+| Add() | add() |
+|---|---|
+| Exported | Unexported |
+| Public | Private |
+
+---
+
+## ❓ Q7: Why packages are important?
+
+### ✅ Answer:
+Packages improve:
+- Scalability
+- Reusability
+- Code organization
+
+---
+
+# 📚 Day 08 Summary
+
+Today I learned:
+- Packages
+- Modules
+- go.mod
+- Importing packages
+- Exported functions
+- Backend project structure
+
+I also practiced:
+- Creating custom packages
+- Importing packages
+- Using modules
+- Organizing backend code
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create math package  
+✅ Create auth package  
+✅ Create user package  
+✅ Add multiple functions  
+✅ Use package alias  
+✅ Create multi-package project
 ---
 
 # 🔥 My Learning Rules
@@ -3326,4 +3834,5 @@ I also practiced:
 ✅ Day 05 Completed  
 ✅ Day 06 Completed  
 ✅ Day 07 Completed  
-🚀 Next: Packages & Modules in Go
+✅ Day 08 Completed  
+🚀 Next: File Handling in Go
