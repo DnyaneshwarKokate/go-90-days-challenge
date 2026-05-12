@@ -72,7 +72,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 03 | Arrays, Slices, Maps | ✅ |
 | Day 04 | Structs | ✅ |
 | Day 05 | Pointers | ✅ |
-| Day 06 | Methods & Interfaces | ⏳ |
+| Day 06 | Methods & Interfaces | ✅ |
 | Day 07 | Mini Project | ⏳ |
 | Day 08 | Packages & Modules | ⏳ |
 | Day 09 | File Handling | ⏳ |
