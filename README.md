@@ -3794,7 +3794,6 @@ I also practiced:
 - Organizing backend code
 
 ---
-
 # 🧠 Practice Tasks
 
 ✅ Create math package  
@@ -3803,6 +3802,344 @@ I also practiced:
 ✅ Add multiple functions  
 ✅ Use package alias  
 ✅ Create multi-package project
+---
+
+# ✅ Day 09 — File Handling in Go
+
+---
+
+# 📖 Introduction to File Handling
+
+File handling is one of the most important concepts in backend development.
+
+Real applications use file handling for:
+- Logs
+- Reports
+- CSV Exports
+- Upload Systems
+- Config Files
+- Data Storage
+
+Using Go, we can:
+✅ Create Files  
+✅ Read Files  
+✅ Write Files  
+✅ Append Data  
+✅ Delete Files  
+✅ Rename Files
+
+---
+
+# 📖 What You Will Learn
+
+- Create File
+- Write File
+- Read File
+- Append Data
+- Delete File
+- Rename File
+- File Information
+- os Package
+- defer Keyword
+- Real Backend Examples
+- Interview Questions
+
+---
+
+# 📌 What is File Handling?
+
+File handling means:
+👉 Creating and managing files using code.
+
+---
+
+# 📌 Important Packages
+
+| Package | Purpose |
+|---|---|
+| os | File operations |
+| fmt | Printing |
+| bufio | Buffered reading |
+| io/ioutil | Read/write helpers |
+
+---
+
+# 📌 Create File
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+
+	file, err := os.Create("student.txt")
+
+	if err != nil {
+
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println("✅ File Created Successfully")
+
+	file.Close()
+}
+```
+
+---
+
+# 📌 Write Data into File
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+
+	file, err := os.Create("student.txt")
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	defer file.Close()
+
+	file.WriteString("Welcome to Go Lang")
+
+	fmt.Println("✅ Data Written Successfully")
+}
+```
+
+---
+
+# 📌 Read File
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+
+	data, err := os.ReadFile("student.txt")
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(data))
+}
+```
+
+---
+
+# 📌 Append Data into File
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+
+	file, err := os.OpenFile(
+		"student.txt",
+		os.O_APPEND|os.O_WRONLY,
+		0644,
+	)
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	defer file.Close()
+
+	file.WriteString("\nLearning Go Lang")
+
+	fmt.Println("✅ Data Appended")
+}
+```
+
+---
+
+# 📌 Delete File
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+
+	err := os.Remove("student.txt")
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("✅ File Deleted")
+}
+```
+
+---
+
+# 📌 Rename File
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+
+	err := os.Rename(
+		"student.txt",
+		"data.txt",
+	)
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println("✅ File Renamed")
+}
+```
+
+---
+
+# 💻 Day 09 Practice Program
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+
+	file, err := os.Create("notes.txt")
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	defer file.Close()
+
+	file.WriteString("Learning File Handling in Go")
+
+	data, err := os.ReadFile("notes.txt")
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(data))
+
+	os.Rename("notes.txt", "golang.txt")
+
+	fmt.Println("✅ File Renamed")
+}
+```
+
+---
+
+# 📘 Day 09 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is file handling?
+
+### ✅ Answer:
+File handling means creating, reading, updating, and deleting files using code.
+
+---
+
+## ❓ Q2: Which package is mainly used for file handling in Go?
+
+### ✅ Answer:
+`os` package.
+
+---
+
+## ❓ Q3: Why file.Close() important?
+
+### ✅ Answer:
+Used to release system resources and avoid memory leaks.
+
+---
+
+## ❓ Q4: What is defer in Go?
+
+### ✅ Answer:
+`defer` delays function execution until surrounding function ends.
+
+---
+
+## ❓ Q5: What does os.Create() do?
+
+### ✅ Answer:
+Creates new file.
+
+---
+
+# 📚 Day 09 Summary
+
+Today I learned:
+- File handling
+- Create file
+- Read file
+- Write file
+- Append file
+- Delete file
+- Rename file
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create student.txt  
+✅ Write student data  
+✅ Read student file  
+✅ Append new data  
+✅ Rename file  
+✅ Delete file
+
 ---
 
 # 🔥 My Learning Rules
@@ -3826,7 +4163,6 @@ I also practiced:
 ---
 
 # ⭐ Challenge Progress
-
 ✅ Day 01 Completed  
 ✅ Day 02 Completed  
 ✅ Day 03 Completed  
@@ -3835,4 +4171,5 @@ I also practiced:
 ✅ Day 06 Completed  
 ✅ Day 07 Completed  
 ✅ Day 08 Completed  
-🚀 Next: File Handling in Go
+✅ Day 09 Completed  
+🚀 Next: Error Handling in Go
