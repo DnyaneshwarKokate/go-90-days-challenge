@@ -1985,6 +1985,634 @@ I also practiced:
 ✅ Create Employee update function
 
 ---
+---
+
+# ✅ Day 06 — Methods & Interfaces
+
+---
+
+# 📖 Introduction to Methods & Interfaces
+
+Methods and Interfaces are one of the most important concepts in Go backend development.
+
+They are heavily used in:
+- Backend APIs
+- Clean Architecture
+- Microservices
+- Business Logic
+- Abstraction
+- Scalable Applications
+
+If you know C#, then:
+- Method in Go ≈ Class Method
+- Interface in Go ≈ Interface in C#
+
+---
+
+# 📖 What You Will Learn
+
+- Methods
+- Method Receivers
+- Value Receiver
+- Pointer Receiver
+- Interfaces
+- Empty Interface
+- Type Assertion
+- Real Backend Examples
+- Interview Questions
+
+---
+
+# 📌 What is Method?
+
+A method is a function attached to a struct.
+
+---
+
+# 📌 Difference Between Function & Method
+
+| Function | Method |
+|---|---|
+| Independent | Attached to struct |
+| Called directly | Called using object |
+
+---
+
+# 📌 Simple Function Example
+
+```go
+func greet() {
+
+	fmt.Println("Hello")
+}
+```
+
+---
+
+# 📌 Method Syntax
+
+```go
+func (receiver StructName) methodName() {
+
+}
+```
+
+---
+
+# 📌 Method Example
+
+```go
+package main
+
+import "fmt"
+
+type Student struct {
+
+	Name string
+	Age  int
+}
+
+func (s Student) display() {
+
+	fmt.Println("Name:", s.Name)
+	fmt.Println("Age:", s.Age)
+}
+
+func main() {
+
+	student := Student{
+
+		Name: "Dnyaneshwar",
+		Age: 24,
+	}
+
+	student.display()
+}
+```
+
+---
+
+# 📌 Explanation
+
+| Code | Meaning |
+|---|---|
+| (s Student) | Receiver |
+| display() | Method |
+| s.Name | Access struct field |
+
+---
+
+# 📌 Why Methods are Important?
+
+Methods help:
+✅ Organize code  
+✅ Add behavior to structs  
+✅ Improve readability  
+✅ Build scalable backend systems
+
+---
+
+# 📌 Value Receiver
+
+Value receiver receives COPY of struct.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+type Employee struct {
+
+	Name   string
+	Salary int
+}
+
+func (e Employee) updateSalary() {
+
+	e.Salary = 70000
+}
+
+func main() {
+
+	employee := Employee{
+
+		Name: "Dnyaneshwar",
+		Salary: 50000,
+	}
+
+	employee.updateSalary()
+
+	fmt.Println(employee.Salary)
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+50000
+```
+
+---
+
+# 📌 Why Salary Not Changed?
+
+Because:
+👉 Value receiver receives COPY.
+
+Original value remains unchanged.
+
+---
+
+# 📌 Pointer Receiver
+
+Pointer receiver modifies original struct.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+type Employee struct {
+
+	Name   string
+	Salary int
+}
+
+func (e *Employee) updateSalary() {
+
+	e.Salary = 70000
+}
+
+func main() {
+
+	employee := Employee{
+
+		Name: "Dnyaneshwar",
+		Salary: 50000,
+	}
+
+	employee.updateSalary()
+
+	fmt.Println(employee.Salary)
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+70000
+```
+
+---
+
+# 📌 Why Pointer Receivers Important?
+
+Pointer receivers:
+✅ Modify original value  
+✅ Improve performance  
+✅ Avoid copying large structs
+
+Go developers mostly use:
+# ✅ Pointer Receivers
+
+---
+
+# 📌 What is Interface?
+
+Interface defines behavior.
+
+Interface contains:
+# ✅ Method Signatures
+
+---
+
+# 📌 Interface Syntax
+
+```go
+type Shape interface {
+
+	area()
+}
+```
+
+---
+
+# 📌 Interface Example
+
+```go
+package main
+
+import "fmt"
+
+type Rectangle struct {
+
+	Width  int
+	Height int
+}
+
+func (r Rectangle) area() {
+
+	fmt.Println("Area:", r.Width*r.Height)
+}
+
+type Shape interface {
+
+	area()
+}
+
+func main() {
+
+	rect := Rectangle{
+
+		Width: 10,
+		Height: 20,
+	}
+
+	var shape Shape
+
+	shape = rect
+
+	shape.area()
+}
+```
+
+---
+
+# 📌 Understanding
+
+| Part | Meaning |
+|---|---|
+| interface | Defines behavior |
+| area() | Method signature |
+| Rectangle | Implements interface |
+
+---
+
+# 📌 Important Point
+
+Go interfaces are:
+# ✅ Implicit
+
+No need for:
+```text
+implements keyword
+```
+
+Unlike Java or C#.
+
+---
+
+# 📌 Real Backend Example
+
+Suppose:
+We have payment system.
+
+Different payment methods:
+- UPI
+- Card
+- PayPal
+
+All should implement:
+```go
+pay()
+```
+
+This is achieved using interfaces.
+
+---
+
+# ✅ Payment Interface Example
+
+```go
+package main
+
+import "fmt"
+
+type Payment interface {
+
+	pay()
+}
+
+type UPI struct {}
+
+func (u UPI) pay() {
+
+	fmt.Println("Paid using UPI")
+}
+
+type Card struct {}
+
+func (c Card) pay() {
+
+	fmt.Println("Paid using Card")
+}
+
+func main() {
+
+	var payment Payment
+
+	payment = UPI{}
+	payment.pay()
+
+	payment = Card{}
+	payment.pay()
+}
+```
+
+---
+
+# 📌 Empty Interface
+
+```go
+interface{}
+```
+
+Can store ANY datatype.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+func display(value interface{}) {
+
+	fmt.Println(value)
+}
+
+func main() {
+
+	display(10)
+	display("Go")
+	display(true)
+}
+```
+
+---
+
+# 📌 Why Empty Interface Important?
+
+Used in:
+- JSON handling
+- Generic data
+- Dynamic APIs
+
+---
+
+# 📌 Type Assertion
+
+Used to get original datatype from interface.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	var value interface{} = "Go Lang"
+
+	str := value.(string)
+
+	fmt.Println(str)
+}
+```
+
+---
+
+# 💻 Day 06 Practice Program
+
+```go
+package main
+
+import "fmt"
+
+type Student struct {
+
+	Name string
+	Age  int
+}
+
+func (s Student) display() {
+
+	fmt.Println("Name:", s.Name)
+	fmt.Println("Age:", s.Age)
+}
+
+type Employee struct {
+
+	Name   string
+	Salary int
+}
+
+func (e *Employee) updateSalary() {
+
+	e.Salary = 70000
+}
+
+type Payment interface {
+
+	pay()
+}
+
+type UPI struct {}
+
+func (u UPI) pay() {
+
+	fmt.Println("Payment using UPI")
+}
+
+func main() {
+
+	student := Student{
+
+		Name: "Dnyaneshwar",
+		Age: 24,
+	}
+
+	student.display()
+
+	employee := Employee{
+
+		Name: "Rahul",
+		Salary: 50000,
+	}
+
+	employee.updateSalary()
+
+	fmt.Println(employee)
+
+	var payment Payment
+
+	payment = UPI{}
+
+	payment.pay()
+}
+```
+
+---
+
+# 📘 Day 06 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is method in Go?
+
+### ✅ Answer:
+Method is a function attached to a struct.
+
+---
+
+## ❓ Q2: Difference between function and method?
+
+| Function | Method |
+|---|---|
+| Independent | Attached to struct |
+
+---
+
+## ❓ Q3: What is receiver in Go?
+
+### ✅ Answer:
+Receiver connects method with struct.
+
+---
+
+## ❓ Q4: Difference between value receiver and pointer receiver?
+
+| Value Receiver | Pointer Receiver |
+|---|---|
+| Copy passed | Original address passed |
+| Cannot modify original | Can modify original |
+
+---
+
+## ❓ Q5: What is interface in Go?
+
+### ✅ Answer:
+Interface defines behavior using method signatures.
+
+---
+
+## ❓ Q6: Why interfaces are important?
+
+### ✅ Answer:
+Interfaces help achieve:
+- Abstraction
+- Loose coupling
+- Clean architecture
+
+---
+
+## ❓ Q7: What is empty interface?
+
+### ✅ Answer:
+`interface{}` can store any datatype.
+
+---
+
+## ❓ Q8: What is type assertion?
+
+### ✅ Answer:
+Used to retrieve original datatype from interface.
+
+---
+
+# 📚 Day 06 Summary
+
+Today I learned:
+- Methods
+- Receivers
+- Pointer Receivers
+- Interfaces
+- Empty Interface
+- Type Assertion
+
+I also practiced:
+- Struct methods
+- Interface implementation
+- Backend-style abstraction
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create Student method  
+✅ Create Employee pointer receiver  
+✅ Create Payment interface  
+✅ Create Card & UPI implementations  
+✅ Use empty interface  
+✅ Practice type assertion
+
+---
+
+# 🚀 GitHub Commands
+
+```bash
+git add .
+git commit -m "Day 6 completed methods and interfaces"
+git push
+
+
 
 # 🔥 My Learning Rules
 
@@ -2013,4 +2641,5 @@ I also practiced:
 ✅ Day 03 Completed  
 ✅ Day 04 Completed  
 ✅ Day 05 Completed  
-🚀 Next: Methods & Interfaces
+✅ Day 06 Completed  
+🚀 Next: Mini Project in Go
