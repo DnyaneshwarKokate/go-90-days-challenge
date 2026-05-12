@@ -3324,6 +3324,6 @@ I also practiced:
 ✅ Day 03 Completed  
 ✅ Day 04 Completed  
 ✅ Day 05 Completed  
-✅ Day 06 Completed 
+✅ Day 06 Completed  
 ✅ Day 07 Completed  
 🚀 Next: Packages & Modules in Go
