@@ -1985,7 +1985,6 @@ I also practiced:
 ✅ Create Employee update function
 
 ---
----
 
 # ✅ Day 06 — Methods & Interfaces
 
@@ -2604,15 +2603,6 @@ I also practiced:
 ✅ Practice type assertion
 
 ---
-
-# 🚀 GitHub Commands
-
-```bash
-git add .
-git commit -m "Day 6 completed methods and interfaces"
-git push
-
-
 
 # 🔥 My Learning Rules
 
