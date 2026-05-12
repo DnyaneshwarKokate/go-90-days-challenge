@@ -3297,16 +3297,6 @@ I also practiced:
 
 ---
 
-# 🚀 GitHub Commands
-
-```bash
-
-git commit -m "Day 7 completed student management mini project"
-git push
-```
-
----
-
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
