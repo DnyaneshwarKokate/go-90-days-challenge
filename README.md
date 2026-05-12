@@ -74,9 +74,9 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 05 | Pointers | ✅ |
 | Day 06 | Methods & Interfaces | ✅ |
 | Day 07 | Mini Project | ✅ |
-| Day 08 | Packages & Modules | ⏳ |
-| Day 09 | File Handling | ⏳ |
-| Day 10 | Error Handling | ⏳ |
+| Day 08 | Packages & Modules | ✅ |
+| Day 09 | File Handling | ✅ |
+| Day 10 | Error Handling | ✅ |
 
 ---
 
@@ -4139,6 +4139,556 @@ Today I learned:
 ✅ Append new data  
 ✅ Rename file  
 ✅ Delete file
+---
+
+# ✅ Day 10 — Error Handling in Go
+
+---
+
+# 📖 Introduction to Error Handling
+
+Error handling is one of the most important concepts in backend development.
+
+In real applications:
+- APIs fail
+- Database connections fail
+- Files may not exist
+- User input can be invalid
+
+Good developers:
+✅ Handle errors properly  
+✅ Prevent crashes  
+✅ Return meaningful messages
+
+That is why:
+# ✅ Error handling is critical in Go
+
+---
+
+# 📖 What You Will Learn
+
+- Errors in Go
+- error Interface
+- if err != nil
+- Custom Errors
+- errors.New()
+- Panic
+- Recover
+- Logging Errors
+- Best Practices
+- Real Backend Examples
+- Interview Questions
+
+---
+
+# 📌 What is Error?
+
+Error means:
+👉 Something went wrong during program execution.
+
+Examples:
+- File not found
+- Database connection failed
+- Invalid input
+- API request failed
+
+---
+
+# 📌 Go Philosophy
+
+Go does NOT use:
+```text
+try-catch
+```
+
+Instead Go uses:
+# ✅ Explicit Error Handling
+
+---
+
+# 📌 Basic Error Handling Syntax
+
+```go
+result, err := someFunction()
+
+if err != nil {
+
+	fmt.Println(err)
+	return
+}
+```
+
+---
+
+# 📌 Understanding
+
+| Part | Meaning |
+|---|---|
+| err | Error object |
+| nil | No error |
+| if err != nil | Error exists |
+
+---
+
+# 📌 Simple Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func main() {
+
+	file, err := os.Open("student.txt")
+
+	if err != nil {
+
+		fmt.Println("Error:", err)
+		return
+	}
+
+	defer file.Close()
+
+	fmt.Println("✅ File Opened Successfully")
+}
+```
+
+---
+
+# 📌 Output (If File Missing)
+
+```text
+Error: open student.txt: no such file or directory
+```
+
+---
+
+# 📌 Why Error Handling Important?
+
+Without error handling:
+❌ Program crashes  
+❌ Bad user experience  
+❌ Difficult debugging
+
+With error handling:
+✅ Stable applications  
+✅ Better debugging  
+✅ Production-ready systems
+
+---
+
+# 📌 Custom Errors
+
+Go allows creating custom errors.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+)
+
+func checkAge(age int) error {
+
+	if age < 18 {
+
+		return errors.New("age must be 18 or above")
+	}
+
+	return nil
+}
+
+func main() {
+
+	err := checkAge(16)
+
+	if err != nil {
+
+		fmt.Println("Error:", err)
+		return
+	}
+
+	fmt.Println("Eligible")
+}
+```
+
+---
+
+# 📌 errors.New()
+
+Used to create custom error message.
+
+---
+
+# 📌 Return nil
+
+```go
+return nil
+```
+
+Means:
+# ✅ No Error
+
+---
+
+# 📌 Multiple Return Values
+
+Go functions commonly return:
+
+```go
+value, err
+```
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"strconv"
+)
+
+func main() {
+
+	number, err := strconv.Atoi("100")
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(number)
+}
+```
+
+---
+
+# 📌 What is Happening?
+
+```text
+"100" → converted into integer
+```
+
+---
+
+# 📌 Panic in Go
+
+`panic` stops program immediately.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+func main() {
+
+	panic("Something went wrong")
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+panic: Something went wrong
+```
+
+---
+
+# 📌 When Panic Used?
+
+Used for:
+- Critical failures
+- Impossible situations
+- Serious system errors
+
+Examples:
+- Database corruption
+- Server startup failure
+
+---
+
+# 📌 Recover in Go
+
+`recover()` handles panic and prevents crash.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+func handlePanic() {
+
+	recoverMessage := recover()
+
+	if recoverMessage != nil {
+
+		fmt.Println("Recovered:", recoverMessage)
+	}
+}
+
+func main() {
+
+	defer handlePanic()
+
+	panic("Server crashed")
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+Recovered: Server crashed
+```
+
+---
+
+# 📌 defer + recover
+
+Mostly used together.
+
+---
+
+# 📌 Real Backend Example
+
+Suppose:
+- Database connection fails
+- API crashes
+
+Instead of crashing server:
+✅ Recover handles panic.
+
+Very important in production systems.
+
+---
+
+# 📌 Logging Errors
+
+Backend developers log errors for debugging.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"log"
+)
+
+func main() {
+
+	log.Println("Server Started")
+}
+```
+
+---
+
+# 📌 Difference Between fmt and log
+
+| fmt | log |
+|---|---|
+| Simple output | Logging |
+| No timestamp | Includes timestamp |
+
+---
+
+# 📌 Best Practices
+
+✅ Always check errors  
+✅ Never ignore errors  
+✅ Use meaningful messages  
+✅ Return errors properly  
+✅ Use panic only for critical issues
+
+---
+
+# ❌ Wrong Practice
+
+```go
+file, _ := os.Open("test.txt")
+```
+
+Ignoring error is bad practice.
+
+---
+
+# ✅ Correct Practice
+
+```go
+file, err := os.Open("test.txt")
+
+if err != nil {
+
+	fmt.Println(err)
+	return
+}
+```
+
+---
+
+# 💻 Day 10 Practice Program
+
+```go
+package main
+
+import (
+	"errors"
+	"fmt"
+	"os"
+)
+
+func checkNumber(number int) error {
+
+	if number < 0 {
+
+		return errors.New("negative number not allowed")
+	}
+
+	return nil
+}
+
+func main() {
+
+	err := checkNumber(-10)
+
+	if err != nil {
+
+		fmt.Println("Error:", err)
+		return
+	}
+
+	file, fileError := os.Open("data.txt")
+
+	if fileError != nil {
+
+		fmt.Println("File Error:", fileError)
+		return
+	}
+
+	defer file.Close()
+
+	fmt.Println("✅ Program Executed Successfully")
+}
+```
+
+---
+
+# 📘 Day 10 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is error handling?
+
+### ✅ Answer:
+Error handling is process of managing runtime problems in program.
+
+---
+
+## ❓ Q2: How Go handles errors?
+
+### ✅ Answer:
+Go uses explicit error handling with:
+
+```go
+if err != nil
+```
+
+---
+
+## ❓ Q3: What is error interface?
+
+### ✅ Answer:
+Error interface represents runtime error in Go.
+
+---
+
+## ❓ Q4: What is errors.New()?
+
+### ✅ Answer:
+Used to create custom error.
+
+---
+
+## ❓ Q5: What is panic?
+
+### ✅ Answer:
+panic stops normal execution of program immediately.
+
+---
+
+## ❓ Q6: What is recover?
+
+### ✅ Answer:
+recover handles panic and prevents program crash.
+
+---
+
+## ❓ Q7: Difference between panic and error?
+
+| error | panic |
+|---|---|
+| Recoverable | Critical failure |
+| Normal flow | Stops execution |
+
+---
+
+## ❓ Q8: Why error handling important in backend?
+
+### ✅ Answer:
+Prevents crashes and improves application stability.
+
+---
+
+# 📚 Day 10 Summary
+
+Today I learned:
+- Error handling
+- Custom errors
+- errors.New()
+- panic
+- recover
+- Logging
+- Backend error management
+
+I also practiced:
+- File errors
+- Input validation
+- Panic recovery
+- Production-style error handling
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create divide function with error  
+✅ Validate age input  
+✅ Handle missing file  
+✅ Create custom errors  
+✅ Use panic & recover  
+✅ Create log messages
 
 ---
 
@@ -4171,5 +4721,6 @@ Today I learned:
 ✅ Day 06 Completed  
 ✅ Day 07 Completed  
 ✅ Day 08 Completed  
-✅ Day 09 Completed  
-🚀 Next: Error Handling in Go
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+🚀 Next: Goroutines & Concurrency in Go
