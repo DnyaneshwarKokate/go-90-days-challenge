@@ -76,7 +76,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 09 | File Handling in Go | ✅ |
 | Day 10 | Error Handling in Go | ✅ |
 | Day 11 | Goroutines & Concurrency | ✅ |
-| Day 12 | Channels in Go | ⏳ |
+| Day 12 | Channels in Go | ✅ |
 | Day 13 | JSON Handling | ⏳ |
 | Day 14 | HTTP Package | ⏳ |
 | Day 15 | First REST API | ⏳ |
@@ -5246,6 +5246,596 @@ I also practiced:
 
 ---
 
+# ✅ Day 12 — Channels in Go
+
+---
+
+# 📖 Introduction to Channels
+
+Channels are one of the most important concepts in Go concurrency.
+
+Yesterday (Day 11):
+You learned:
+✅ Goroutines
+
+Today:
+You will learn:
+# ✅ Communication Between Goroutines
+
+That communication happens using:
+# 🚀 Channels
+
+---
+
+# 📖 What You Will Learn
+
+- Channels
+- Channel Syntax
+- Send & Receive Data
+- Buffered Channels
+- Unbuffered Channels
+- Deadlock
+- Channel Directions
+- range & close()
+- Real Backend Examples
+- Interview Questions
+
+---
+
+# 📌 What is Channel?
+
+Channel is used for:
+# ✅ Communication between goroutines
+
+Channels safely transfer data.
+
+---
+
+# 📌 Real Example
+
+Suppose:
+One goroutine:
+👉 Processes payment
+
+Another goroutine:
+👉 Sends notification
+
+They communicate using:
+# ✅ Channels
+
+---
+
+# 📌 Why Channels Important?
+
+Without channels:
+❌ Difficult synchronization  
+❌ Unsafe data sharing  
+❌ Race conditions
+
+With channels:
+✅ Safe communication  
+✅ Better concurrency  
+✅ Cleaner code
+
+---
+
+# 📌 Channel Syntax
+
+```go
+channelName := make(chan datatype)
+```
+
+---
+
+# 📌 Example
+
+```go
+messages := make(chan string)
+```
+
+---
+
+# 📌 Understanding
+
+| Part | Meaning |
+|---|---|
+| make() | Create channel |
+| chan | Channel keyword |
+| string | Data type |
+
+---
+
+# 📌 Send Data into Channel
+
+```go
+channel <- value
+```
+
+---
+
+# 📌 Receive Data from Channel
+
+```go
+value := <-channel
+```
+
+---
+
+# 📌 First Channel Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	messageChannel := make(chan string)
+
+	go func() {
+
+		messageChannel <- "Hello from Goroutine"
+	}()
+
+	message := <-messageChannel
+
+	fmt.Println(message)
+}
+```
+
+---
+
+# 📌 What Happened?
+
+```text
+Goroutine sent data
+↓
+Main function received data
+```
+
+---
+
+# 📌 Important Rule
+
+Channels are:
+# ✅ Blocking
+
+Meaning:
+- Send waits for receiver
+- Receive waits for sender
+
+---
+
+# 📌 Unbuffered Channel
+
+Default channel type.
+
+---
+
+# ✅ Example
+
+```go
+channel := make(chan int)
+```
+
+---
+
+# 📌 Deadlock Example
+
+```go
+package main
+
+func main() {
+
+	channel := make(chan int)
+
+	channel <- 10
+}
+```
+
+---
+
+# 📌 Error
+
+```text
+fatal error: all goroutines are asleep - deadlock!
+```
+
+---
+
+# 📌 Why Deadlock Happened?
+
+Because:
+❌ No receiver available.
+
+---
+
+# 📌 Fix Using Goroutine
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	channel := make(chan int)
+
+	go func() {
+
+		channel <- 10
+	}()
+
+	value := <-channel
+
+	fmt.Println("Received:", value)
+}
+```
+
+---
+
+# 📌 Buffered Channel
+
+Buffered channel can store limited values without immediate receiver.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	channel := make(chan int, 2)
+
+	channel <- 10
+	channel <- 20
+
+	fmt.Println(<-channel)
+	fmt.Println(<-channel)
+}
+```
+
+---
+
+# 📌 Understanding
+
+```go
+make(chan int, 2)
+```
+
+Capacity:
+```text
+2 values
+```
+
+---
+
+# 📌 Why Buffered Channels Important?
+
+Useful when:
+- Temporary storage needed
+- Producer faster than consumer
+
+---
+
+# 📌 Channel with WaitGroup
+
+Professional concurrency handling.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func sendData(channel chan string, wg *sync.WaitGroup) {
+
+	defer wg.Done()
+
+	channel <- "Hello Go"
+}
+
+func main() {
+
+	var wg sync.WaitGroup
+
+	channel := make(chan string)
+
+	wg.Add(1)
+
+	go sendData(channel, &wg)
+
+	message := <-channel
+
+	fmt.Println(message)
+
+	wg.Wait()
+}
+```
+
+---
+
+# 📌 Understanding WaitGroup
+
+| Method | Purpose |
+|---|---|
+| Add() | Add goroutine count |
+| Done() | Reduce count |
+| Wait() | Wait until complete |
+
+---
+
+# 📌 Close Channel
+
+Used to indicate:
+# ✅ No more data will be sent
+
+---
+
+# ✅ Example
+
+```go
+close(channel)
+```
+
+---
+
+# 📌 range with Channel
+
+Used to continuously receive values.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+
+	channel := make(chan int)
+
+	go func() {
+
+		for i := 1; i <= 5; i++ {
+
+			channel <- i
+		}
+
+		close(channel)
+	}()
+
+	for value := range channel {
+
+		fmt.Println(value)
+	}
+}
+```
+
+---
+
+# 📌 What Happened?
+
+```text
+range receives values until channel closes
+```
+
+---
+
+# 📌 Channel Directions
+
+Restrict send/receive operations.
+
+---
+
+# 📌 Send Only Channel
+
+```go
+chan<- int
+```
+
+---
+
+# 📌 Receive Only Channel
+
+```go
+<-chan int
+```
+
+---
+
+# 📌 Example
+
+```go
+func send(channel chan<- int)
+```
+
+---
+
+# 📌 Why Channel Directions Important?
+
+Improves:
+✅ Safety  
+✅ Readability  
+✅ Better architecture
+
+---
+
+# 📌 Real Backend Usage
+
+Channels used in:
+- Worker pools
+- Background jobs
+- API processing
+- Notification systems
+- Task queues
+
+---
+
+# 📌 Backend Example
+
+Suppose:
+User places order.
+
+Different goroutines:
+- Process payment
+- Update inventory
+- Send email
+
+Channels coordinate communication safely.
+
+Very powerful 🔥
+
+---
+
+# 📌 Goroutines + Channels
+
+This combination is:
+# 🚀 Core Power of Go
+
+---
+
+# 💻 Day 12 Practice Program
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+func sendNumbers(channel chan int, wg *sync.WaitGroup) {
+
+	defer wg.Done()
+
+	for i := 1; i <= 5; i++ {
+
+		channel <- i
+	}
+
+	close(channel)
+}
+
+func main() {
+
+	var wg sync.WaitGroup
+
+	channel := make(chan int)
+
+	wg.Add(1)
+
+	go sendNumbers(channel, &wg)
+
+	for value := range channel {
+
+		fmt.Println("Received:", value)
+	}
+
+	wg.Wait()
+
+	fmt.Println("✅ Channel Processing Completed")
+}
+```
+
+---
+
+# 📘 Day 12 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is channel in Go?
+
+### ✅ Answer:
+Channel is used for communication between goroutines.
+
+---
+
+## ❓ Q2: Why channels important?
+
+### ✅ Answer:
+Channels provide safe communication and synchronization.
+
+---
+
+## ❓ Q3: What is buffered channel?
+
+### ✅ Answer:
+Buffered channel can store limited values before receiver reads them.
+
+---
+
+## ❓ Q4: What is deadlock?
+
+### ✅ Answer:
+Deadlock happens when goroutines wait forever.
+
+---
+
+## ❓ Q5: What does close(channel) do?
+
+### ✅ Answer:
+Indicates no more values will be sent.
+
+---
+
+## ❓ Q6: Difference between buffered and unbuffered channel?
+
+| Buffered | Unbuffered |
+|---|---|
+| Stores values | No storage |
+| Non-immediate receive | Immediate synchronization |
+
+---
+
+## ❓ Q7: What is range with channel?
+
+### ✅ Answer:
+Used to receive values continuously until channel closes.
+
+---
+
+# 📚 Day 12 Summary
+
+Today I learned:
+- Channels
+- Buffered channels
+- Unbuffered channels
+- Deadlock
+- close()
+- range with channel
+- Channel directions
+
+I also practiced:
+- Goroutine communication
+- Concurrent processing
+- Safe synchronization
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create integer channel  
+✅ Send & receive messages  
+✅ Create buffered channel  
+✅ Use range with channel  
+✅ Close channel properly  
+✅ Build producer-consumer example
+
+---
+
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
@@ -5278,4 +5868,5 @@ I also practiced:
 ✅ Day 09 Completed   
 ✅ Day 10 Completed  
 ✅ Day 11 Completed  
-🚀 Next: Channels in Go
+✅ Day 12 Completed   
+🚀 Next: JSON Handling in Go
