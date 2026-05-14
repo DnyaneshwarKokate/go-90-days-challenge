@@ -77,7 +77,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 10 | Error Handling in Go | ✅ |
 | Day 11 | Goroutines & Concurrency | ✅ |
 | Day 12 | Channels in Go | ✅ |
-| Day 13 | JSON Handling | ⏳ |
+| Day 13 | JSON Handling | ✅ |
 | Day 14 | HTTP Package | ⏳ |
 | Day 15 | First REST API | ⏳ |
 | Day 16 | CRUD REST API | ⏳ |
@@ -6470,6 +6470,581 @@ I also practiced:
 
 ---
 
+# ✅ Day 14 — HTTP Package in Go
+
+---
+
+# 📖 Introduction to HTTP Package
+
+Today we started real backend development using Go.
+
+The HTTP package is used to:
+- Create web servers
+- Handle routes
+- Build APIs
+- Send JSON responses
+- Handle HTTP requests
+
+This is the foundation for:
+✅ REST APIs  
+✅ Backend applications  
+✅ Microservices
+
+---
+
+# 📖 What You Will Learn
+
+- HTTP Package
+- Web Server
+- Routes
+- Handler Functions
+- Request & Response
+- Query Parameters
+- JSON Response
+- POST Request Basics
+- HTTP Methods
+- Status Codes
+- Real Backend Examples
+- Interview Questions
+
+---
+
+# 📌 What is HTTP?
+
+HTTP means:
+# ✅ HyperText Transfer Protocol
+
+Used for communication between:
+- Client
+- Server
+
+Example:
+- Browser → Backend API
+- Mobile App → Server
+
+---
+
+# 📌 What is Web Server?
+
+Web server receives requests and sends responses.
+
+---
+
+# 📌 Go HTTP Package
+
+```go
+import "net/http"
+```
+
+---
+
+# 📌 First HTTP Server
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func main() {
+
+	http.HandleFunc("/", homeHandler)
+
+	fmt.Println("Server running on port 8080")
+
+	http.ListenAndServe(":8080", nil)
+}
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Fprintln(w, "Welcome to Go Backend")
+}
+```
+
+---
+
+# 📌 Run Server
+
+```bash
+go run main.go
+```
+
+---
+
+# 📌 Open Browser
+
+```text
+http://localhost:8080
+```
+
+---
+
+# 📌 Output
+
+```text
+Welcome to Go Backend
+```
+
+---
+
+# 📌 Understanding
+
+| Function | Purpose |
+|---|---|
+| HandleFunc() | Create route |
+| ListenAndServe() | Start server |
+| ResponseWriter | Send response |
+| Request | Receive request |
+
+---
+
+# 📌 What is Handler Function?
+
+Function that handles HTTP request.
+
+---
+
+# 📌 Handler Syntax
+
+```go
+func handler(w http.ResponseWriter, r *http.Request)
+```
+
+---
+
+# 📌 Parameters Meaning
+
+| Parameter | Purpose |
+|---|---|
+| w | Send response |
+| r | Receive request |
+
+---
+
+# 📌 Multiple Routes Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Fprintln(w, "Home Page")
+}
+
+func aboutHandler(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Fprintln(w, "About Page")
+}
+
+func main() {
+
+	http.HandleFunc("/", homeHandler)
+
+	http.HandleFunc("/about", aboutHandler)
+
+	fmt.Println("Server running on 8080")
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📌 Routes
+
+| Route | Output |
+|---|---|
+| / | Home Page |
+| /about | About Page |
+
+---
+
+# 📌 Query Parameters
+
+Used to send data in URL.
+
+---
+
+# ✅ Example URL
+
+```text
+http://localhost:8080/user?name=Dnyaneshwar
+```
+
+---
+
+# ✅ Query Parameter Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func userHandler(w http.ResponseWriter, r *http.Request) {
+
+	name := r.URL.Query().Get("name")
+
+	fmt.Fprintln(w, "Hello", name)
+}
+
+func main() {
+
+	http.HandleFunc("/user", userHandler)
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📌 Output
+
+```text
+Hello Dnyaneshwar
+```
+
+---
+
+# 📌 JSON Response
+
+Backend APIs mostly send:
+# ✅ JSON
+
+---
+
+# ✅ JSON Response Example
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"net/http"
+)
+
+type Student struct {
+
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+func studentHandler(w http.ResponseWriter, r *http.Request) {
+
+	student := Student{
+
+		Name: "Dnyaneshwar",
+		Age: 24,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(student)
+}
+
+func main() {
+
+	http.HandleFunc("/student", studentHandler)
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📌 Output
+
+```json
+{
+  "name":"Dnyaneshwar",
+  "age":24
+}
+```
+
+---
+
+# 📌 Why Header Important?
+
+```go
+w.Header().Set("Content-Type", "application/json")
+```
+
+Tells client:
+# ✅ Response is JSON
+
+---
+
+# 📌 HTTP Methods
+
+| Method | Purpose |
+|---|---|
+| GET | Retrieve data |
+| POST | Create data |
+| PUT | Update data |
+| DELETE | Delete data |
+
+---
+
+# 📌 POST Request Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "POST" {
+
+		http.Error(w, "Invalid Request", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	fmt.Fprintln(w, "Login Successful")
+}
+
+func main() {
+
+	http.HandleFunc("/login", loginHandler)
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📌 Test POST Request
+
+Using curl:
+
+```bash
+curl -X POST http://localhost:8080/login
+```
+
+---
+
+# 📌 Output
+
+```text
+Login Successful
+```
+
+---
+
+# 📌 Status Codes
+
+| Code | Meaning |
+|---|---|
+| 200 | OK |
+| 201 | Created |
+| 400 | Bad Request |
+| 404 | Not Found |
+| 500 | Server Error |
+
+---
+
+# 📌 Send Status Code
+
+```go
+w.WriteHeader(http.StatusCreated)
+```
+
+---
+
+# 📌 Custom Error Response
+
+```go
+http.Error(w, "User Not Found", http.StatusNotFound)
+```
+
+---
+
+# 📌 Real Backend Usage
+
+HTTP package used in:
+- REST APIs
+- Authentication systems
+- Microservices
+- Backend servers
+- Web applications
+
+---
+
+# 📌 Backend Example
+
+Suppose:
+Frontend sends request:
+
+```text
+GET /students
+```
+
+Backend:
+- Receives request
+- Fetches data
+- Sends JSON response
+
+Exactly same process used in real APIs 🔥
+
+---
+
+# 💻 Day 14 Practice Program
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"net/http"
+)
+
+type Product struct {
+
+	Name  string `json:"name"`
+	Price int    `json:"price"`
+}
+
+func productHandler(w http.ResponseWriter, r *http.Request) {
+
+	product := Product{
+
+		Name:  "iPhone",
+		Price: 120000,
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(product)
+}
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Write([]byte("Welcome to Go HTTP Server"))
+}
+
+func main() {
+
+	http.HandleFunc("/", homeHandler)
+
+	http.HandleFunc("/product", productHandler)
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📘 Day 14 Interview Questions & Answers
+
+---
+
+## ❓ Q1: Which package used for HTTP server in Go?
+
+### ✅ Answer:
+
+```go
+net/http
+```
+
+---
+
+## ❓ Q2: What is handler function?
+
+### ✅ Answer:
+Function that handles HTTP requests.
+
+---
+
+## ❓ Q3: What is ResponseWriter?
+
+### ✅ Answer:
+Used to send HTTP response to client.
+
+---
+
+## ❓ Q4: What is Request object?
+
+### ✅ Answer:
+Contains client request information.
+
+---
+
+## ❓ Q5: How to create route in Go?
+
+### ✅ Answer:
+
+```go
+http.HandleFunc("/route", handler)
+```
+
+---
+
+## ❓ Q6: Why Content-Type important?
+
+### ✅ Answer:
+Tells client response format.
+
+---
+
+## ❓ Q7: What is JSON response?
+
+### ✅ Answer:
+Response sent in JSON format.
+
+---
+
+## ❓ Q8: Difference between GET and POST?
+
+| GET | POST |
+|---|---|
+| Retrieve data | Create data |
+| Data in URL | Data in body |
+
+---
+
+# 📚 Day 14 Summary
+
+Today I learned:
+- HTTP package
+- Web server
+- Routes
+- Handler functions
+- Query parameters
+- JSON responses
+- HTTP methods
+- Status codes
+
+I also practiced:
+- Creating server
+- Handling routes
+- Sending JSON
+- API basics
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create home route  
+✅ Create about route  
+✅ Create JSON API  
+✅ Handle query parameters  
+✅ Handle POST request  
+✅ Send status codes
+
+---
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
@@ -6504,4 +7079,5 @@ I also practiced:
 ✅ Day 11 Completed  
 ✅ Day 12 Completed  
 ✅ Day 13 Completed  
-🚀 Next: HTTP Package in Go  
+✅ Day 14 Completed  
+🚀 Next: First REST API in Go
