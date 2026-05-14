@@ -5836,6 +5836,640 @@ I also practiced:
 
 ---
 
+# ✅ Day 13 — JSON Handling in Go
+
+---
+
+# 📖 Introduction to JSON Handling
+
+JSON is one of the most important concepts in backend development.
+
+JSON is used in:
+- REST APIs
+- Frontend communication
+- Database responses
+- Authentication systems
+- External APIs
+
+If you want to build APIs:
+👉 JSON is mandatory.
+
+---
+
+# 📖 What You Will Learn
+
+- JSON Basics
+- Marshal
+- Unmarshal
+- Struct Tags
+- JSON Arrays
+- Nested JSON
+- omitempty
+- map with JSON
+- Real API Examples
+- Interview Questions
+
+---
+
+# 📌 What is JSON?
+
+JSON means:
+# ✅ JavaScript Object Notation
+
+Used for:
+👉 Data exchange between systems.
+
+---
+
+# 📌 JSON Example
+
+```json
+{
+  "name": "Dnyaneshwar",
+  "age": 24,
+  "city": "Nashik"
+}
+```
+
+---
+
+# 📌 Why JSON Important?
+
+Backend APIs send data in:
+# ✅ JSON format
+
+Frontend applications receive JSON responses.
+
+---
+
+# 📌 Go Package for JSON
+
+```go
+import "encoding/json"
+```
+
+---
+
+# 📌 What is Marshal?
+
+Convert:
+# ✅ Go Struct → JSON
+
+---
+
+# 📌 Marshal Example
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type Student struct {
+
+	Name string
+	Age  int
+	City string
+}
+
+func main() {
+
+	student := Student{
+
+		Name: "Dnyaneshwar",
+		Age: 24,
+		City: "Nashik",
+	}
+
+	jsonData, err := json.Marshal(student)
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(jsonData))
+}
+```
+
+---
+
+# 📌 Output
+
+```json
+{"Name":"Dnyaneshwar","Age":24,"City":"Nashik"}
+```
+
+---
+
+# 📌 What Happened?
+
+```text
+Struct converted into JSON
+```
+
+---
+
+# 📌 Why string(jsonData)?
+
+Because:
+👉 Marshal returns bytes.
+
+Convert bytes → string.
+
+---
+
+# 📌 What is Unmarshal?
+
+Convert:
+# ✅ JSON → Go Struct
+
+---
+
+# 📌 Unmarshal Example
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type Student struct {
+
+	Name string
+	Age  int
+	City string
+}
+
+func main() {
+
+	jsonData := `{
+		"Name":"Dnyaneshwar",
+		"Age":24,
+		"City":"Nashik"
+	}`
+
+	var student Student
+
+	err := json.Unmarshal([]byte(jsonData), &student)
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(student.Name)
+	fmt.Println(student.Age)
+	fmt.Println(student.City)
+}
+```
+
+---
+
+# 📌 Understanding
+
+| Function | Purpose |
+|---|---|
+| Marshal() | Struct → JSON |
+| Unmarshal() | JSON → Struct |
+
+---
+
+# 📌 Struct Tags
+
+Used to customize JSON field names.
+
+---
+
+# ✅ Example
+
+```go
+type Student struct {
+
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+	City string `json:"city"`
+}
+```
+
+---
+
+# 📌 Why Struct Tags Important?
+
+Because APIs mostly use:
+
+```json
+{
+  "name":"Dnyaneshwar"
+}
+```
+
+not:
+
+```json
+{
+  "Name":"Dnyaneshwar"
+}
+```
+
+---
+
+# 📌 Marshal with Struct Tags
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type Student struct {
+
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+	City string `json:"city"`
+}
+
+func main() {
+
+	student := Student{
+
+		Name: "Dnyaneshwar",
+		Age: 24,
+		City: "Nashik",
+	}
+
+	jsonData, _ := json.Marshal(student)
+
+	fmt.Println(string(jsonData))
+}
+```
+
+---
+
+# 📌 Output
+
+```json
+{"name":"Dnyaneshwar","age":24,"city":"Nashik"}
+```
+
+---
+
+# 📌 omitempty Tag
+
+Removes empty fields from JSON.
+
+---
+
+# ✅ Example
+
+```go
+type Student struct {
+
+	Name string `json:"name"`
+	Age  int    `json:"age,omitempty"`
+}
+```
+
+---
+
+# 📌 If Age Empty
+
+Output:
+
+```json
+{
+  "name":"Dnyaneshwar"
+}
+```
+
+---
+
+# 📌 JSON Array Example
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type Student struct {
+
+	Name string `json:"name"`
+}
+
+func main() {
+
+	students := []Student{
+
+		{Name: "Dnyaneshwar"},
+		{Name: "Rahul"},
+	}
+
+	jsonData, _ := json.Marshal(students)
+
+	fmt.Println(string(jsonData))
+}
+```
+
+---
+
+# 📌 Output
+
+```json
+[
+  {"name":"Dnyaneshwar"},
+  {"name":"Rahul"}
+]
+```
+
+---
+
+# 📌 Nested JSON
+
+Struct inside another struct.
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type Address struct {
+
+	City  string `json:"city"`
+	State string `json:"state"`
+}
+
+type Student struct {
+
+	Name    string  `json:"name"`
+	Address Address `json:"address"`
+}
+
+func main() {
+
+	student := Student{
+
+		Name: "Dnyaneshwar",
+
+		Address: Address{
+
+			City:  "Nashik",
+			State: "Maharashtra",
+		},
+	}
+
+	jsonData, _ := json.Marshal(student)
+
+	fmt.Println(string(jsonData))
+}
+```
+
+---
+
+# 📌 map with JSON
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+func main() {
+
+	data := map[string]interface{}{
+
+		"name":"Dnyaneshwar",
+		"age":24,
+	}
+
+	jsonData, _ := json.Marshal(data)
+
+	fmt.Println(string(jsonData))
+}
+```
+
+---
+
+# 📌 Why interface{} Used?
+
+Because:
+👉 map values can store different datatypes.
+
+---
+
+# 📌 Real Backend Usage
+
+JSON used in:
+- REST APIs
+- Authentication
+- API responses
+- Frontend communication
+- External integrations
+
+---
+
+# 📌 Backend Example
+
+Suppose:
+Frontend sends:
+
+```json
+{
+  "email":"test@gmail.com",
+  "password":"123"
+}
+```
+
+Backend:
+👉 Converts JSON → Struct
+
+Exactly using:
+# ✅ Unmarshal
+
+---
+
+# 📌 Important Rule
+
+Struct fields must start with CAPITAL letters.
+
+Correct:
+
+```go
+Name string
+```
+
+Wrong:
+
+```go
+name string
+```
+
+Otherwise:
+❌ JSON conversion fails.
+
+---
+
+# 💻 Day 13 Practice Program
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type Employee struct {
+
+	Name   string `json:"name"`
+	Role   string `json:"role"`
+	Salary int    `json:"salary"`
+}
+
+func main() {
+
+	employee := Employee{
+
+		Name:   "Dnyaneshwar",
+		Role:   "Backend Developer",
+		Salary: 50000,
+	}
+
+	jsonData, err := json.Marshal(employee)
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(string(jsonData))
+
+	var newEmployee Employee
+
+	err = json.Unmarshal(jsonData, &newEmployee)
+
+	if err != nil {
+
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Println(newEmployee.Name)
+	fmt.Println(newEmployee.Role)
+}
+```
+
+---
+
+# 📘 Day 13 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is JSON?
+
+### ✅ Answer:
+JSON is lightweight format used for data exchange.
+
+---
+
+## ❓ Q2: Which package used for JSON in Go?
+
+### ✅ Answer:
+
+```go
+encoding/json
+```
+
+---
+
+## ❓ Q3: What is Marshal?
+
+### ✅ Answer:
+Marshal converts Go object into JSON.
+
+---
+
+## ❓ Q4: What is Unmarshal?
+
+### ✅ Answer:
+Unmarshal converts JSON into Go object.
+
+---
+
+## ❓ Q5: Why struct tags important?
+
+### ✅ Answer:
+Struct tags customize JSON field names.
+
+---
+
+## ❓ Q6: What is omitempty?
+
+### ✅ Answer:
+Removes empty fields from JSON response.
+
+---
+
+## ❓ Q7: Why fields must start with capital letter?
+
+### ✅ Answer:
+Because exported fields are required for JSON conversion.
+
+---
+
+# 📚 Day 13 Summary
+
+Today I learned:
+- JSON handling
+- Marshal
+- Unmarshal
+- Struct tags
+- JSON arrays
+- Nested JSON
+- omitempty
+
+I also practiced:
+- API-style JSON handling
+- Struct conversion
+- Backend response formatting
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create Student JSON  
+✅ Convert struct → JSON  
+✅ Convert JSON → struct  
+✅ Use struct tags  
+✅ Create nested JSON  
+✅ Create JSON array
+
+---
+
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
@@ -5868,5 +6502,6 @@ I also practiced:
 ✅ Day 09 Completed   
 ✅ Day 10 Completed  
 ✅ Day 11 Completed  
-✅ Day 12 Completed   
-🚀 Next: JSON Handling in Go
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+🚀 Next: HTTP Package in Go  
