@@ -78,9 +78,9 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 11 | Goroutines & Concurrency | ✅ |
 | Day 12 | Channels in Go | ✅ |
 | Day 13 | JSON Handling | ✅ |
-| Day 14 | HTTP Package | ⏳ |
-| Day 15 | First REST API | ⏳ |
-| Day 16 | CRUD REST API | ⏳ |
+| Day 14 | HTTP Package | ✅ |
+| Day 15 | First REST API | ✅ |
+| Day 16 | CRUD REST API | ✅ |
 | Day 17 | Routing & URL Parameters | ⏳ |
 | Day 18 | Gin Framework | ⏳ |
 | Day 19 | PostgreSQL Integration | ⏳ |
@@ -7043,8 +7043,561 @@ I also practiced:
 ✅ Handle query parameters  
 ✅ Handle POST request  
 ✅ Send status codes
+---
+
+# ✅ Day 15 — First REST API in Go
 
 ---
+
+# 📖 Introduction to REST API
+
+Today we started real backend development using Go.
+
+Until now we learned:
+- Structs
+- JSON
+- HTTP Package
+- Error Handling
+
+Now we combine everything and build:
+# ✅ First REST API
+
+This is exactly how backend development works in companies.
+
+---
+
+# 📖 What You Will Learn
+
+- REST API
+- API Routes
+- JSON Responses
+- GET API
+- POST API
+- Request Body
+- Decode JSON
+- API Status Codes
+- CRUD Basics
+- Real Backend Flow
+- Interview Questions
+
+---
+
+# 📌 What is REST API?
+
+REST API means:
+# ✅ Backend service communicating using HTTP + JSON
+
+Used in:
+- Web apps
+- Mobile apps
+- Frontend frameworks
+- Microservices
+
+---
+
+# 📌 Real Example
+
+Frontend sends:
+
+```text
+GET /students
+```
+
+Backend returns:
+
+```json
+[
+  {
+    "id":1,
+    "name":"Dnyaneshwar"
+  }
+]
+```
+
+---
+
+# 📌 REST API Uses
+
+| Method | Purpose |
+|---|---|
+| GET | Fetch data |
+| POST | Create data |
+| PUT | Update data |
+| DELETE | Delete data |
+
+---
+
+# 📌 Project Goal
+
+Today we build:
+# ✅ Student REST API
+
+Features:
+- Get Students
+- Add Student
+
+---
+
+# 📌 Project Structure
+
+```text
+Day-15/
+ ├── main.go
+ ├── README.md
+```
+
+---
+
+# 📌 Step 1 — Create Student Struct
+
+```go
+type Student struct {
+
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+```
+
+---
+
+# 📌 Why Struct Tags Used?
+
+Because API responses use:
+
+```json
+{
+  "id":1
+}
+```
+
+not:
+
+```json
+{
+  "ID":1
+}
+```
+
+---
+
+# 📌 Step 2 — Create Dummy Data
+
+```go
+var students = []Student{
+
+	{ID: 1, Name: "Dnyaneshwar", Age: 24},
+	{ID: 2, Name: "Rahul", Age: 22},
+}
+```
+
+---
+
+# 📌 Why Dummy Data?
+
+Currently:
+❌ No database
+
+Later:
+✅ PostgreSQL  
+✅ GORM
+
+---
+
+# 📌 Step 3 — GET API
+
+Used to fetch students.
+
+---
+
+# ✅ Example
+
+```go
+func getStudents(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(students)
+}
+```
+
+---
+
+# 📌 What Happened?
+
+```text
+students slice
+↓
+converted into JSON
+↓
+sent to client
+```
+
+---
+
+# 📌 Step 4 — Register Route
+
+```go
+http.HandleFunc("/students", getStudents)
+```
+
+---
+
+# 📌 Step 5 — Run Server
+
+```go
+http.ListenAndServe(":8080", nil)
+```
+
+---
+
+# 📌 Open Browser
+
+```text
+http://localhost:8080/students
+```
+
+---
+
+# 📌 Output
+
+```json
+[
+  {
+    "id":1,
+    "name":"Dnyaneshwar",
+    "age":24
+  },
+  {
+    "id":2,
+    "name":"Rahul",
+    "age":22
+  }
+]
+```
+
+---
+
+# 📌 POST API
+
+Used to:
+# ✅ Add Data
+
+---
+
+# 📌 What is Request Body?
+
+Client sends JSON data inside request.
+
+Example:
+
+```json
+{
+  "id":3,
+  "name":"Sai",
+  "age":21
+}
+```
+
+---
+
+# 📌 Step 6 — Create POST API
+
+---
+
+# ✅ Example
+
+```go
+func createStudent(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "POST" {
+
+		http.Error(w, "Invalid Request", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	var student Student
+
+	err := json.NewDecoder(r.Body).Decode(&student)
+
+	if err != nil {
+
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	students = append(students, student)
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(student)
+}
+```
+
+---
+
+# 📌 Understanding
+
+| Code | Purpose |
+|---|---|
+| NewDecoder() | Read JSON body |
+| Decode() | Convert JSON → Struct |
+| append() | Add student |
+| StatusCreated | 201 status |
+
+---
+
+# 📌 Register POST Route
+
+```go
+http.HandleFunc("/add-student", createStudent)
+```
+
+---
+
+# 📌 Test POST API
+
+Using:
+- Postman
+- curl
+- Thunder Client
+
+---
+
+# ✅ curl Example
+
+```bash
+curl -X POST http://localhost:8080/add-student \
+-H "Content-Type: application/json" \
+-d '{"id":3,"name":"Sai","age":21}'
+```
+
+---
+
+# 📌 Response
+
+```json
+{
+  "id":3,
+  "name":"Sai",
+  "age":21
+}
+```
+
+---
+
+# 📌 Full Project Code
+
+# ✅ main.go
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"net/http"
+)
+
+type Student struct {
+
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+var students = []Student{
+
+	{ID: 1, Name: "Dnyaneshwar", Age: 24},
+	{ID: 2, Name: "Rahul", Age: 22},
+}
+
+// GET API
+func getStudents(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(students)
+}
+
+// POST API
+func createStudent(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "POST" {
+
+		http.Error(w, "Invalid Request", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	var student Student
+
+	err := json.NewDecoder(r.Body).Decode(&student)
+
+	if err != nil {
+
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	students = append(students, student)
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(student)
+}
+
+func main() {
+
+	http.HandleFunc("/students", getStudents)
+
+	http.HandleFunc("/add-student", createStudent)
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📌 API Flow
+
+```text
+Client Request
+↓
+HTTP Route
+↓
+Handler Function
+↓
+Business Logic
+↓
+JSON Response
+```
+
+---
+
+# 📌 Real Backend Understanding
+
+This is exactly how:
+- ASP.NET APIs
+- Node.js APIs
+- Java APIs
+- Go APIs
+
+work internally 🔥
+
+---
+
+# 📌 Current Limitation
+
+Currently:
+❌ Data stored in memory
+
+After Day 20:
+✅ PostgreSQL database  
+✅ Permanent storage
+
+---
+
+# 💻 Backend Skills You Learned Today
+
+✅ API development  
+✅ JSON APIs  
+✅ GET requests  
+✅ POST requests  
+✅ Request body handling  
+✅ HTTP status codes  
+✅ Route handling
+
+---
+
+# 📘 Day 15 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is REST API?
+
+### ✅ Answer:
+REST API is backend service using HTTP and JSON for communication.
+
+---
+
+## ❓ Q2: Difference between GET and POST?
+
+| GET | POST |
+|---|---|
+| Fetch data | Create data |
+| No body | Has body |
+
+---
+
+## ❓ Q3: What is request body?
+
+### ✅ Answer:
+Client sends data inside HTTP request.
+
+---
+
+## ❓ Q4: Why json.NewDecoder() used?
+
+### ✅ Answer:
+Used to convert JSON request into struct.
+
+---
+
+## ❓ Q5: Why json.NewEncoder() used?
+
+### ✅ Answer:
+Used to send JSON response.
+
+---
+
+## ❓ Q6: Why Content-Type important?
+
+### ✅ Answer:
+Indicates response format is JSON.
+
+---
+
+## ❓ Q7: What is StatusCreated?
+
+### ✅ Answer:
+HTTP 201 status indicating resource created successfully.
+
+---
+
+# 📚 Day 15 Summary
+
+Today I learned:
+- REST APIs
+- GET API
+- POST API
+- JSON request handling
+- JSON responses
+- Request body
+- API routes
+- HTTP status codes
+
+I also practiced:
+- Building APIs
+- Sending JSON
+- Receiving JSON
+- Backend API flow
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create Product API  
+✅ Create User API  
+✅ Add GET route  
+✅ Add POST route  
+✅ Send JSON response  
+✅ Decode request body
+
+---
+
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
@@ -7079,5 +7632,6 @@ I also practiced:
 ✅ Day 11 Completed  
 ✅ Day 12 Completed  
 ✅ Day 13 Completed  
-✅ Day 14 Completed  
-🚀 Next: First REST API in Go
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+🚀 Next: CRUD REST API in Go
