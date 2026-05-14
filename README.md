@@ -7598,6 +7598,703 @@ I also practiced:
 
 ---
 
+# ✅ Day 16 — CRUD REST API in Go
+
+---
+
+# 📖 Introduction to CRUD REST API
+
+Today we moved from:
+# ✅ Simple API
+to:
+# 🚀 Complete CRUD REST API
+
+This is exactly what backend developers build in companies.
+
+---
+
+# 📖 What You Will Learn
+
+- CRUD Operations
+- GET API
+- POST API
+- PUT API
+- DELETE API
+- Query Parameters
+- Update Data
+- Delete Data
+- API Design
+- REST Standards
+- Backend Logic
+- Interview Questions
+
+---
+
+# 📌 What is CRUD?
+
+CRUD means:
+
+| Operation | Meaning |
+|---|---|
+| Create | Add data |
+| Read | Fetch data |
+| Update | Modify data |
+| Delete | Remove data |
+
+---
+
+# 📌 Real Backend Example
+
+Student Management System:
+- Add Student
+- Get Students
+- Update Student
+- Delete Student
+
+This is:
+# ✅ CRUD API
+
+---
+
+# 📌 Project Goal
+
+Today we build:
+# 🚀 Student CRUD REST API
+
+Features:
+✅ Get All Students  
+✅ Get Student By ID  
+✅ Add Student  
+✅ Update Student  
+✅ Delete Student
+
+---
+
+# 📌 Project Structure
+
+```text
+Day-16/
+ ├── main.go
+ ├── README.md
+```
+
+---
+
+# 📌 Step 1 — Create Student Struct
+
+```go
+type Student struct {
+
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+```
+
+---
+
+# 📌 Step 2 — Create Dummy Data
+
+```go
+var students = []Student{
+
+	{ID: 1, Name: "Dnyaneshwar", Age: 24},
+	{ID: 2, Name: "Rahul", Age: 22},
+}
+```
+
+---
+
+# 📌 GET All Students API
+
+---
+
+# ✅ Example
+
+```go
+func getStudents(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(students)
+}
+```
+
+---
+
+# 📌 Route
+
+```go
+http.HandleFunc("/students", getStudents)
+```
+
+---
+
+# 📌 Output
+
+```json
+[
+  {
+    "id":1,
+    "name":"Dnyaneshwar",
+    "age":24
+  }
+]
+```
+
+---
+
+# 📌 GET Student By ID API
+
+---
+
+# 📌 Problem
+
+Current API:
+
+```text
+/students
+```
+
+returns ALL students.
+
+We need:
+
+```text
+/student?id=1
+```
+
+---
+
+# ✅ Example
+
+```go
+func getStudentByID(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id")
+
+	for _, student := range students {
+
+		if strconv.Itoa(student.ID) == id {
+
+			json.NewEncoder(w).Encode(student)
+
+			return
+		}
+	}
+
+	http.Error(w, "Student Not Found", http.StatusNotFound)
+}
+```
+
+---
+
+# 📌 Why strconv.Itoa()?
+
+Because:
+
+```text
+student.ID → integer
+id → string
+```
+
+Need conversion.
+
+---
+
+# 📌 Route
+
+```go
+http.HandleFunc("/student", getStudentByID)
+```
+
+---
+
+# 📌 Test
+
+```text
+http://localhost:8080/student?id=1
+```
+
+---
+
+# 📌 POST API — Add Student
+
+---
+
+# ✅ Example
+
+```go
+func createStudent(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "POST" {
+
+		http.Error(w, "Invalid Request", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	var student Student
+
+	err := json.NewDecoder(r.Body).Decode(&student)
+
+	if err != nil {
+
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	students = append(students, student)
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(student)
+}
+```
+
+---
+
+# 📌 Route
+
+```go
+http.HandleFunc("/add-student", createStudent)
+```
+
+---
+
+# 📌 PUT API — Update Student
+
+---
+
+# 📌 Goal
+
+Update existing student.
+
+---
+
+# ✅ Example
+
+```go
+func updateStudent(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "PUT" {
+
+		http.Error(w, "Invalid Request", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	id := r.URL.Query().Get("id")
+
+	var updatedStudent Student
+
+	err := json.NewDecoder(r.Body).Decode(&updatedStudent)
+
+	if err != nil {
+
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	for index, student := range students {
+
+		if strconv.Itoa(student.ID) == id {
+
+			students[index] = updatedStudent
+
+			json.NewEncoder(w).Encode(updatedStudent)
+
+			return
+		}
+	}
+
+	http.Error(w, "Student Not Found", http.StatusNotFound)
+}
+```
+
+---
+
+# 📌 Route
+
+```go
+http.HandleFunc("/update-student", updateStudent)
+```
+
+---
+
+# 📌 Test PUT API
+
+```text
+PUT /update-student?id=1
+```
+
+---
+
+# 📌 Request Body
+
+```json
+{
+  "id":1,
+  "name":"Updated Name",
+  "age":25
+}
+```
+
+---
+
+# 📌 DELETE API
+
+---
+
+# 📌 Goal
+
+Delete student by ID.
+
+---
+
+# ✅ Example
+
+```go
+func deleteStudent(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "DELETE" {
+
+		http.Error(w, "Invalid Request", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	id := r.URL.Query().Get("id")
+
+	for index, student := range students {
+
+		if strconv.Itoa(student.ID) == id {
+
+			students = append(
+				students[:index],
+				students[index+1:]...,
+			)
+
+			fmt.Fprintln(w, "Student Deleted Successfully")
+
+			return
+		}
+	}
+
+	http.Error(w, "Student Not Found", http.StatusNotFound)
+}
+```
+
+---
+
+# 📌 Delete Logic
+
+```go
+students[:index]
+students[index+1:]
+```
+
+Removes current student.
+
+---
+
+# 📌 Route
+
+```go
+http.HandleFunc("/delete-student", deleteStudent)
+```
+
+---
+
+# 📌 Full Project Code
+
+# ✅ main.go
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"strconv"
+)
+
+type Student struct {
+
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+var students = []Student{
+
+	{ID: 1, Name: "Dnyaneshwar", Age: 24},
+	{ID: 2, Name: "Rahul", Age: 22},
+}
+
+// GET ALL STUDENTS
+func getStudents(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	json.NewEncoder(w).Encode(students)
+}
+
+// GET STUDENT BY ID
+func getStudentByID(w http.ResponseWriter, r *http.Request) {
+
+	id := r.URL.Query().Get("id")
+
+	for _, student := range students {
+
+		if strconv.Itoa(student.ID) == id {
+
+			json.NewEncoder(w).Encode(student)
+
+			return
+		}
+	}
+
+	http.Error(w, "Student Not Found", http.StatusNotFound)
+}
+
+// CREATE STUDENT
+func createStudent(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "POST" {
+
+		http.Error(w, "Invalid Request", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	var student Student
+
+	err := json.NewDecoder(r.Body).Decode(&student)
+
+	if err != nil {
+
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	students = append(students, student)
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(student)
+}
+
+// UPDATE STUDENT
+func updateStudent(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "PUT" {
+
+		http.Error(w, "Invalid Request", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	id := r.URL.Query().Get("id")
+
+	var updatedStudent Student
+
+	err := json.NewDecoder(r.Body).Decode(&updatedStudent)
+
+	if err != nil {
+
+		http.Error(w, err.Error(), http.StatusBadRequest)
+
+		return
+	}
+
+	for index, student := range students {
+
+		if strconv.Itoa(student.ID) == id {
+
+			students[index] = updatedStudent
+
+			json.NewEncoder(w).Encode(updatedStudent)
+
+			return
+		}
+	}
+
+	http.Error(w, "Student Not Found", http.StatusNotFound)
+}
+
+// DELETE STUDENT
+func deleteStudent(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "DELETE" {
+
+		http.Error(w, "Invalid Request", http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	id := r.URL.Query().Get("id")
+
+	for index, student := range students {
+
+		if strconv.Itoa(student.ID) == id {
+
+			students = append(
+				students[:index],
+				students[index+1:]...,
+			)
+
+			fmt.Fprintln(w, "Student Deleted Successfully")
+
+			return
+		}
+	}
+
+	http.Error(w, "Student Not Found", http.StatusNotFound)
+}
+
+func main() {
+
+	http.HandleFunc("/students", getStudents)
+
+	http.HandleFunc("/student", getStudentByID)
+
+	http.HandleFunc("/add-student", createStudent)
+
+	http.HandleFunc("/update-student", updateStudent)
+
+	http.HandleFunc("/delete-student", deleteStudent)
+
+	fmt.Println("Server Running on Port 8080")
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📌 CRUD API Flow
+
+```text
+Client Request
+↓
+Route
+↓
+Handler
+↓
+Business Logic
+↓
+JSON Response
+```
+
+---
+
+# 📌 Real Backend Understanding
+
+This is exactly how:
+- Company backend APIs
+- ASP.NET APIs
+- Node.js APIs
+- Go APIs
+
+work internally 🔥
+
+---
+
+# 📘 Day 16 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is CRUD?
+
+### ✅ Answer:
+CRUD means Create, Read, Update, Delete.
+
+---
+
+## ❓ Q2: Which HTTP method used for update?
+
+### ✅ Answer:
+PUT method.
+
+---
+
+## ❓ Q3: Which HTTP method used for delete?
+
+### ✅ Answer:
+DELETE method.
+
+---
+
+## ❓ Q4: Why json.NewDecoder() used?
+
+### ✅ Answer:
+Used to convert request JSON into struct.
+
+---
+
+## ❓ Q5: Why StatusCreated used?
+
+### ✅ Answer:
+Indicates successful resource creation.
+
+---
+
+## ❓ Q6: What is query parameter?
+
+### ✅ Answer:
+Data sent through URL.
+
+Example:
+
+```text
+?id=1
+```
+
+---
+
+## ❓ Q7: Why strconv.Itoa() used?
+
+### ✅ Answer:
+Converts integer into string.
+
+---
+
+# 📚 Day 16 Summary
+
+Today I learned:
+- CRUD APIs
+- GET API
+- POST API
+- PUT API
+- DELETE API
+- Query parameters
+- JSON request handling
+- REST API design
+
+I also practiced:
+- Creating backend APIs
+- Updating data
+- Deleting data
+- API routing
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create Product CRUD API  
+✅ Create Employee CRUD API  
+✅ Add validation  
+✅ Add custom error messages  
+✅ Add status codes  
+✅ Test APIs in Postman
+
+---
+
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
@@ -7634,4 +8331,5 @@ I also practiced:
 ✅ Day 13 Completed  
 ✅ Day 14 Completed   
 ✅ Day 15 Completed  
-🚀 Next: CRUD REST API in Go
+✅ Day 16 Completed  
+🚀 Next: Routing & URL Parameters in Go
