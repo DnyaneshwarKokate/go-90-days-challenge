@@ -8295,6 +8295,579 @@ I also practiced:
 
 ---
 
+# ✅ Day 17 — Routing & URL Parameters in Go
+
+---
+
+# 📖 Introduction to Routing & URL Parameters
+
+Today we learned an important backend concept:
+# 🚀 Routing & URL Parameters
+
+Until now:
+We created APIs using:
+
+```text
+/student?id=1
+```
+
+But real APIs use:
+
+```text
+/students/1
+```
+
+This is called:
+# ✅ URL Parameters / Path Parameters
+
+Today we learned:
+- Dynamic routes
+- URL parameters
+- Clean API routing
+- RESTful API structure
+
+Used heavily in:
+- REST APIs
+- Microservices
+- Production backend systems
+
+---
+
+# 📖 What You Will Learn
+
+- Routing
+- URL Parameters
+- Dynamic Routes
+- Path Parameters
+- strings Package
+- RESTful Routing
+- Route Parsing
+- Clean API Design
+- Real Backend Examples
+- Interview Questions
+
+---
+
+# 📌 What is Routing?
+
+Routing means:
+# ✅ Mapping URL to function
+
+Example:
+
+| Route | Handler |
+|---|---|
+| /students | getStudents |
+| /products | getProducts |
+
+---
+
+# 📌 What are URL Parameters?
+
+Dynamic values inside URL.
+
+Example:
+
+```text
+/students/1
+```
+
+Here:
+
+```text
+1
+```
+
+is:
+# ✅ URL Parameter
+
+---
+
+# 📌 Why URL Parameters Important?
+
+Used for:
+- Fetch by ID
+- Update by ID
+- Delete by ID
+
+Examples:
+- `/users/10`
+- `/products/5`
+- `/orders/100`
+
+---
+
+# 📌 Problem in net/http
+
+Go standard `net/http` does NOT support dynamic routing directly.
+
+So today we manually handled routes.
+
+Later:
+✅ Gin Framework  
+✅ Professional routing
+
+---
+
+# 📌 Example Route
+
+```text
+/student/1
+```
+
+---
+
+# 📌 Goal
+
+Extract:
+
+```text
+1
+```
+
+from URL.
+
+---
+
+# 📌 Step 1 — Import strings Package
+
+```go
+import "strings"
+```
+
+---
+
+# 📌 Why strings Package?
+
+Used to split URL.
+
+---
+
+# 📌 Step 2 — Route Example
+
+```text
+http://localhost:8080/student/1
+```
+
+---
+
+# 📌 Step 3 — Split URL
+
+```go
+parts := strings.Split(r.URL.Path, "/")
+```
+
+---
+
+# 📌 Result
+
+```text
+["", "student", "1"]
+```
+
+---
+
+# 📌 Access ID
+
+```go
+id := parts[2]
+```
+
+---
+
+# 📌 First URL Parameter Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"strings"
+)
+
+func studentHandler(w http.ResponseWriter, r *http.Request) {
+
+	parts := strings.Split(r.URL.Path, "/")
+
+	id := parts[2]
+
+	fmt.Fprintln(w, "Student ID:", id)
+}
+
+func main() {
+
+	http.HandleFunc("/student/", studentHandler)
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📌 Test
+
+```text
+http://localhost:8080/student/10
+```
+
+---
+
+# 📌 Output
+
+```text
+Student ID: 10
+```
+
+---
+
+# 📌 Understanding
+
+| Code | Purpose |
+|---|---|
+| URL.Path | Get URL |
+| strings.Split() | Split route |
+| parts[2] | Extract ID |
+
+---
+
+# 📌 Problem
+
+If URL invalid:
+
+```text
+/student/
+```
+
+then:
+❌ index out of range error
+
+---
+
+# 📌 Solution — Validation
+
+---
+
+# ✅ Example
+
+```go
+if len(parts) < 3 {
+
+	http.Error(w, "Invalid URL", http.StatusBadRequest)
+
+	return
+}
+```
+
+---
+
+# 📌 Updated Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"strings"
+)
+
+func studentHandler(w http.ResponseWriter, r *http.Request) {
+
+	parts := strings.Split(r.URL.Path, "/")
+
+	if len(parts) < 3 {
+
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+
+		return
+	}
+
+	id := parts[2]
+
+	fmt.Fprintln(w, "Student ID:", id)
+}
+
+func main() {
+
+	http.HandleFunc("/student/", studentHandler)
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📌 Dynamic Student API
+
+Now combine:
+- Routing
+- URL parameters
+- JSON response
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"encoding/json"
+	"net/http"
+	"strconv"
+	"strings"
+)
+
+type Student struct {
+
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+var students = []Student{
+
+	{ID: 1, Name: "Dnyaneshwar"},
+	{ID: 2, Name: "Rahul"},
+}
+
+func getStudent(w http.ResponseWriter, r *http.Request) {
+
+	parts := strings.Split(r.URL.Path, "/")
+
+	if len(parts) < 3 {
+
+		http.Error(w, "Invalid URL", http.StatusBadRequest)
+
+		return
+	}
+
+	id := parts[2]
+
+	for _, student := range students {
+
+		if strconv.Itoa(student.ID) == id {
+
+			w.Header().Set("Content-Type", "application/json")
+
+			json.NewEncoder(w).Encode(student)
+
+			return
+		}
+	}
+
+	http.Error(w, "Student Not Found", http.StatusNotFound)
+}
+
+func main() {
+
+	http.HandleFunc("/student/", getStudent)
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📌 Test
+
+```text
+http://localhost:8080/student/1
+```
+
+---
+
+# 📌 Response
+
+```json
+{
+  "id":1,
+  "name":"Dnyaneshwar"
+}
+```
+
+---
+
+# 📌 RESTful Routing
+
+Professional API structure.
+
+---
+
+# 📌 Good API Design
+
+| Operation | Route |
+|---|---|
+| Get All | GET /students |
+| Get By ID | GET /students/1 |
+| Create | POST /students |
+| Update | PUT /students/1 |
+| Delete | DELETE /students/1 |
+
+---
+
+# 📌 Why RESTful Routing Important?
+
+Improves:
+✅ Clean architecture  
+✅ API readability  
+✅ Professional backend structure
+
+---
+
+# 📌 Current Limitation
+
+Manual route parsing is difficult.
+
+Tomorrow:
+# 🚀 Gin Framework
+
+will solve this professionally.
+
+---
+
+# 📌 Real Backend Usage
+
+URL parameters used in:
+- User APIs
+- Product APIs
+- Order APIs
+- Authentication systems
+
+Every production backend uses this.
+
+---
+
+# 💻 Day 17 Practice Program
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"strings"
+)
+
+func productHandler(w http.ResponseWriter, r *http.Request) {
+
+	parts := strings.Split(r.URL.Path, "/")
+
+	if len(parts) < 3 {
+
+		http.Error(w, "Invalid Product URL", http.StatusBadRequest)
+
+		return
+	}
+
+	productID := parts[2]
+
+	fmt.Fprintln(w, "Product ID:", productID)
+}
+
+func main() {
+
+	http.HandleFunc("/product/", productHandler)
+
+	fmt.Println("Server Running on Port 8080")
+
+	http.ListenAndServe(":8080", nil)
+}
+```
+
+---
+
+# 📘 Day 17 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is routing?
+
+### ✅ Answer:
+Routing maps URL to handler function.
+
+---
+
+## ❓ Q2: What are URL parameters?
+
+### ✅ Answer:
+Dynamic values passed inside URL.
+
+Example:
+
+```text
+/students/1
+```
+
+---
+
+## ❓ Q3: Why URL parameters important?
+
+### ✅ Answer:
+Used for fetching, updating, and deleting resources by ID.
+
+---
+
+## ❓ Q4: Which package used for URL splitting?
+
+### ✅ Answer:
+
+```go
+strings
+```
+
+---
+
+## ❓ Q5: What does strings.Split() do?
+
+### ✅ Answer:
+Splits string into parts.
+
+---
+
+## ❓ Q6: What is RESTful routing?
+
+### ✅ Answer:
+Professional API route structure using HTTP methods and clean URLs.
+
+---
+
+## ❓ Q7: Why validation important in URL parameters?
+
+### ✅ Answer:
+Prevents runtime errors and invalid requests.
+
+---
+
+# 📚 Day 17 Summary
+
+Today I learned:
+- Routing
+- URL parameters
+- Dynamic routes
+- RESTful routing
+- Route validation
+- URL parsing
+
+I also practiced:
+- Extracting IDs
+- Dynamic API routes
+- JSON responses
+- Backend route handling
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create Product API with URL parameter  
+✅ Create User API with URL parameter  
+✅ Add route validation  
+✅ Send JSON response  
+✅ Handle invalid routes  
+✅ Create RESTful routes
+
+---
+
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
@@ -8332,4 +8905,5 @@ I also practiced:
 ✅ Day 14 Completed   
 ✅ Day 15 Completed  
 ✅ Day 16 Completed  
-🚀 Next: Routing & URL Parameters in Go
+✅ Day 17 Completed  
+🚀 Next: Gin Framework in Go
