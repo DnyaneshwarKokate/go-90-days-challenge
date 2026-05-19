@@ -8868,6 +8868,707 @@ I also practiced:
 
 ---
 
+# ✅ Day 18 — Gin Framework in Go
+
+---
+
+# 📖 Introduction to Gin Framework
+
+Today we started:
+# 🚀 Professional Backend Development
+
+Until now:
+We used:
+
+```text
+net/http
+```
+
+But real Go backend developers mostly use:
+# ✅ Gin Framework
+
+Why?
+Because Gin provides:
+- Fast routing
+- Middleware
+- JSON handling
+- Clean APIs
+- Professional backend structure
+
+Used by:
+- Startups
+- Product companies
+- Microservices
+- Production APIs
+
+---
+
+# 📖 What You Will Learn
+
+- Gin Framework
+- Gin Installation
+- Routes in Gin
+- GET API
+- POST API
+- JSON Response
+- Request Body
+- Path Parameters
+- Query Parameters
+- HTTP Status Codes
+- Real Backend Examples
+- Interview Questions
+
+---
+
+# 📌 What is Gin?
+
+Gin is:
+# ✅ Fast HTTP web framework for Go
+
+Built on top of:
+
+```text
+net/http
+```
+
+---
+
+# 📌 Why Gin Popular?
+
+Because it is:
+✅ Fast  
+✅ Minimal  
+✅ Clean  
+✅ Easy for APIs  
+✅ Production-ready
+
+---
+
+# 📌 Gin vs net/http
+
+| Gin | net/http |
+|---|---|
+| Easy routing | Manual routing |
+| Built-in JSON | More boilerplate |
+| Middleware support | Manual handling |
+| Cleaner APIs | More code |
+
+---
+
+# 📌 Step 1 — Initialize Go Module
+
+Before installing Gin:
+
+```bash
+go mod init day18
+```
+
+---
+
+# 📌 Why go.mod Important?
+
+`go.mod` manages:
+- Dependencies
+- Package versions
+- Project modules
+
+Like:
+- `package.json` in Node.js
+- `.csproj` in .NET
+
+---
+
+# 📌 Install Gin
+
+Run:
+
+```bash
+go get -u github.com/gin-gonic/gin
+```
+
+---
+
+# 📌 Project Structure
+
+```text
+Day-18/
+ ├── go.mod
+ ├── go.sum
+ ├── main.go
+ ├── README.md
+```
+
+---
+
+# 📌 Import Gin
+
+```go
+import "github.com/gin-gonic/gin"
+```
+
+---
+
+# 📌 First Gin Server
+
+```go
+package main
+
+import "github.com/gin-gonic/gin"
+
+func main() {
+
+	router := gin.Default()
+
+	router.GET("/", func(c *gin.Context) {
+
+		c.JSON(200, gin.H{
+
+			"message": "Welcome to Gin Framework",
+		})
+	})
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📌 Run Server
+
+```bash
+go run main.go
+```
+
+---
+
+# 📌 Open Browser
+
+```text
+http://localhost:8080
+```
+
+---
+
+# 📌 Output
+
+```json
+{
+  "message":"Welcome to Gin Framework"
+}
+```
+
+---
+
+# 📌 Understanding
+
+| Code | Purpose |
+|---|---|
+| gin.Default() | Create router |
+| router.GET() | Create GET route |
+| c.JSON() | Send JSON response |
+| router.Run() | Start server |
+
+---
+
+# 📌 What is gin.H?
+
+Shortcut for:
+
+```go
+map[string]interface{}
+```
+
+Used for JSON response.
+
+---
+
+# 📌 GET API Example
+
+```go
+package main
+
+import "github.com/gin-gonic/gin"
+
+func main() {
+
+	router := gin.Default()
+
+	router.GET("/students", func(c *gin.Context) {
+
+		c.JSON(200, gin.H{
+
+			"name": "Dnyaneshwar",
+			"age": 24,
+		})
+	})
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📌 Path Parameters in Gin
+
+Earlier:
+Manual splitting required.
+
+Now:
+# ✅ Very Easy
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+
+	router := gin.Default()
+
+	router.GET("/student/:id", func(c *gin.Context) {
+
+		id := c.Param("id")
+
+		c.JSON(http.StatusOK, gin.H{
+
+			"student_id": id,
+		})
+	})
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📌 Test
+
+```text
+http://localhost:8080/student/1
+```
+
+---
+
+# 📌 Output
+
+```json
+{
+  "student_id":"1"
+}
+```
+
+---
+
+# 📌 Query Parameters in Gin
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+
+	router := gin.Default()
+
+	router.GET("/search", func(c *gin.Context) {
+
+		name := c.Query("name")
+
+		c.JSON(http.StatusOK, gin.H{
+
+			"name": name,
+		})
+	})
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📌 Test
+
+```text
+http://localhost:8080/search?name=Dnyaneshwar
+```
+
+---
+
+# 📌 Output
+
+```json
+{
+  "name":"Dnyaneshwar"
+}
+```
+
+---
+
+# 📌 POST API in Gin
+
+---
+
+# 📌 Create Struct
+
+```go
+type Product struct {
+
+	Name  string `json:"name"`
+	Price int    `json:"price"`
+}
+```
+
+---
+
+# ✅ POST API Example
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+type Product struct {
+
+	Name  string `json:"name"`
+	Price int    `json:"price"`
+}
+
+func main() {
+
+	router := gin.Default()
+
+	router.GET("/product/:id", func(c *gin.Context) {
+
+		id := c.Param("id")
+
+		c.JSON(http.StatusOK, gin.H{
+
+			"product_id": id,
+		})
+	})
+
+	router.POST("/product", func(c *gin.Context) {
+
+		var product Product
+
+		err := c.BindJSON(&product)
+
+		if err != nil {
+
+			c.JSON(http.StatusBadRequest, gin.H{
+
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		c.JSON(http.StatusCreated, gin.H{
+
+			"message": "Product Created",
+			"data": product,
+		})
+	})
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📌 Understanding
+
+| Code | Purpose |
+|---|---|
+| BindJSON() | Convert request JSON → struct |
+| c.JSON() | Send JSON response |
+| StatusCreated | HTTP 201 |
+
+---
+
+# 📌 Test GET API
+
+Open browser:
+
+```text
+http://localhost:8080/product/1
+```
+
+---
+
+# 📌 GET Response
+
+```json
+{
+  "product_id":"1"
+}
+```
+
+---
+
+# 📌 Test POST API
+
+Using curl:
+
+```bash
+curl -X POST http://localhost:8080/product \
+-H "Content-Type: application/json" \
+-d '{"name":"iPhone","price":120000}'
+```
+
+---
+
+# 📌 POST Response
+
+```json
+{
+  "data": {
+    "name": "iPhone",
+    "price": 120000
+  },
+  "message": "Product Created"
+}
+```
+
+---
+
+# 📌 HTTP Status Codes in Gin
+
+---
+
+# ✅ Example
+
+```go
+c.JSON(http.StatusOK, gin.H{})
+```
+
+---
+
+# 📌 Common Status Codes
+
+| Code | Meaning |
+|---|---|
+| 200 | OK |
+| 201 | Created |
+| 400 | Bad Request |
+| 404 | Not Found |
+| 500 | Internal Server Error |
+
+---
+
+# 📌 Why Gin Important?
+
+Gin makes:
+✅ APIs cleaner  
+✅ Development faster  
+✅ Backend architecture better
+
+---
+
+# 📌 Real Backend Usage
+
+Gin used in:
+- REST APIs
+- Authentication systems
+- Microservices
+- High-performance backends
+
+---
+
+# 📌 Company-Level Backend
+
+Most Go backend interviews ask:
+- Gin routing
+- JSON handling
+- CRUD APIs
+- Middleware
+- Authentication
+
+Very important topic 🔥
+
+---
+
+# 💻 Day 18 Practice Program
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+type User struct {
+
+	Name string `json:"name"`
+	Role string `json:"role"`
+}
+
+func main() {
+
+	router := gin.Default()
+
+	router.GET("/user/:id", func(c *gin.Context) {
+
+		id := c.Param("id")
+
+		c.JSON(http.StatusOK, gin.H{
+
+			"user_id": id,
+		})
+	})
+
+	router.POST("/user", func(c *gin.Context) {
+
+		var user User
+
+		err := c.BindJSON(&user)
+
+		if err != nil {
+
+			c.JSON(http.StatusBadRequest, gin.H{
+
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		c.JSON(http.StatusCreated, gin.H{
+
+			"message": "User Created",
+			"data": user,
+		})
+	})
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📘 Day 18 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is Gin framework?
+
+### ✅ Answer:
+Gin is fast HTTP web framework for Go.
+
+---
+
+## ❓ Q2: Why Gin popular?
+
+### ✅ Answer:
+Because it provides fast routing, middleware, and clean API development.
+
+---
+
+## ❓ Q3: What is gin.Default()?
+
+### ✅ Answer:
+Creates Gin router with default middleware.
+
+---
+
+## ❓ Q4: What is gin.H?
+
+### ✅ Answer:
+Shortcut for:
+
+```go
+map[string]interface{}
+```
+
+---
+
+## ❓ Q5: What does BindJSON() do?
+
+### ✅ Answer:
+Converts request JSON into struct.
+
+---
+
+## ❓ Q6: How to get path parameter in Gin?
+
+### ✅ Answer:
+
+```go
+c.Param("id")
+```
+
+---
+
+## ❓ Q7: How to get query parameter in Gin?
+
+### ✅ Answer:
+
+```go
+c.Query("name")
+```
+
+---
+
+## ❓ Q8: Why Gin better than net/http?
+
+### ✅ Answer:
+Gin provides easier routing, middleware, and cleaner APIs.
+
+---
+
+# 📚 Day 18 Summary
+
+Today I learned:
+- Gin framework
+- Gin routing
+- GET APIs
+- POST APIs
+- JSON responses
+- Path parameters
+- Query parameters
+- Request body handling
+
+I also practiced:
+- Building APIs with Gin
+- Dynamic routes
+- JSON APIs
+- Backend architecture
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create Product API  
+✅ Create User API  
+✅ Add GET route  
+✅ Add POST route  
+✅ Use path parameters  
+✅ Use query parameters
+
+---
+
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
@@ -8906,4 +9607,5 @@ I also practiced:
 ✅ Day 15 Completed  
 ✅ Day 16 Completed  
 ✅ Day 17 Completed  
-🚀 Next: Gin Framework in Go
+✅ Day 18 Completed  
+🚀 Next: PostgreSQL Integration in Go
