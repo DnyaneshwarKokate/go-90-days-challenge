@@ -84,7 +84,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 17 | Routing & URL Parameters | ✅ |
 | Day 18 | Gin Framework | ✅ |
 | Day 19 | PostgreSQL Integration | ✅ |
-| Day 20 | GORM in Go | ⏳ |
+| Day 20 | GORM in Go | ✅ |
 | Day 21 | JWT Authentication | ⏳ |
 | Day 22 | Middleware in Go | ⏳ |
 | Day 23 | Password Hashing | ⏳ |
@@ -10331,6 +10331,704 @@ I also practiced:
 
 ---
 
+# ✅ Day 20 — GORM ORM in Go
+
+---
+
+# 📖 Introduction to GORM ORM
+
+Today we moved from:
+# ❌ Raw SQL Queries
+to:
+# 🚀 Professional ORM Development
+
+Until now:
+We used:
+
+```sql
+SELECT * FROM students
+```
+
+But in real production backend:
+Most Go developers use:
+# ✅ GORM ORM
+
+Why?
+Because GORM provides:
+- Cleaner code
+- Faster development
+- ORM features
+- Auto migrations
+- Model handling
+- Easier CRUD
+
+Used in:
+- Startups
+- Product companies
+- Enterprise APIs
+- Microservices
+
+---
+
+# 📖 What You Will Learn
+
+- What is ORM
+- GORM Introduction
+- Install GORM
+- PostgreSQL with GORM
+- Models
+- Auto Migration
+- Create Data
+- Fetch Data
+- Update Data
+- Delete Data
+- GORM CRUD APIs
+- Interview Questions
+
+---
+
+# 📌 What is ORM?
+
+ORM means:
+# ✅ Object Relational Mapping
+
+Used to map:
+
+```text
+Go Struct
+↓
+Database Table
+```
+
+---
+
+# 📌 Without ORM
+
+You write:
+
+```sql
+SELECT * FROM students
+```
+
+---
+
+# 📌 With GORM
+
+You write:
+
+```go
+db.Find(&students)
+```
+
+Much cleaner ✅
+
+---
+
+# 📌 Why GORM Popular?
+
+Because it provides:
+✅ Cleaner code  
+✅ Faster development  
+✅ Less SQL writing  
+✅ Easy CRUD  
+✅ Auto migration  
+✅ Production-ready architecture
+
+---
+
+# 📌 Install GORM
+
+Run:
+
+```bash
+go get gorm.io/gorm
+```
+
+---
+
+# 📌 Install PostgreSQL Driver
+
+```bash
+go get gorm.io/driver/postgres
+```
+
+---
+
+# 📌 Project Structure
+
+```text
+Day-20/
+ ├── go.mod
+ ├── go.sum
+ ├── main.go
+ ├── README.md
+```
+
+---
+
+# 📌 Import Packages
+
+```go
+import (
+	"gorm.io/gorm"
+	"gorm.io/driver/postgres"
+)
+```
+
+---
+
+# 📌 Connect PostgreSQL with GORM
+
+---
+
+# ✅ Example
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
+
+func main() {
+
+	dsn := "user=dnyaneshwarkokate dbname=studentdb sslmode=disable"
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	if err != nil {
+
+		panic(err)
+	}
+
+	fmt.Println("Database Connected Successfully")
+
+	_ = db
+}
+```
+
+---
+
+# 📌 Run Program
+
+```bash
+go run main.go
+```
+
+---
+
+# 📌 Output
+
+```text
+Database Connected Successfully
+```
+
+---
+
+# 📌 What is Model?
+
+Model means:
+# ✅ Struct mapped with database table
+
+---
+
+# 📌 Student Model
+
+```go
+type Student struct {
+
+	ID   uint   `json:"id" gorm:"primaryKey"`
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+```
+
+---
+
+# 📌 Understanding
+
+| Tag | Purpose |
+|---|---|
+| json | JSON response |
+| gorm | Database configuration |
+
+---
+
+# 📌 What is AutoMigrate?
+
+Automatically creates:
+✅ Tables  
+✅ Columns  
+✅ Schema changes
+
+---
+
+# ✅ Example
+
+```go
+db.AutoMigrate(&Student{})
+```
+
+---
+
+# 📌 Full Migration Example
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
+
+type Student struct {
+
+	ID   uint   `json:"id" gorm:"primaryKey"`
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+func main() {
+
+	dsn := "user=dnyaneshwarkokate dbname=studentdb sslmode=disable"
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	if err != nil {
+
+		panic(err)
+	}
+
+	db.AutoMigrate(&Student{})
+
+	fmt.Println("Migration Completed")
+}
+```
+
+---
+
+# 📌 What Happened?
+
+GORM automatically created:
+# ✅ students table
+
+---
+
+# 📌 Insert Data with GORM
+
+---
+
+# ✅ Example
+
+```go
+student := Student{
+
+	Name: "Dnyaneshwar",
+	Age: 24,
+}
+
+db.Create(&student)
+```
+
+---
+
+# 📌 Fetch Data with GORM
+
+---
+
+# ✅ Example
+
+```go
+var students []Student
+
+db.Find(&students)
+```
+
+---
+
+# 📌 Fetch Single Record
+
+```go
+var student Student
+
+db.First(&student, 1)
+```
+
+---
+
+# 📌 Update Data
+
+---
+
+# ✅ Example
+
+```go
+db.Model(&student).Update("Age", 25)
+```
+
+---
+
+# 📌 Delete Data
+
+---
+
+# ✅ Example
+
+```go
+db.Delete(&student, 1)
+```
+
+---
+
+# 📌 Full CRUD Example
+
+# ✅ main.go
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
+
+type Student struct {
+
+	ID   uint   `json:"id" gorm:"primaryKey"`
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+}
+
+func main() {
+
+	dsn := "user=dnyaneshwarkokate dbname=studentdb sslmode=disable"
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	if err != nil {
+
+		panic(err)
+	}
+
+	db.AutoMigrate(&Student{})
+
+	router := gin.Default()
+
+	// GET ALL STUDENTS
+	router.GET("/students", func(c *gin.Context) {
+
+		var students []Student
+
+		db.Find(&students)
+
+		c.JSON(http.StatusOK, students)
+	})
+
+	// CREATE STUDENT
+	router.POST("/students", func(c *gin.Context) {
+
+		var student Student
+
+		err := c.BindJSON(&student)
+
+		if err != nil {
+
+			c.JSON(http.StatusBadRequest, gin.H{
+
+				"error": err.Error(),
+			})
+
+			return
+		}
+
+		db.Create(&student)
+
+		c.JSON(http.StatusCreated, student)
+	})
+
+	// UPDATE STUDENT
+	router.PUT("/students/:id", func(c *gin.Context) {
+
+		id := c.Param("id")
+
+		var student Student
+
+		db.First(&student, id)
+
+		if student.ID == 0 {
+
+			c.JSON(http.StatusNotFound, gin.H{
+
+				"message": "Student Not Found",
+			})
+
+			return
+		}
+
+		var updatedStudent Student
+
+		c.BindJSON(&updatedStudent)
+
+		student.Name = updatedStudent.Name
+		student.Age = updatedStudent.Age
+
+		db.Save(&student)
+
+		c.JSON(http.StatusOK, student)
+	})
+
+	// DELETE STUDENT
+	router.DELETE("/students/:id", func(c *gin.Context) {
+
+		id := c.Param("id")
+
+		var student Student
+
+		db.First(&student, id)
+
+		if student.ID == 0 {
+
+			c.JSON(http.StatusNotFound, gin.H{
+
+				"message": "Student Not Found",
+			})
+
+			return
+		}
+
+		db.Delete(&student)
+
+		c.JSON(http.StatusOK, gin.H{
+
+			"message": "Student Deleted Successfully",
+		})
+	})
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📌 Test APIs
+
+---
+
+# ✅ GET
+
+```text
+GET /students
+```
+
+---
+
+# ✅ POST
+
+```text
+POST /students
+```
+
+Body:
+
+```json
+{
+  "name":"Dnyaneshwar",
+  "age":24
+}
+```
+
+---
+
+# ✅ PUT
+
+```text
+PUT /students/1
+```
+
+---
+
+# ✅ DELETE
+
+```text
+DELETE /students/1
+```
+
+---
+
+# 📌 Real Backend Architecture
+
+```text
+Frontend
+↓
+Gin API
+↓
+GORM ORM
+↓
+PostgreSQL
+```
+
+---
+
+# 📌 Why GORM Important?
+
+GORM used in:
+- Production APIs
+- Enterprise backend
+- Microservices
+- SaaS applications
+
+Very important for interviews 🔥
+
+---
+
+# 📌 Common GORM Methods
+
+| Method | Purpose |
+|---|---|
+| Create() | Insert data |
+| Find() | Fetch all |
+| First() | Fetch single |
+| Save() | Update |
+| Delete() | Delete |
+
+---
+
+# 💻 Day 20 Practice Program
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+)
+
+type Product struct {
+
+	ID    uint   `gorm:"primaryKey"`
+	Name  string
+	Price int
+}
+
+func main() {
+
+	dsn := "user=dnyaneshwarkokate dbname=studentdb sslmode=disable"
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	if err != nil {
+
+		panic(err)
+	}
+
+	db.AutoMigrate(&Product{})
+
+	product := Product{
+
+		Name: "iPhone",
+		Price: 120000,
+	}
+
+	db.Create(&product)
+
+	fmt.Println("Product Added Successfully")
+}
+```
+
+---
+
+# 📘 Day 20 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is ORM?
+
+### ✅ Answer:
+ORM maps programming language objects with database tables.
+
+---
+
+## ❓ Q2: What is GORM?
+
+### ✅ Answer:
+GORM is ORM library for Go.
+
+---
+
+## ❓ Q3: Why GORM popular?
+
+### ✅ Answer:
+Because it simplifies database operations and reduces SQL code.
+
+---
+
+## ❓ Q4: What does AutoMigrate() do?
+
+### ✅ Answer:
+Automatically creates or updates database tables.
+
+---
+
+## ❓ Q5: Difference between Find() and First()?
+
+| Find() | First() |
+|---|---|
+| Multiple records | Single record |
+
+---
+
+## ❓ Q6: What does Create() do?
+
+### ✅ Answer:
+Inserts data into database.
+
+---
+
+## ❓ Q7: Why GORM used in backend?
+
+### ✅ Answer:
+Makes CRUD operations cleaner and faster.
+
+---
+
+# 📚 Day 20 Summary
+
+Today I learned:
+- GORM ORM
+- Database models
+- Auto migration
+- CRUD with GORM
+- Gin + GORM integration
+- PostgreSQL with GORM
+
+I also practiced:
+- Creating models
+- Database migrations
+- CRUD APIs
+- ORM architecture
+
+---
+
+# 🧠 Practice Tasks
+
+✅ Create Product CRUD API  
+✅ Create Employee Model  
+✅ Practice AutoMigrate  
+✅ Build CRUD APIs with GORM  
+✅ Test APIs in Postman
+
+---
+
 # 🔥 My Learning Rules
 
 ✅ Code Daily  
@@ -10371,4 +11069,5 @@ I also practiced:
 ✅ Day 17 Completed  
 ✅ Day 18 Completed  
 ✅ Day 19 Completed  
-🚀 Next: GORM ORM in Go
+✅ Day 20 Completed  
+🚀 Next: JWT Authentication in Go
