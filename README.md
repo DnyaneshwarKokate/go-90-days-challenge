@@ -81,9 +81,9 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 14 | HTTP Package | ✅ |
 | Day 15 | First REST API | ✅ |
 | Day 16 | CRUD REST API | ✅ |
-| Day 17 | Routing & URL Parameters | ⏳ |
-| Day 18 | Gin Framework | ⏳ |
-| Day 19 | PostgreSQL Integration | ⏳ |
+| Day 17 | Routing & URL Parameters | ✅ |
+| Day 18 | Gin Framework | ✅ |
+| Day 19 | PostgreSQL Integration | ✅ |
 | Day 20 | GORM in Go | ⏳ |
 | Day 21 | JWT Authentication | ⏳ |
 | Day 22 | Middleware in Go | ⏳ |
