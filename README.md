@@ -1463,7 +1463,7 @@ Today I learned:
 - Anonymous Structs
 - Struct Functions
 - Exported vs Unexported Fields
-
+---
 I also practiced:
 - Creating models
 - Accessing fields
@@ -1482,7 +1482,6 @@ I also practiced:
 ✅ Pass struct into function  
 ✅ Create User API model structure
 
----
 ---
 
 # ✅ Day 05 — Pointers in Go
@@ -2180,7 +2179,7 @@ import "fmt"
 
 type Employee struct {
 
-	Name   string
+	Name string
 	Salary int
 }
 
@@ -2249,7 +2248,6 @@ func (e *Employee) updateSalary() {
 func main() {
 
 	employee := Employee{
-
 		Name: "Dnyaneshwar",
 		Salary: 50000,
 	}
@@ -2656,7 +2654,6 @@ I also practiced:
 ✅ Use empty interface  
 ✅ Practice type assertion
 
----
 ---
 
 # ✅ Day 07 — Mini Project in Go
@@ -4106,7 +4103,6 @@ func main() {
 	file, err := os.Create("notes.txt")
 
 	if err != nil {
-
 		fmt.Println(err)
 		return
 	}
@@ -5937,12 +5933,10 @@ type Student struct {
 func main() {
 
 	student := Student{
-
 		Name: "Dnyaneshwar",
 		Age: 24,
 		City: "Nashik",
 	}
-
 	jsonData, err := json.Marshal(student)
 
 	if err != nil {
@@ -5960,7 +5954,11 @@ func main() {
 # 📌 Output
 
 ```json
-{"Name":"Dnyaneshwar","Age":24,"City":"Nashik"}
+{ 
+	"Name":"Dnyaneshwar",
+	"Age":24,
+	"City":"Nashik"
+}
 ```
 
 ---
@@ -6000,7 +5998,6 @@ import (
 )
 
 type Student struct {
-
 	Name string
 	Age  int
 	City string
@@ -6019,7 +6016,6 @@ func main() {
 	err := json.Unmarshal([]byte(jsonData), &student)
 
 	if err != nil {
-
 		fmt.Println(err)
 		return
 	}
@@ -6051,7 +6047,6 @@ Used to customize JSON field names.
 
 ```go
 type Student struct {
-
 	Name string `json:"name"`
 	Age  int    `json:"age"`
 	City string `json:"city"`
@@ -6117,7 +6112,11 @@ func main() {
 # 📌 Output
 
 ```json
-{"name":"Dnyaneshwar","age":24,"city":"Nashik"}
+{
+	"name":"Dnyaneshwar",
+	"age":24,
+	"city":"Nashik"
+}
 ```
 
 ---
