@@ -85,7 +85,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 18 | Gin Framework | ✅ |
 | Day 19 | PostgreSQL Integration | ✅ |
 | Day 20 | GORM in Go | ✅ |
-| Day 21 | JWT Authentication | ⏳ |
+| Day 21 | JWT Authentication | ✅ |
 | Day 22 | Middleware in Go | ⏳ |
 | Day 23 | Password Hashing | ⏳ |
 | Day 24 | Role-Based Authorization | ⏳ |
@@ -11048,6 +11048,241 @@ I also practiced:
 
 ---
 
+# ✅ Day 21 — JWT Authentication in Go
+
+---
+
+# 📖 Introduction to JWT Authentication
+
+In modern backend web applications and REST APIs, stateless authentication is essential. Instead of maintaining sessions on the server, we use **JWT (JSON Web Token)**.
+
+JWT allows clients (Frontend, Mobile Apps, Microservices) to authenticate once and send a signed token with every subsequent request via the `Authorization` header.
+
+---
+
+# 📖 What You Will Learn
+
+- What is JWT (JSON Web Token)
+- JWT Structure (Header, Payload, Signature)
+- Installing `golang-jwt/jwt/v5`
+- Creating & Signing JWT Tokens
+- Verifying & Parsing JWT Tokens
+- Building a Login & Protected Profile API with Gin
+- Interview Questions & Answers
+
+---
+
+# 📌 What is JWT?
+
+JWT stands for **JSON Web Token**. It is an open standard (RFC 7519) used to securely transmit information between parties as a JSON object.
+
+Structure of a JWT token:
+```text
+Header.Payload.Signature
+```
+
+- **Header**: Contains the algorithm (e.g. HS256) and token type.
+- **Payload**: Contains claims (data like `username`, `role`, `exp` expiration time).
+- **Signature**: Used to verify that the sender is who it says it is and to ensure that the message wasn't changed along the way.
+
+---
+
+# 📌 Installing JWT Package
+
+To use JWT in Go, install the official community-v5 package:
+
+```bash
+go get github.com/golang-jwt/jwt/v5
+```
+
+---
+
+# 📌 Generating a JWT Token Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
+
+func main() {
+	secretKey := "mysecretkey"
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"username": "Dnyanesh",
+		"role":     "admin",
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(secretKey))
+	if err != nil {
+		fmt.Println("Error generating token:", err)
+		return
+	}
+
+	fmt.Println("JWT Token:")
+	fmt.Println(tokenString)
+}
+```
+
+---
+
+# 📌 Creating Login & Protected Profile API with Gin
+
+```go
+package main
+
+import (
+	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+)
+
+type Login struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+func main() {
+	router := gin.Default()
+
+	// LOGIN ENDPOINT (Generates JWT)
+	router.POST("/login", func(c *gin.Context) {
+		var login Login
+
+		err := c.BindJSON(&login)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		if login.Username != "admin" || login.Password != "1234" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Invalid Credentials",
+			})
+			return
+		}
+
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"username": login.Username,
+			"role":     "admin",
+			"exp":      time.Now().Add(time.Hour * 24).Unix(),
+		})
+
+		tokenString, err := token.SignedString([]byte("mysecretkey"))
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": err.Error(),
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"token": tokenString,
+		})
+	})
+
+	// PROTECTED ROUTE (Requires & Verifies JWT)
+	router.GET("/profile", func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Token Required",
+			})
+			return
+		}
+
+		tokenString := authHeader
+		if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+			tokenString = authHeader[7:]
+		}
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return []byte("mysecretkey"), nil
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Invalid or Expired Token",
+			})
+			return
+		}
+
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Invalid Claims",
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message":  "Protected Route Accessed",
+			"username": claims["username"],
+			"role":     claims["role"],
+		})
+	})
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📘 Day 21 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is JWT and why is it used?
+
+### ✅ Answer:
+JWT (JSON Web Token) is an open standard for securely transmitting information between client and server as a JSON object. It is stateless, self-contained, and widely used for authentication and authorization in REST APIs.
+
+---
+
+## ❓ Q2: What are the three parts of a JWT?
+
+### ✅ Answer:
+1. **Header**: Contains token type (JWT) and signing algorithm (e.g. HS256).
+2. **Payload**: Contains claims (user identity, roles, expiration).
+3. **Signature**: Verifies token integrity using a secret key or private key.
+
+---
+
+## ❓ Q3: How is a JWT verified in Go?
+
+### ✅ Answer:
+Using `jwt.Parse()`, which takes the token string and a keyfunc callback that returns the secret signing key. If the token is valid and signature matches, claims can be safely extracted.
+
+---
+
+## ❓ Q4: Where should JWT tokens be stored on the client side?
+
+### ✅ Answer:
+Ideally in an `httpOnly` secure cookie to mitigate XSS (Cross-Site Scripting) risks, or in memory / Authorization headers (`Bearer <token>`).
+
+---
+
+# 📚 Day 21 Summary
+
+Today I learned:
+- JSON Web Token (JWT) concepts & security
+- Creating signed tokens with `golang-jwt/jwt/v5`
+- Extracting & verifying claims
+- Building a JWT Login API & protecting routes in Gin
+
+---
+
 # ⭐ Challenge Progress
 ✅ Day 01 Completed  
 ✅ Day 02 Completed  
@@ -11069,4 +11304,5 @@ I also practiced:
 ✅ Day 18 Completed  
 ✅ Day 19 Completed  
 ✅ Day 20 Completed  
-🚀 Next: JWT Authentication in Go
+✅ Day 21 Completed  
+🚀 Next: Middleware in Go

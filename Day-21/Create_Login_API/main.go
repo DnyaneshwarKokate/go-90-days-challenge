@@ -55,18 +55,45 @@ func main() {
 		})
 	})
 
-	router.GET("/profile", func (c *gin.Context)  {
-		
-		authHeader := c.GetHeader("Autorization")
+	router.GET("/profile", func(c *gin.Context) {
 
-		if authHeader == ""{
+		authHeader := c.GetHeader("Authorization")
+
+		if authHeader == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{
-				"message":"Token Required",
+				"message": "Token Required",
 			})
 			return
 		}
+
+		tokenString := authHeader
+		if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+			tokenString = authHeader[7:]
+		}
+
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return []byte("mysecretkey"), nil
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Invalid or Expired Token",
+			})
+			return
+		}
+
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Invalid Claims",
+			})
+			return
+		}
+
 		c.JSON(http.StatusOK, gin.H{
-			"message":"Protected Route Accessed",
+			"message":  "Protected Route Accessed",
+			"username": claims["username"],
+			"role":     claims["role"],
 		})
 	})
 
