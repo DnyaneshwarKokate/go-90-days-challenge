@@ -86,7 +86,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 19 | PostgreSQL Integration | ✅ |
 | Day 20 | GORM in Go | ✅ |
 | Day 21 | JWT Authentication | ✅ |
-| Day 22 | Middleware in Go | ⏳ |
+| Day 22 | Middleware in Go | ✅ |
 | Day 23 | Password Hashing | ⏳ |
 | Day 24 | Role-Based Authorization | ⏳ |
 | Day 25 | Environment Variables | ⏳ |
@@ -11283,6 +11283,222 @@ Today I learned:
 
 ---
 
+# ✅ Day 22 — Middleware in Go
+
+---
+
+# 📖 Introduction to Middleware
+
+In web applications and microservices, **Middleware** acts as a bridge between an incoming HTTP request and the final route handler.
+
+Middleware functions intercept, process, authorize, log, or transform requests before passing control to the next handler using `c.Next()`, or abort processing using `c.Abort()`.
+
+Common use cases:
+- Logging & Latency tracking
+- Authentication & Authorization
+- CORS (Cross-Origin Resource Sharing)
+- Rate Limiting & Header Injection
+- Panic Recovery
+
+---
+
+# 📖 What You Will Learn
+
+- What is Middleware in Go (net/http & Gin)
+- Global Middleware vs Route-Specific Middleware
+- Using `c.Next()` and `c.Abort()`
+- Building Custom Logger Middleware
+- Building Custom JWT Authentication Middleware
+- Grouping Protected Routes with Middleware
+- Day 22 Interview Questions & Answers
+
+---
+
+# 📌 How Middleware Works in Gin
+
+In Gin, middleware functions have the signature `func(*gin.Context)` (or `gin.HandlerFunc`).
+
+```text
+Incoming Request -> [ Middleware 1 ] -> [ Middleware 2 ] -> [ Handler ]
+                                                                 |
+Response        <- [ Middleware 1 ] <- [ Middleware 2 ] <--------+
+```
+
+Key control methods:
+- `c.Next()`: Passes control to the next handler in the chain.
+- `c.Abort()`: Stops executing subsequent handlers (e.g. on unauthorized access).
+- `c.Set("key", value)`: Passes contextual data down the execution chain.
+
+---
+
+# 📌 Custom Logger & Request ID Middleware Example
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"time"
+
+	"github.com/gin-gonic/gin"
+)
+
+// Custom Logger Middleware
+func LoggerMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		startTime := time.Now()
+
+		fmt.Printf("[LOG] Incoming Request: %s %s\n", c.Request.Method, c.Request.URL.Path)
+
+		c.Next() // Pass to next handler
+
+		latency := time.Since(startTime)
+		status := c.Writer.Status()
+
+		fmt.Printf("[LOG] Completed Request: %s %s | Status: %d | Time: %v\n",
+			c.Request.Method, c.Request.URL.Path, status, latency)
+	}
+}
+
+func main() {
+	router := gin.New()
+	router.Use(LoggerMiddleware())
+
+	router.GET("/ping", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "pong"})
+	})
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📌 JWT Authentication Middleware with Route Groups
+
+```go
+package main
+
+import (
+	"net/http"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+)
+
+var secretKey = []byte("mysecretkey")
+
+func JWTAuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
+			c.Abort()
+			return
+		}
+
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid Authorization header format"})
+			c.Abort()
+			return
+		}
+
+		tokenString := parts[1]
+		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+			return secretKey, nil
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired JWT token"})
+			c.Abort()
+			return
+		}
+
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if ok && token.Valid {
+			c.Set("username", claims["username"])
+			c.Set("role", claims["role"])
+		}
+
+		c.Next()
+	}
+}
+
+func main() {
+	router := gin.Default()
+
+	// Protected API Group
+	api := router.Group("/api")
+	api.Use(JWTAuthMiddleware())
+	{
+		api.GET("/profile", func(c *gin.Context) {
+			user, _ := c.Get("username")
+			c.JSON(http.StatusOK, gin.H{"message": "Access granted", "user": user})
+		})
+	}
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📘 Day 22 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is Middleware in web development?
+
+### ✅ Answer:
+Middleware is a software layer/function that intercepts incoming HTTP requests before they reach the main request handler. It is used for tasks like logging, authentication, request validation, CORS, and response transformation.
+
+---
+
+## ❓ Q2: What is the difference between `c.Next()` and `c.Abort()` in Gin?
+
+### ✅ Answer:
+- `c.Next()`: Suspends execution of current middleware, executes downstream handlers/middlewares, and then resumes execution after `c.Next()` completes.
+- `c.Abort()`: Prevents pending handlers in the chain from being called. It is used when a middleware decides to reject a request (e.g. 401 Unauthorized).
+
+---
+
+## ❓ Q3: How do you pass data from a Middleware to a Request Handler in Gin?
+
+### ✅ Answer:
+Using `c.Set("key", value)` in the middleware, and retrieving it inside downstream handlers using `value, exists := c.Get("key")`.
+
+---
+
+## ❓ Q4: How do you apply middleware to specific routes or groups in Gin?
+
+### ✅ Answer:
+By using route groups:
+```go
+api := router.Group("/api")
+api.Use(AuthMiddleware())
+```
+Or directly passing the middleware function to individual routes:
+```go
+router.GET("/admin", AuthMiddleware(), AdminHandler)
+```
+
+---
+
+# 📚 Day 22 Summary
+
+Today I learned:
+- Middleware fundamentals in Go & Gin
+- Creating custom Logger and Request ID middlewares
+- Writing reusable JWT Authentication Middleware
+- Using `c.Next()`, `c.Abort()`, and `c.Set()`
+- Grouping protected API endpoints with `router.Group().Use()`
+
+---
+
 # ⭐ Challenge Progress
 ✅ Day 01 Completed  
 ✅ Day 02 Completed  
@@ -11305,4 +11521,5 @@ Today I learned:
 ✅ Day 19 Completed  
 ✅ Day 20 Completed  
 ✅ Day 21 Completed  
-🚀 Next: Middleware in Go
+✅ Day 22 Completed  
+🚀 Next: Password Hashing in Go
