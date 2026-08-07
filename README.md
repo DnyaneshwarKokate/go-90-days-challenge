@@ -89,7 +89,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 22 | Middleware in Go | ✅ |
 | Day 23 | Password Hashing | ✅ |
 | Day 24 | Role-Based Authorization | ✅ |
-| Day 25 | Environment Variables | ⏳ |
+| Day 25 | Environment Variables | ✅ |
 | Day 26 | Clean Architecture | ⏳ |
 | Day 27 | Repository Pattern | ⏳ |
 | Day 28 | Dependency Injection | ⏳ |
@@ -12039,4 +12039,218 @@ Today I learned:
 ✅ Day 22 Completed  
 ✅ Day 23 Completed  
 ✅ Day 24 Completed  
-🚀 Next: Environment Variables in Go
+✅ Day 25 Completed  
+🚀 Next: Clean Architecture in Go
+
+---
+
+# ✅ Day 25 — Environment Variables in Go
+
+---
+
+# 📖 Introduction to Environment Variables in Go
+
+Environment variables are key-value pairs configured outside application code at the operating system or deployment environment level (e.g. Docker, Kubernetes, systemd). Following the **12-Factor App methodology**, external configuration allows the exact same application binary to run seamlessly across local development, staging, and production environments without changing source code.
+
+### 🔒 Key Configuration Principles:
+- **Never Hardcode Secrets**: Database passwords, API credentials, and JWT signing keys must never be committed to source control.
+- **`os` Package**: Standard Go library (`os.Getenv`, `os.LookupEnv`, `os.Setenv`) reads variables directly from the host system process environment.
+- **`.env` Files & `godotenv`**: During local development, `.env` files manage local environment variables. `github.com/joho/godotenv` loads `.env` key-value pairs into the process environment.
+- **Configuration Struct & Fallbacks**: Parsing environment variables into a strongly-typed `Config` struct with sensible fallback defaults ensures safe application startup.
+
+---
+
+# 📖 What You Will Learn
+
+- Reading environment variables using standard library `os.Getenv()`
+- Distinguishing between empty and missing variables using `os.LookupEnv()`
+- Programmatically setting environment variables with `os.Setenv()`
+- Loading `.env` files into environment variables using `github.com/joho/godotenv`
+- Building a centralized, strongly-typed `Config` struct with fallback defaults
+- Exposing dynamic configuration and health endpoints in a Gin REST API
+- Day 25 Technical Interview Questions & Answers
+
+---
+
+# 📌 Standalone Environment Variables Example in Go (`os` package)
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+)
+
+func getEnvWithDefault(key, fallback string) string {
+	if value, exists := os.LookupEnv(key); exists && value != "" {
+		return value
+	}
+	return fallback
+}
+
+func main() {
+	// Set environment variables programmatically
+	os.Setenv("APP_NAME", "Go90DaysChallenge")
+	os.Setenv("PORT", "8080")
+
+	// Read environment variables
+	appName := os.Getenv("APP_NAME")
+	fmt.Println("APP_NAME:", appName)
+
+	// Check variable existence with LookupEnv
+	if dbHost, exists := os.LookupEnv("DB_HOST"); exists {
+		fmt.Println("DB_HOST:", dbHost)
+	} else {
+		fmt.Println("DB_HOST is not set!")
+	}
+
+	// Read with fallback default value
+	dbPort := getEnvWithDefault("DB_PORT", "5432")
+	fmt.Println("DB_PORT (with fallback):", dbPort)
+}
+```
+
+---
+
+# 📌 Environment Configured REST API with Gin and `godotenv`
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+)
+
+type Config struct {
+	Port        string
+	AppName     string
+	Environment string
+	DBHost      string
+	DBPort      string
+}
+
+var AppConfig Config
+
+func getEnv(key, defaultValue string) string {
+	if val, exists := os.LookupEnv(key); exists && val != "" {
+		return val
+	}
+	return defaultValue
+}
+
+func LoadConfig() {
+	// Load .env file
+	if err := godotenv.Load(".env"); err != nil {
+		log.Println("⚠️  Warning: .env file not found, using system environment variables")
+	}
+
+	AppConfig = Config{
+		Port:        getEnv("PORT", "8085"),
+		AppName:     getEnv("APP_NAME", "Default_Go_API"),
+		Environment: getEnv("ENVIRONMENT", "development"),
+		DBHost:      getEnv("DB_HOST", "localhost"),
+		DBPort:      getEnv("DB_PORT", "5432"),
+	}
+}
+
+func main() {
+	LoadConfig()
+
+	router := gin.Default()
+
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status":      "UP",
+			"app_name":    AppConfig.AppName,
+			"environment": AppConfig.Environment,
+		})
+	})
+
+	router.Run(":" + AppConfig.Port)
+}
+```
+
+---
+
+# 📘 Day 25 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is the difference between `os.Getenv()` and `os.LookupEnv()` in Go?
+
+### ✅ Answer:
+- **`os.Getenv(key)`** returns the string value of the environment variable. If the variable is not set, it returns an empty string `""`. However, it cannot differentiate between an unset variable and a variable explicitly set to an empty string.
+- **`os.LookupEnv(key)`** returns two values: `(value string, exists bool)`. The boolean `exists` indicates whether the environment variable is present in the process environment, even if set to `""`.
+
+---
+
+## ❓ Q2: Why is `.env.example` committed to Git, while `.env` is added to `.gitignore`?
+
+### ✅ Answer:
+- **`.env`** contains real credentials (API keys, DB passwords, secret tokens) and local machine settings. It must be listed in `.gitignore` to prevent sensitive secrets from leaking to source repositories.
+- **`.env.example`** contains non-sensitive key names and sample placeholder values. It acts as a template and documentation for developers setting up the application environment.
+
+---
+
+## ❓ Q3: What is the 12-Factor App principle regarding configuration?
+
+### ✅ Answer:
+The 12-Factor App methodology states that an application's **config should be strictly separated from code**. Configuration that varies between deployments (staging, production, dev) should be stored in environment variables, allowing identical build artifacts to run in any environment.
+
+---
+
+## ❓ Q4: What popular packages exist in Go for configuration management?
+
+### ✅ Answer:
+- **`github.com/joho/godotenv`**: Lightweight package for loading `.env` files into process environment variables.
+- **`github.com/spf13/viper`**: Complete configuration solution supporting JSON, TOML, YAML, environment variables, flags, and remote config systems (Etcd, Consul).
+- **`github.com/kelseyhightower/envconfig`**: Decodes environment variables directly into Go structs using struct tags.
+
+---
+
+# 📚 Day 25 Summary
+
+Today I learned:
+- Importance of externalizing configuration following 12-Factor App methodology
+- Reading environment variables with `os.Getenv()` and `os.LookupEnv()` in standard library `os`
+- Loading local `.env` files into Go environment using `github.com/joho/godotenv`
+- Designing a centralized, strongly-typed `Config` struct with fallback default values
+- Building a Gin REST API that dynamically configures port, database connection settings, and environment state
+- Security best practices: keeping secrets out of Git using `.env.example` templates
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+🚀 Next: Clean Architecture in Go
