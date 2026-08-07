@@ -91,7 +91,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 24 | Role-Based Authorization | ✅ |
 | Day 25 | Environment Variables | ✅ |
 | Day 26 | Clean Architecture | ✅ |
-| Day 27 | Repository Pattern | ⏳ |
+| Day 27 | Repository Pattern | ✅ |
 | Day 28 | Dependency Injection | ⏳ |
 | Day 29 | Logging System | ⏳ |
 | Day 30 | Student Management REST API Project | ⏳ |
@@ -12540,4 +12540,508 @@ Today I learned:
 ✅ Day 24 Completed  
 ✅ Day 25 Completed  
 ✅ Day 26 Completed  
-🚀 Next: Repository Pattern in Go
+✅ Day 27 Completed  
+🚀 Next: Dependency Injection in Go
+
+---
+
+# ✅ Day 27 — Repository Pattern in Go
+
+---
+
+# 📖 Introduction to Repository Pattern in Go
+
+The **Repository Pattern** is a software design pattern that abstracts data access logic and mediates between the domain/business layer and the persistence layer (SQL, NoSQL, ORM, or In-Memory).
+
+By decoupling persistence mechanisms from domain models and business logic:
+- Business logic (`usecase`) operates purely on **Go Interfaces** (`domain.ProductRepository`).
+- Swapping database drivers (e.g., switching from In-Memory to PostgreSQL / GORM or MongoDB) requires **zero changes** to business logic or HTTP handlers.
+- Writing fast, isolated unit tests becomes effortless because repositories can be mocked or swapped with in-memory implementations.
+
+---
+
+# 🏗️ Architecture & Component Flow
+
+```text
+  +-------------------------------------------------------------+
+  |                   HTTP / Delivery Layer                     |
+  |                (handler/product_handler.go)                 |
+  +-------------------------------------------------------------+
+                               |
+                               v
+  +-------------------------------------------------------------+
+  |                  Business Use Case Layer                    |
+  |               (usecase/product_usecase.go)                  |
+  +-------------------------------------------------------------+
+                               |
+                               | (Depends on Interface)
+                               v
+  +-------------------------------------------------------------+
+  |                   Domain Interface Contract                 |
+  |                 (domain.ProductRepository)                  |
+  +-------------------------------------------------------------+
+                 /                             \
+                /                               \
+   (Implements)                                 (Implements)
+              v                                   v
++-----------------------------+   +-----------------------------+
+|    In-Memory Repository     |   |       GORM Repository       |
+| (repository/memory_repo.go) |   |  (repository/gorm_repo.go)  |
++-----------------------------+   +-----------------------------+
+```
+
+---
+
+# 📖 What You Will Learn
+
+- Designing clean repository interfaces in `domain/` package
+- Implementing thread-safe In-Memory storage repositories with `sync.RWMutex`
+- Implementing relational database repositories using `gorm.io/gorm`
+- Unit testing repository implementations independently using Go `testing` framework and SQLite in-memory DB
+- Wiring repositories, use cases, and Gin handlers via Constructor Dependency Injection
+- Day 27 Technical Interview Questions & Answers
+
+---
+
+# 📌 Code Walkthrough: Repository Pattern Implementation
+
+### 1. Domain Model & Interface Contract (`domain/product.go`)
+
+```go
+package domain
+
+import (
+	"errors"
+	"time"
+)
+
+type Product struct {
+	ID        int       `json:"id" gorm:"primaryKey"`
+	Name      string    `json:"name" gorm:"not null"`
+	SKU       string    `json:"sku" gorm:"uniqueIndex;not null"`
+	Price     float64   `json:"price" gorm:"not null"`
+	Stock     int       `json:"stock" gorm:"not null"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+var (
+	ErrProductNotFound = errors.New("product not found")
+	ErrDuplicateSKU    = errors.New("product with this SKU already exists")
+	ErrInvalidProduct  = errors.New("product details are invalid")
+)
+
+type ProductRepository interface {
+	Create(product *Product) (*Product, error)
+	GetByID(id int) (*Product, error)
+	GetBySKU(sku string) (*Product, error)
+	GetAll() ([]Product, error)
+	Update(id int, product *Product) (*Product, error)
+	Delete(id int) error
+}
+
+type ProductUseCase interface {
+	CreateProduct(name, sku string, price float64, stock int) (*Product, error)
+	GetProductByID(id int) (*Product, error)
+	GetProductBySKU(sku string) (*Product, error)
+	ListProducts() ([]Product, error)
+	UpdateProduct(id int, name string, price float64, stock int) (*Product, error)
+	DeleteProduct(id int) error
+}
+```
+
+---
+
+### 2. Thread-Safe In-Memory Repository (`repository/memory_repository.go`)
+
+```go
+package repository
+
+import (
+	"sync"
+	"time"
+
+	"day-27/domain"
+)
+
+type memoryProductRepository struct {
+	mu       sync.RWMutex
+	products map[int]domain.Product
+	nextID   int
+}
+
+func NewMemoryProductRepository() domain.ProductRepository {
+	return &memoryProductRepository{
+		products: make(map[int]domain.Product),
+		nextID:   1,
+	}
+}
+
+func (r *memoryProductRepository) Create(p *domain.Product) (*domain.Product, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	for _, item := range r.products {
+		if item.SKU == p.SKU {
+			return nil, domain.ErrDuplicateSKU
+		}
+	}
+
+	p.ID = r.nextID
+	now := time.Now()
+	p.CreatedAt = now
+	p.UpdatedAt = now
+	r.products[p.ID] = *p
+	r.nextID++
+
+	return p, nil
+}
+
+func (r *memoryProductRepository) GetByID(id int) (*domain.Product, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	p, exists := r.products[id]
+	if !exists {
+		return nil, domain.ErrProductNotFound
+	}
+	return &p, nil
+}
+
+func (r *memoryProductRepository) GetBySKU(sku string) (*domain.Product, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	for _, p := range r.products {
+		if p.SKU == sku {
+			return &p, nil
+		}
+	}
+	return nil, domain.ErrProductNotFound
+}
+
+func (r *memoryProductRepository) GetAll() ([]domain.Product, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	list := make([]domain.Product, 0, len(r.products))
+	for _, p := range r.products {
+		list = append(list, p)
+	}
+	return list, nil
+}
+
+func (r *memoryProductRepository) Update(id int, p *domain.Product) (*domain.Product, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	existing, exists := r.products[id]
+	if !exists {
+		return nil, domain.ErrProductNotFound
+	}
+
+	if p.Name != "" {
+		existing.Name = p.Name
+	}
+	if p.Price > 0 {
+		existing.Price = p.Price
+	}
+	if p.Stock >= 0 {
+		existing.Stock = p.Stock
+	}
+	existing.UpdatedAt = time.Now()
+
+	r.products[id] = existing
+	return &existing, nil
+}
+
+func (r *memoryProductRepository) Delete(id int) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	if _, exists := r.products[id]; !exists {
+		return domain.ErrProductNotFound
+	}
+
+	delete(r.products, id)
+	return nil
+}
+```
+
+---
+
+### 3. GORM DB Repository (`repository/gorm_repository.go`)
+
+```go
+package repository
+
+import (
+	"errors"
+
+	"day-27/domain"
+	"gorm.io/gorm"
+)
+
+type gormProductRepository struct {
+	db *gorm.DB
+}
+
+func NewGORMProductRepository(db *gorm.DB) domain.ProductRepository {
+	return &gormProductRepository{db: db}
+}
+
+func (r *gormProductRepository) Create(p *domain.Product) (*domain.Product, error) {
+	var existing domain.Product
+	err := r.db.Where("sku = ?", p.SKU).First(&existing).Error
+	if err == nil {
+		return nil, domain.ErrDuplicateSKU
+	}
+
+	if err := r.db.Create(p).Error; err != nil {
+		return nil, err
+	}
+	return p, nil
+}
+
+func (r *gormProductRepository) GetByID(id int) (*domain.Product, error) {
+	var p domain.Product
+	if err := r.db.First(&p, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, domain.ErrProductNotFound
+		}
+		return nil, err
+	}
+	return &p, nil
+}
+
+func (r *gormProductRepository) GetBySKU(sku string) (*domain.Product, error) {
+	var p domain.Product
+	if err := r.db.Where("sku = ?", sku).First(&p).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, domain.ErrProductNotFound
+		}
+		return nil, err
+	}
+	return &p, nil
+}
+
+func (r *gormProductRepository) GetAll() ([]domain.Product, error) {
+	var products []domain.Product
+	if err := r.db.Find(&products).Error; err != nil {
+		return nil, err
+	}
+	return products, nil
+}
+
+func (r *gormProductRepository) Update(id int, p *domain.Product) (*domain.Product, error) {
+	existing, err := r.GetByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	updates := map[string]interface{}{}
+	if p.Name != "" {
+		updates["name"] = p.Name
+	}
+	if p.Price > 0 {
+		updates["price"] = p.Price
+	}
+	if p.Stock >= 0 {
+		updates["stock"] = p.Stock
+	}
+
+	if err := r.db.Model(existing).Updates(updates).Error; err != nil {
+		return nil, err
+	}
+	return r.GetByID(id)
+}
+
+func (r *gormProductRepository) Delete(id int) error {
+	result := r.db.Delete(&domain.Product{}, id)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return domain.ErrProductNotFound
+	}
+	return nil
+}
+```
+
+---
+
+### 4. Unit Testing Repositories (`repository/repository_test.go`)
+
+```go
+package repository_test
+
+import (
+	"testing"
+
+	"day-27/domain"
+	"day-27/repository"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+)
+
+func runRepositoryTests(t *testing.T, repo domain.ProductRepository) {
+	p1 := &domain.Product{Name: "Mechanical Keyboard", SKU: "KB-101", Price: 99.99, Stock: 15}
+
+	created, err := repo.Create(p1)
+	if err != nil || created.ID == 0 {
+		t.Fatalf("failed to create product: %v", err)
+	}
+
+	pDup := &domain.Product{Name: "Another Keyboard", SKU: "KB-101", Price: 80.00, Stock: 5}
+	if _, err := repo.Create(pDup); err != domain.ErrDuplicateSKU {
+		t.Errorf("expected ErrDuplicateSKU, got %v", err)
+	}
+
+	fetched, err := repo.GetByID(created.ID)
+	if err != nil || fetched.Name != p1.Name {
+		t.Errorf("failed to fetch created product correctly")
+	}
+
+	updated, err := repo.Update(created.ID, &domain.Product{Price: 109.99, Stock: 20})
+	if err != nil || updated.Price != 109.99 {
+		t.Errorf("failed to update product price")
+	}
+
+	if err := repo.Delete(created.ID); err != nil {
+		t.Errorf("failed to delete product: %v", err)
+	}
+}
+
+func TestMemoryProductRepository(t *testing.T) {
+	runRepositoryTests(t, repository.NewMemoryProductRepository())
+}
+
+func TestGORMProductRepository(t *testing.T) {
+	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
+	if err != nil {
+		t.Fatalf("failed to open sqlite memory db: %v", err)
+	}
+	db.AutoMigrate(&domain.Product{})
+	runRepositoryTests(t, repository.NewGORMProductRepository(db))
+}
+```
+
+---
+
+### 5. Application Entry Point (`main.go`)
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"day-27/domain"
+	"day-27/handler"
+	"day-27/repository"
+	"day-27/usecase"
+
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	fmt.Println("🚀 Day 27: Repository Pattern in Go")
+
+	// Plug in desired storage repository (Memory or GORM)
+	var productRepo domain.ProductRepository = repository.NewMemoryProductRepository()
+
+	productUseCase := usecase.NewProductUseCase(productRepo)
+	productHandler := handler.NewProductHandler(productUseCase)
+
+	router := gin.Default()
+	api := router.Group("/api/v1")
+	{
+		api.POST("/products", productHandler.CreateProduct)
+		api.GET("/products", productHandler.ListProducts)
+		api.GET("/products/:id", productHandler.GetProductByID)
+		api.PUT("/products/:id", productHandler.UpdateProduct)
+		api.DELETE("/products/:id", productHandler.DeleteProduct)
+	}
+
+	log.Println("⚡ Server listening on http://localhost:8087")
+	router.Run(":8087")
+}
+```
+
+---
+
+# 📘 Day 27 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is the main purpose of the Repository Pattern in Go?
+
+### ✅ Answer:
+The Repository Pattern abstracts data persistence details behind an interface contract. It decouples domain models and business logic (`usecases`) from database-specific drivers or ORMs (SQL, GORM, Mongo, Redis). This promotes clean separation of concerns, simplifies swapping storage backends, and enables fast unit testing with mock or in-memory repositories.
+
+---
+
+## ❓ Q2: Where should the Repository Interface contract be defined in a Clean Architecture Go project?
+
+### ✅ Answer:
+The Repository Interface (e.g., `type ProductRepository interface`) must be defined in the **Domain Layer** (`domain/` package). According to the **Dependency Inversion Principle (DIP)**, high-level modules should depend on abstractions defined within the core domain, not on concrete implementations in the infrastructure or persistence layers.
+
+---
+
+## ❓ Q3: How does the Repository Pattern improve Unit Testing?
+
+### ✅ Answer:
+Because business logic depends on an interface rather than concrete SQL/ORM structs, unit tests can supply a lightweight In-Memory repository or a generated mock (e.g., `mockery` or `gomock`). Tests execute in milliseconds without needing to start a real database server or execute slow network/file I/O operations.
+
+---
+
+## ❓ Q4: What is the difference between an Active Record Pattern and a Repository Pattern?
+
+### ✅ Answer:
+- **Active Record**: Database columns and tables map directly to entity methods where entity structs perform their own SQL/database operations (e.g., `user.Save()`, `user.Delete()`).
+- **Repository**: Entities are pure data structs without persistence methods. A separate Repository component handles all queries and storage operations on entities (`repo.Create(user)`). Repository pattern provides much cleaner separation of concerns and testability.
+
+---
+
+# 📚 Day 27 Summary
+
+Today I learned:
+- How to implement the **Repository Pattern** in Go to abstract persistence operations.
+- Defining repository interface contracts in `domain/` package.
+- Creating multiple repository implementations (Thread-Safe In-Memory map & GORM DB adapter).
+- Writing table-driven repository unit tests with Go's `testing` package and SQLite in-memory engine.
+- Integrating repositories with Use Case business logic and Gin HTTP handler endpoints.
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+✅ Day 27 Completed  
+🚀 Next: Dependency Injection in Go
