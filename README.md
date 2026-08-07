@@ -88,7 +88,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 21 | JWT Authentication | ✅ |
 | Day 22 | Middleware in Go | ✅ |
 | Day 23 | Password Hashing | ✅ |
-| Day 24 | Role-Based Authorization | ⏳ |
+| Day 24 | Role-Based Authorization | ✅ |
 | Day 25 | Environment Variables | ⏳ |
 | Day 26 | Clean Architecture | ⏳ |
 | Day 27 | Repository Pattern | ⏳ |
@@ -11757,4 +11757,286 @@ Today I learned:
 ✅ Day 21 Completed  
 ✅ Day 22 Completed  
 ✅ Day 23 Completed  
-🚀 Next: Role-Based Authorization in Go
+✅ Day 24 Completed  
+🚀 Next: Environment Variables in Go
+
+---
+
+# ✅ Day 24 — Role-Based Authorization in Go
+
+---
+
+# 📖 Introduction to Role-Based Authorization (RBAC)
+
+Role-Based Access Control (RBAC) is an authorization paradigm where system permissions are grouped into **Roles** (e.g., `admin`, `manager`, `user`), and users are assigned one or more roles. Instead of checking individual user IDs for permissions, application endpoints restrict access based on the authenticated user's role.
+
+### 🔑 Key Authorization Concepts:
+- **Authentication vs Authorization**: Authentication answers *"Who are you?"* (e.g. login with password/JWT). Authorization answers *"What are you allowed to do?"* (e.g. RBAC middleware).
+- **JWT Role Claims**: Embedding user roles directly within signed JWT payload claims allows backend APIs to perform stateless authorization checks without querying the database on every request.
+- **Middleware-Based Guards**: Protecting API routes by chaining JWT authentication middleware and Role authorization middleware in web frameworks like **Gin**.
+
+---
+
+# 📖 What You Will Learn
+
+- Concept of Role-Based Access Control (RBAC) in API design
+- Embedding role claims into JSON Web Tokens (JWT) using `golang-jwt/jwt/v5`
+- Creating custom Gin authorization middleware `AuthorizeRole(allowedRoles ...string)`
+- Protecting route groups by user roles (`/admin`, `/manager`, `/user`)
+- Enforcing HTTP 401 Unauthorized vs HTTP 403 Forbidden responses
+- Day 24 Technical Interview Questions & Answers
+
+---
+
+# 📌 Standalone Role-Based Authorization Example in Go
+
+```go
+package main
+
+import (
+	"fmt"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
+)
+
+const (
+	RoleAdmin   = "admin"
+	RoleManager = "manager"
+	RoleUser    = "user"
+)
+
+type Claims struct {
+	Username string `json:"username"`
+	Role     string `json:"role"`
+	jwt.RegisteredClaims
+}
+
+var jwtSecretKey = []byte("super-secret-rbac-key")
+
+func GenerateJWT(username, role string) (string, error) {
+	claims := &Claims{
+		Username: username,
+		Role:     role,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(1 * time.Hour)),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(jwtSecretKey)
+}
+
+func ValidateJWT(tokenStr string) (*Claims, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtSecretKey, nil
+	})
+	if err != nil || !token.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+	return claims, nil
+}
+
+func CheckPermission(userRole string, allowedRoles []string) bool {
+	for _, r := range allowedRoles {
+		if userRole == r {
+			return true
+		}
+	}
+	return false
+}
+
+func main() {
+	token, _ := GenerateJWT("alice", RoleAdmin)
+	claims, _ := ValidateJWT(token)
+
+	if CheckPermission(claims.Role, []string{RoleAdmin}) {
+		fmt.Println("Access granted to Admin Settings!")
+	}
+}
+```
+
+---
+
+# 📌 Role-Based Authorization API with Gin and JWT Middleware
+
+```go
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+)
+
+var secretKey = []byte("rbac-secret")
+
+type Claims struct {
+	Username string `json:"username"`
+	Role     string `json:"role"`
+	jwt.RegisteredClaims
+}
+
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header required"})
+			c.Abort()
+			return
+		}
+
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid header format"})
+			c.Abort()
+			return
+		}
+
+		claims := &Claims{}
+		token, err := jwt.ParseWithClaims(parts[1], claims, func(t *jwt.Token) (interface{}, error) {
+			return secretKey, nil
+		})
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
+			c.Abort()
+			return
+		}
+
+		c.Set("username", claims.Username)
+		c.Set("role", claims.Role)
+		c.Next()
+	}
+}
+
+func AuthorizeRole(allowedRoles ...string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userRole, exists := c.Get("role")
+		if !exists {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Role not found in context"})
+			c.Abort()
+			return
+		}
+
+		roleStr := userRole.(string)
+		for _, role := range allowedRoles {
+			if roleStr == role {
+				c.Next()
+				return
+			}
+		}
+
+		c.JSON(http.StatusForbidden, gin.H{"error": "Access denied: insufficient privileges"})
+		c.Abort()
+	}
+}
+
+func main() {
+	router := gin.Default()
+
+	// Public Route
+	router.GET("/public", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"message": "Public access"})
+	})
+
+	// User Routes (user, manager, admin)
+	userRoutes := router.Group("/user")
+	userRoutes.Use(AuthMiddleware(), AuthorizeRole("user", "manager", "admin"))
+	{
+		userRoutes.GET("/profile", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{"message": "User profile data"})
+		})
+	}
+
+	// Admin Routes (admin only)
+	adminRoutes := router.Group("/admin")
+	adminRoutes.Use(AuthMiddleware(), AuthorizeRole("admin"))
+	{
+		adminRoutes.GET("/settings", func(c *gin.Context) {
+			c.JSON(http.StatusOK, gin.H{"message": "Admin settings data"})
+		})
+	}
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📘 Day 24 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is the difference between Authentication and Authorization?
+
+### ✅ Answer:
+- **Authentication (AuthN)** is the process of verifying *who a user is* (e.g. checking credentials like username/password or validating a JWT signature).
+- **Authorization (AuthZ)** is the process of verifying *what permissions an authenticated user has* (e.g. checking if a user with role `user` can access `/admin/settings`).
+
+---
+
+## ❓ Q2: What is the difference between 401 Unauthorized and 403 Forbidden?
+
+### ✅ Answer:
+- **`401 Unauthorized`**: Indicates that the client has not authenticated (missing or invalid credentials/token).
+- **`403 Forbidden`**: Indicates that the client is authenticated, but does *not* have sufficient permissions to access the requested resource.
+
+---
+
+## ❓ Q3: What is RBAC vs ABAC?
+
+### ✅ Answer:
+- **RBAC (Role-Based Access Control)** assigns permissions to predefined roles (e.g., `admin`, `user`). Access is checked against the user's assigned role.
+- **ABAC (Attribute-Based Access Control)** dynamically determines access based on attributes of the user, resource, environment, and action (e.g., allow user access to document X only if department matches and time is between 9 AM - 5 PM).
+
+---
+
+## ❓ Q4: Why embed roles inside JWT claims in microservices?
+
+### ✅ Answer:
+Embedding roles in JWT claims enables **stateless authorization**. Downstream microservices can verify the JWT signature and extract the user's role directly from the token without needing to query a central database or authentication server for every incoming request.
+
+---
+
+# 📚 Day 24 Summary
+
+Today I learned:
+- Difference between Authentication and Authorization
+- Concepts of Role-Based Access Control (RBAC) in Go APIs
+- Embedding and parsing custom role claims in JWT (`golang-jwt/jwt/v5`)
+- Building custom role authorization middleware (`AuthorizeRole`) in Gin
+- Protecting endpoints using Gin route groups and multi-role guards
+- Proper HTTP status codes (`401 Unauthorized` vs `403 Forbidden`)
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+🚀 Next: Environment Variables in Go
