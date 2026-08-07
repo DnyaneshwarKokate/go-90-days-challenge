@@ -87,7 +87,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 20 | GORM in Go | ✅ |
 | Day 21 | JWT Authentication | ✅ |
 | Day 22 | Middleware in Go | ✅ |
-| Day 23 | Password Hashing | ⏳ |
+| Day 23 | Password Hashing | ✅ |
 | Day 24 | Role-Based Authorization | ⏳ |
 | Day 25 | Environment Variables | ⏳ |
 | Day 26 | Clean Architecture | ⏳ |
@@ -11522,4 +11522,239 @@ Today I learned:
 ✅ Day 20 Completed  
 ✅ Day 21 Completed  
 ✅ Day 22 Completed  
-🚀 Next: Password Hashing in Go
+✅ Day 23 Completed  
+🚀 Next: Role-Based Authorization in Go
+
+---
+
+# ✅ Day 23 — Password Hashing in Go
+
+---
+
+# 📖 Introduction to Password Hashing
+
+Storing plain text passwords in a database is a critical security vulnerability. If a database leak occurs, user accounts across multiple services become compromised.
+
+To secure user authentication, passwords must be securely hashed using a cryptographic key derivation function such as **Bcrypt** (`golang.org/x/crypto/bcrypt`).
+
+### 🔒 Key Security Concepts:
+- **Hashing vs Encryption**: Encryption is two-way (reversible with a key); Hashing is one-way (irreversible).
+- **Salting**: Automatically adding random data to the password before hashing to prevent Rainbow Table attacks.
+- **Work Factor (Cost)**: Adjusts computational complexity to slow down brute-force attacks.
+
+---
+
+# 📖 What You Will Learn
+
+- Why plain text passwords should never be stored
+- Difference between Hashing & Encryption
+- Using `golang.org/x/crypto/bcrypt` in Go
+- Generating password hashes with `bcrypt.GenerateFromPassword()`
+- Verifying passwords using `bcrypt.CompareHashAndPassword()`
+- Building a Secure User Registration & Login REST API with Gin
+- Day 23 Interview Questions & Answers
+
+---
+
+# 📌 Password Hashing Helper Functions in Go
+
+```go
+package main
+
+import (
+	"fmt"
+	"log"
+
+	"golang.org/x/crypto/bcrypt"
+)
+
+// HashPassword generates a bcrypt hash from plain text password
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
+}
+
+// CheckPasswordHash compares plain text password with hashed password
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func main() {
+	password := "SuperSecret123"
+
+	// Generate Hash
+	hash, _ := HashPassword(password)
+	fmt.Println("Password:", password)
+	fmt.Println("Hash:    ", hash)
+
+	// Compare Correct Password
+	match := CheckPasswordHash("SuperSecret123", hash)
+	fmt.Println("Correct Password Match:", match) // true
+
+	// Compare Wrong Password
+	wrongMatch := CheckPasswordHash("WrongPass", hash)
+	fmt.Println("Wrong Password Match:  ", wrongMatch) // false
+}
+```
+
+---
+
+# 📌 User Registration & Login API with Gin and Bcrypt
+
+```go
+package main
+
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
+)
+
+type User struct {
+	ID       int    `json:"id"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+var users = make(map[string]User)
+
+func HashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	return string(bytes), err
+}
+
+func CheckPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func main() {
+	router := gin.Default()
+
+	// Register Route
+	router.POST("/register", func(c *gin.Context) {
+		var input struct {
+			Username string `json:"username" binding:"required"`
+			Password string `json:"password" binding:"required"`
+		}
+
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		hashedPassword, err := HashPassword(input.Password)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to hash password"})
+			return
+		}
+
+		users[input.Username] = User{
+			Username: input.Username,
+			Password: hashedPassword,
+		}
+
+		c.JSON(http.StatusCreated, gin.H{"message": "User registered successfully!"})
+	})
+
+	// Login Route
+	router.POST("/login", func(c *gin.Context) {
+		var input struct {
+			Username string `json:"username" binding:"required"`
+			Password string `json:"password" binding:"required"`
+		}
+
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		user, exists := users[input.Username]
+		if !exists || !CheckPasswordHash(input.Password, user.Password) {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": "Login successful!"})
+	})
+
+	router.Run(":8080")
+}
+```
+
+---
+
+# 📘 Day 23 Interview Questions & Answers
+
+---
+
+## ❓ Q1: Why should you use Bcrypt instead of MD5 or SHA256 for passwords?
+
+### ✅ Answer:
+MD5 and SHA256 are fast general-purpose cryptographic hash functions. Because they are fast, attackers can run billions of guesses per second using GPUs or precomputed Rainbow Tables. **Bcrypt** is an adaptive key derivation algorithm specifically designed for passwords; it includes automatic salting and configurable work factor (cost) to slow down brute-force and dictionary attacks.
+
+---
+
+## ❓ Q2: What is "Salt" in password hashing?
+
+### ✅ Answer:
+A salt is a unique, randomly generated byte sequence appended to a password before hashing. It ensures that two users with identical passwords end up with completely different hash strings, preventing Rainbow Table attacks. In Bcrypt, the salt is generated automatically and embedded directly within the output hash string.
+
+---
+
+## ❓ Q3: What is the Cost Factor in Bcrypt?
+
+### ✅ Answer:
+The Cost Factor determines how many iteration rounds ($2^{cost}$) the hashing algorithm performs. Increasing the cost exponentially increases the time required to hash a password, allowing developers to scale password verification times as hardware speed increases over time.
+
+---
+
+## ❓ Q4: How do you verify a password against a stored Bcrypt hash in Go?
+
+### ✅ Answer:
+Using `bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(plainPassword))`. It returns `nil` if the password matches the hash, or an `error` if they do not match.
+
+---
+
+# 📚 Day 23 Summary
+
+Today I learned:
+- Importance of secure password hashing in backend development
+- Differences between Encryption, Hashing, and Salting
+- Using `golang.org/x/crypto/bcrypt` in Go
+- Password hashing with `bcrypt.GenerateFromPassword()`
+- Password verification with `bcrypt.CompareHashAndPassword()`
+- Integrating password hashing into Gin User Registration & Login endpoints
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+🚀 Next: Role-Based Authorization in Go
