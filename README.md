@@ -90,7 +90,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 23 | Password Hashing | ✅ |
 | Day 24 | Role-Based Authorization | ✅ |
 | Day 25 | Environment Variables | ✅ |
-| Day 26 | Clean Architecture | ⏳ |
+| Day 26 | Clean Architecture | ✅ |
 | Day 27 | Repository Pattern | ⏳ |
 | Day 28 | Dependency Injection | ⏳ |
 | Day 29 | Logging System | ⏳ |
@@ -12253,4 +12253,291 @@ Today I learned:
 ✅ Day 23 Completed  
 ✅ Day 24 Completed  
 ✅ Day 25 Completed  
-🚀 Next: Clean Architecture in Go
+✅ Day 26 Completed  
+🚀 Next: Repository Pattern in Go
+
+---
+
+# ✅ Day 26 — Clean Architecture in Go
+
+---
+
+# 📖 Introduction to Clean Architecture in Go
+
+Clean Architecture (advocated by Robert C. Martin / Uncle Bob) is a software design pattern aimed at creating applications with high maintainability, testability, and independence from external frameworks, databases, or UI libraries.
+
+### 🏗️ Layer Responsibilities in Go:
+
+1. **Domain Layer (`domain/`)**: The innermost layer. Contains pure enterprise entities, data structures, and contract interfaces (`UserRepository`, `UserUseCase`). Has zero external dependencies.
+2. **Use Case Layer (`usecase/`)**: Implements business rules and workflows. Depends only on domain interfaces and entities.
+3. **Repository Layer (`repository/`)**: Handles database persistence (PostgreSQL, GORM, or In-Memory). Implements `domain.UserRepository`.
+4. **Delivery/Handler Layer (`handler/`)**: Handles web transport details (Gin, HTTP routes, JSON parsing, DTO binding). Implements HTTP handlers.
+
+```text
+       +---------------------------------------------+
+       |         Delivery / Handler Layer            |
+       |       (Gin REST API / Controllers)          |
+       +---------------------------------------------+
+                              |
+                              v
+       +---------------------------------------------+
+       |          Use Case / Service Layer           |
+       |            (Business Logic)                 |
+       +---------------------------------------------+
+                              |
+                              v
+       +---------------------------------------------+
+       |           Domain / Entity Layer             |
+       |     (Structs & Interface Contracts)         |
+       +---------------------------------------------+
+                              ^
+                              |
+       +---------------------------------------------+
+       |          Repository / Data Layer            |
+       |       (PostgreSQL / GORM / In-Memory)       |
+       +---------------------------------------------+
+```
+
+---
+
+# 📖 What You Will Learn
+
+- Principles of Clean Architecture and Dependency Inversion in Go
+- Organizing Go packages by layer (`domain`, `repository`, `usecase`, `handler`)
+- Defining interface contracts in the domain layer
+- Implementing dependency injection across layers
+- Decoupling business logic from web frameworks (Gin) and data storage
+- Day 26 Technical Interview Questions & Answers
+
+---
+
+# 📌 Code Walkthrough: Clean Architecture Implementation
+
+### 1. Domain Layer (`domain/user.go`)
+```go
+package domain
+
+import "errors"
+
+type User struct {
+	ID    int    `json:"id"`
+	Name  string `json:"name"`
+	Email string `json:"email"`
+	Role  string `json:"role"`
+}
+
+var (
+	ErrUserNotFound      = errors.New("user not found")
+	ErrUserAlreadyExists = errors.New("user with this email already exists")
+)
+
+type UserRepository interface {
+	Create(user *User) (*User, error)
+	GetByID(id int) (*User, error)
+	GetByEmail(email string) (*User, error)
+	GetAll() ([]User, error)
+}
+
+type UserUseCase interface {
+	RegisterUser(name, email, role string) (*User, error)
+	GetUserByID(id int) (*User, error)
+	ListUsers() ([]User, error)
+}
+```
+
+### 2. Repository Layer (`repository/user_repository.go`)
+```go
+package repository
+
+import (
+	"sync"
+	"day-26/domain"
+)
+
+type inMemoryUserRepository struct {
+	mu     sync.RWMutex
+	users  map[int]domain.User
+	nextID int
+}
+
+func NewInMemoryUserRepository() domain.UserRepository {
+	return &inMemoryUserRepository{
+		users:  make(map[int]domain.User),
+		nextID: 1,
+	}
+}
+
+func (r *inMemoryUserRepository) Create(user *domain.User) (*domain.User, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	user.ID = r.nextID
+	r.users[user.ID] = *user
+	r.nextID++
+	return user, nil
+}
+
+func (r *inMemoryUserRepository) GetByID(id int) (*domain.User, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	u, ok := r.users[id]
+	if !ok {
+		return nil, domain.ErrUserNotFound
+	}
+	return &u, nil
+}
+
+func (r *inMemoryUserRepository) GetByEmail(email string) (*domain.User, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	for _, u := range r.users {
+		if u.Email == email {
+			return &u, nil
+		}
+	}
+	return nil, nil
+}
+
+func (r *r *inMemoryUserRepository) GetAll() ([]domain.User, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	list := make([]domain.User, 0, len(r.users))
+	for _, u := range r.users {
+		list = append(list, u)
+	}
+	return list, nil
+}
+```
+
+### 3. Use Case Layer (`usecase/user_usecase.go`)
+```go
+package usecase
+
+import "day-26/domain"
+
+type userUseCase struct {
+	userRepo domain.UserRepository
+}
+
+func NewUserUseCase(repo domain.UserRepository) domain.UserUseCase {
+	return &userUseCase{userRepo: repo}
+}
+
+func (u *userUseCase) RegisterUser(name, email, role string) (*domain.User, error) {
+	existing, _ := u.userRepo.GetByEmail(email)
+	if existing != nil {
+		return nil, domain.ErrUserAlreadyExists
+	}
+	newUser := &domain.User{Name: name, Email: email, Role: role}
+	return u.userRepo.Create(newUser)
+}
+
+func (u *userUseCase) GetUserByID(id int) (*domain.User, error) {
+	return u.userRepo.GetByID(id)
+}
+
+func (u *userUseCase) ListUsers() ([]domain.User, error) {
+	return u.userRepo.GetAll()
+}
+```
+
+### 4. Main Entry Point (`main.go`)
+```go
+package main
+
+import (
+	"day-26/handler"
+	"day-26/repository"
+	"day-26/usecase"
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	repo := repository.NewInMemoryUserRepository()
+	useCase := usecase.NewUserUseCase(repo)
+	userHandler := handler.NewUserHandler(useCase)
+
+	router := gin.Default()
+	api := router.Group("/api/v1")
+	{
+		api.POST("/users", userHandler.RegisterUser)
+		api.GET("/users", userHandler.ListUsers)
+		api.GET("/users/:id", userHandler.GetUserByID)
+	}
+
+	router.Run(":8086")
+}
+```
+
+---
+
+# 📘 Day 26 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is the primary benefit of Clean Architecture in backend development?
+
+### ✅ Answer:
+The primary benefit is **Separation of Concerns and Testability**. By isolating core business logic (Use Cases) from external frameworks (Gin) and storage mechanisms (PostgreSQL, Redis), developers can write unit tests for business logic without mocking HTTP request objects or spinning up real database instances.
+
+---
+
+## ❓ Q2: What is the Dependency Inversion Principle (DIP) and how is it used in Go Clean Architecture?
+
+### ✅ Answer:
+Dependency Inversion states that high-level modules (Use Cases) should not depend on low-level modules (Database Repositories); both should depend on abstractions (Go Interfaces). In Go, interface contracts are defined in the `domain` layer. Use Cases accept interface dependencies rather than concrete struct implementations.
+
+---
+
+## ❓ Q3: How do you handle database transactions in Clean Architecture?
+
+### ✅ Answer:
+Database transactions can be managed by defining a `TxManager` or `UnitOfWork` interface in the `domain` layer. The Use Case initiates the transaction interface, passing the transaction context down to repository methods, ensuring atomic operations while keeping SQL/ORM logic out of the Use Case.
+
+---
+
+## ❓ Q4: Why shouldn't HTTP Handlers call Repository methods directly?
+
+### ✅ Answer:
+Bypassing Use Cases violates layer separation. HTTP Handlers should only handle transport concerns (JSON serialization, HTTP status codes) and delegate domain rules to Use Cases. Directly calling Repositories duplicates business validation logic across multiple handlers and makes testing difficult.
+
+---
+
+# 📚 Day 26 Summary
+
+Today I learned:
+- Core principles of Clean Architecture and layered design in Go
+- Decoupling domain entities, business logic (Use Cases), persistence (Repositories), and HTTP handlers
+- Using Go interfaces to satisfy Dependency Inversion
+- Assembling dependencies via constructor injection in `main.go`
+- Unit testing advantages provided by interface-based architecture
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+🚀 Next: Repository Pattern in Go
