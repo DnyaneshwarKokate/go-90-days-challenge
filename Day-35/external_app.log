@@ -1,0 +1,8 @@
+{"level":"info","ts":1786374325.819158,"caller":"Day-35/main.go:52","msg":"Mock External HTTP Server started","url":"http://127.0.0.1:62460"}
+{"level":"info","ts":1786374325.8199759,"caller":"client/http_client.go:53","msg":"HTTP GET request attempt","request_id":"c7cc6e88-b855-49de-bc30-1166bcffad88","url":"http://127.0.0.1:62460/users/101","attempt":1}
+{"level":"warn","ts":1786374325.821111,"caller":"client/http_client.go:93","msg":"HTTP server error status code, retrying...","request_id":"c7cc6e88-b855-49de-bc30-1166bcffad88","status":503,"attempt":1}
+{"level":"info","ts":1786374325.922197,"caller":"client/http_client.go:53","msg":"HTTP GET request attempt","request_id":"c7cc6e88-b855-49de-bc30-1166bcffad88","url":"http://127.0.0.1:62460/users/101","attempt":2}
+{"level":"warn","ts":1786374325.9229581,"caller":"client/http_client.go:93","msg":"HTTP server error status code, retrying...","request_id":"c7cc6e88-b855-49de-bc30-1166bcffad88","status":503,"attempt":2}
+{"level":"info","ts":1786374326.124109,"caller":"client/http_client.go:53","msg":"HTTP GET request attempt","request_id":"c7cc6e88-b855-49de-bc30-1166bcffad88","url":"http://127.0.0.1:62460/users/101","attempt":3}
+{"level":"info","ts":1786374326.125468,"caller":"client/http_client.go:85","msg":"HTTP GET request succeeded","request_id":"c7cc6e88-b855-49de-bc30-1166bcffad88","url":"http://127.0.0.1:62460/users/101","user_id":101}
+{"level":"info","ts":1786374326.1255429,"caller":"middleware/logger_middleware.go:50","msg":"HTTP Request Completed","request_id":"c7cc6e88-b855-49de-bc30-1166bcffad88","status":200,"method":"GET","path":"/api/v1/external/users/101","latency_ms":305}

@@ -1,0 +1,9 @@
+{"level":"info","ts":1786374251.4146729,"caller":"Day-34/main.go:36","msg":"Email Service starting","smtp_host":"smtp.example.com","mock_mode":true}
+{"level":"info","ts":1786374251.416229,"caller":"service/email_service.go:85","msg":"Sending email via SMTP","request_id":"06361baa-ae13-4c12-ad91-5fcb679e6dbb","to":"dnyaneshwar@example.com","subject":"Welcome to Go 90 Days Challenge!","is_mock":true}
+{"level":"info","ts":1786374251.416333,"caller":"service/email_service.go:88","msg":"MOCK SMTP: Email delivered successfully","request_id":"06361baa-ae13-4c12-ad91-5fcb679e6dbb","id":"62cb5fa5-8d19-4c98-8ac7-7294ad9c91e4","recipients":1}
+{"level":"info","ts":1786374251.416399,"caller":"middleware/logger_middleware.go:50","msg":"HTTP Request Completed","request_id":"06361baa-ae13-4c12-ad91-5fcb679e6dbb","status":200,"method":"POST","path":"/api/v1/email/send","latency_ms":0}
+{"level":"info","ts":1786374251.416515,"caller":"service/email_service.go:110","msg":"Enqueuing email for background delivery","request_id":"34bdcbd6-4584-46e6-8bda-b232969b9d91","job_id":"2c628a9f-ac1d-40aa-a89b-dd1f8567c006","to":"rahul@example.com"}
+{"level":"info","ts":1786374251.416542,"caller":"middleware/logger_middleware.go:50","msg":"HTTP Request Completed","request_id":"34bdcbd6-4584-46e6-8bda-b232969b9d91","status":202,"method":"POST","path":"/api/v1/email/queue","latency_ms":0}
+{"level":"info","ts":1786374251.4165719,"caller":"service/email_service.go:85","msg":"Sending email via SMTP","to":"rahul@example.com","subject":"Your Order #9090 has been confirmed","is_mock":true}
+{"level":"info","ts":1786374251.4168909,"caller":"service/email_service.go:88","msg":"MOCK SMTP: Email delivered successfully","id":"2c628a9f-ac1d-40aa-a89b-dd1f8567c006","recipients":1}
+{"level":"info","ts":1786374251.417135,"caller":"service/email_service.go:122","msg":"Background worker email delivered","job_id":"2c628a9f-ac1d-40aa-a89b-dd1f8567c006"}

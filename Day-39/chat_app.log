@@ -1,0 +1,7 @@
+{"level":"info","ts":1786374703.929339,"caller":"Day-39/main.go:35","msg":"Real-Time Chat Hub initializing"}
+{"level":"info","ts":1786374703.931193,"caller":"middleware/logger_middleware.go:50","msg":"HTTP Request Completed","request_id":"78cc6f63-8de9-4c9a-a435-edaaa42811c6","status":200,"method":"GET","path":"/ws/chat","latency_ms":0}
+{"level":"info","ts":1786374703.931194,"caller":"hub/chat_hub.go:68","msg":"Client joined chat room","username":"Alice","room":"go-devs"}
+{"level":"info","ts":1786374703.933016,"caller":"middleware/logger_middleware.go:50","msg":"HTTP Request Completed","request_id":"312f3777-f3ac-4c7d-8cb2-bb982ef1cfa6","status":200,"method":"GET","path":"/ws/chat","latency_ms":0}
+{"level":"info","ts":1786374703.933038,"caller":"hub/chat_hub.go:68","msg":"Client joined chat room","username":"Bob","room":"go-devs"}
+{"level":"info","ts":1786374704.134815,"caller":"hub/chat_hub.go:90","msg":"Client left chat room","username":"Bob","room":"go-devs"}
+{"level":"info","ts":1786374704.1350558,"caller":"hub/chat_hub.go:90","msg":"Client left chat room","username":"Alice","room":"go-devs"}

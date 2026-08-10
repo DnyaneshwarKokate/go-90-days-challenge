@@ -1,0 +1,3 @@
+{"level":"warn","ts":1786374795.833972,"caller":"middleware/rate_limiter.go:92","msg":"🚫 RATE LIMIT EXCEEDED","request_id":"a95ef328-1141-4157-8abe-328b2d706406","ip":"192.168.1.50","path":"/api/v1/resource"}
+{"level":"warn","ts":1786374795.834316,"caller":"middleware/rate_limiter.go:92","msg":"🚫 RATE LIMIT EXCEEDED","request_id":"09e1b256-9a61-439f-af28-f1a230c45eea","ip":"192.168.1.50","path":"/api/v1/resource"}
+{"level":"warn","ts":1786374795.834383,"caller":"middleware/rate_limiter.go:92","msg":"🚫 RATE LIMIT EXCEEDED","request_id":"434ac736-8c8a-4ed6-b375-5008a8feb3a0","ip":"192.168.1.50","path":"/api/v1/resource"}

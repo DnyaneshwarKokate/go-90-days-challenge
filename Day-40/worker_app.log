@@ -1,0 +1,14 @@
+{"level":"info","ts":1786374753.340085,"caller":"pool/worker_pool.go:30","msg":"Starting Worker Pool","worker_count":4}
+{"level":"info","ts":1786374753.3406332,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":3,"task_id":1,"job_type":"IMAGE_RESIZE"}
+{"level":"info","ts":1786374753.340686,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":2,"task_id":2,"job_type":"PDF_GENERATE"}
+{"level":"info","ts":1786374753.340708,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":4,"task_id":3,"job_type":"IMAGE_RESIZE"}
+{"level":"info","ts":1786374753.340744,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":1,"task_id":4,"job_type":"PDF_GENERATE"}
+{"level":"info","ts":1786374753.391735,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":2,"task_id":6,"job_type":"PDF_GENERATE"}
+{"level":"info","ts":1786374753.391721,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":1,"task_id":5,"job_type":"IMAGE_RESIZE"}
+{"level":"info","ts":1786374753.3917398,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":3,"task_id":8,"job_type":"PDF_GENERATE"}
+{"level":"info","ts":1786374753.391737,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":4,"task_id":7,"job_type":"IMAGE_RESIZE"}
+{"level":"info","ts":1786374753.442828,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":4,"task_id":9,"job_type":"IMAGE_RESIZE"}
+{"level":"info","ts":1786374753.442867,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":3,"task_id":12,"job_type":"PDF_GENERATE"}
+{"level":"info","ts":1786374753.442867,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":2,"task_id":11,"job_type":"IMAGE_RESIZE"}
+{"level":"info","ts":1786374753.442842,"caller":"pool/worker_pool.go:63","msg":"Worker processing task","worker_id":1,"task_id":10,"job_type":"PDF_GENERATE"}
+{"level":"info","ts":1786374753.494038,"caller":"pool/worker_pool.go:41","msg":"All workers completed, results channel closed"}

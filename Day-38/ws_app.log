@@ -1,0 +1,5 @@
+{"level":"info","ts":1786374633.640602,"caller":"Day-38/main.go:34","msg":"WebSocket Server initializing"}
+{"level":"info","ts":1786374633.642316,"caller":"handler/ws_handler.go:28","msg":"WebSocket connection established","request_id":"b2707903-91a2-464e-bf1a-d878130d2d91","client_id":"fa4cbe57"}
+{"level":"info","ts":1786374633.6426501,"caller":"ws/connection.go:72","msg":"WebSocket received message","request_id":"b2707903-91a2-464e-bf1a-d878130d2d91","client_id":"fa4cbe57","content":"Hello Go 90 Days WebSocket Server!"}
+{"level":"info","ts":1786374633.844075,"caller":"ws/connection.go:44","msg":"WebSocket client connection closed","request_id":"b2707903-91a2-464e-bf1a-d878130d2d91","client_id":"fa4cbe57"}
+{"level":"info","ts":1786374633.844165,"caller":"middleware/logger_middleware.go:50","msg":"HTTP Request Completed","request_id":"b2707903-91a2-464e-bf1a-d878130d2d91","status":200,"method":"GET","path":"/ws","latency_ms":201}

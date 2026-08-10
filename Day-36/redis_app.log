@@ -1,0 +1,10 @@
+{"level":"info","ts":1786374433.184127,"caller":"Day-36/main.go:35","msg":"Redis Service initializing","target_host":"localhost:6379"}
+{"level":"info","ts":1786374433.188577,"caller":"redis/redis_client.go:38","msg":"Connected to Redis server successfully","addr":"localhost:6379"}
+{"level":"info","ts":1786374433.188853,"caller":"redis/redis_client.go:52","msg":"Redis SET operation","request_id":"3ccb11c5-5598-4ad2-beda-a9f45950af88","key":"session:usr_99","ttl":300}
+{"level":"info","ts":1786374433.189106,"caller":"middleware/logger_middleware.go:50","msg":"HTTP Request Completed","request_id":"3ccb11c5-5598-4ad2-beda-a9f45950af88","status":200,"method":"POST","path":"/api/v1/redis/set","latency_ms":0}
+{"level":"info","ts":1786374433.189472,"caller":"redis/redis_client.go:63","msg":"Redis GET operation","request_id":"9fe054c1-6d85-4a2d-b8c4-d3ca15111b46","key":"session:usr_99"}
+{"level":"info","ts":1786374433.1899168,"caller":"middleware/logger_middleware.go:50","msg":"HTTP Request Completed","request_id":"9fe054c1-6d85-4a2d-b8c4-d3ca15111b46","status":200,"method":"GET","path":"/api/v1/redis/get/session:usr_99","latency_ms":0}
+{"level":"info","ts":1786374433.190037,"caller":"redis/redis_client.go:81","msg":"Redis HSET operation","request_id":"5c63c482-18a7-4170-b0d3-50c4a9a46fe7","key":"user:101","field_count":3}
+{"level":"info","ts":1786374433.1903949,"caller":"middleware/logger_middleware.go:50","msg":"HTTP Request Completed","request_id":"5c63c482-18a7-4170-b0d3-50c4a9a46fe7","status":200,"method":"POST","path":"/api/v1/redis/hset","latency_ms":0}
+{"level":"info","ts":1786374433.190429,"caller":"redis/redis_client.go:100","msg":"Redis HGETALL operation","request_id":"8a733876-da3a-4002-aaf8-b9a491f3be5a","key":"user:101"}
+{"level":"info","ts":1786374433.1905868,"caller":"middleware/logger_middleware.go:50","msg":"HTTP Request Completed","request_id":"8a733876-da3a-4002-aaf8-b9a491f3be5a","status":200,"method":"GET","path":"/api/v1/redis/hgetall/user:101","latency_ms":0}
