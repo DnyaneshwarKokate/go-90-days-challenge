@@ -95,7 +95,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 28 | Dependency Injection | ✅ |
 | Day 29 | Logging System | ✅ |
 | Day 30 | Student Management REST API Project | ✅ |
-| Day 31 | Advanced CRUD APIs | ⏳ |
+| Day 31 | Advanced CRUD APIs | ✅ |
 | Day 32 | Pagination & Filtering | ⏳ |
 | Day 33 | File Upload API | ⏳ |
 | Day 34 | Email Sending in Go | ⏳ |
@@ -15083,4 +15083,570 @@ Today I completed the **Day 30 Student Management REST API Milestone Project**:
 ✅ Day 28 Completed  
 ✅ Day 29 Completed  
 ✅ Day 30 Completed  
-🚀 Next: Advanced CRUD APIs in Go
+✅ Day 31 Completed  
+🚀 Next: Pagination & Filtering in Go
+
+---
+
+# ✅ Day 31 — Advanced CRUD APIs in Go
+
+---
+
+# 📖 Introduction to Advanced CRUD Patterns in Go
+
+In production backend engineering, basic CRUD operations (`CREATE`, `READ`, `UPDATE`, `DELETE`) are insufficient for high-volume enterprise systems. **Advanced CRUD APIs** handle complex scenarios such as partial resource updates, bulk processing, record soft deletion, and concurrency control.
+
+### Key Concepts & Design Patterns
+
+1. **Partial Updates (`PATCH` vs `PUT`)**:
+   - `PUT`: Requires replacing the entire resource payload. If a field is omitted, it will be wiped or set to zero values.
+   - `PATCH`: Modifies only the explicitly supplied fields (represented using pointer types in Go structs, e.g. `*string`, `*float64`), leaving all other resource attributes untouched.
+
+2. **Bulk / Batch Operations (`POST /bulk`, `POST /bulk-delete`)**:
+   - Instead of triggering hundreds of separate HTTP requests to insert or delete records individually, bulk endpoints process slices of items (`[]Item`) in a single database transaction/batch call.
+
+3. **Soft Deletion & Restoration**:
+   - Deleting database rows permanently (`HARD DELETE`) can cause accidental data loss and break foreign key integrity.
+   - `SOFT DELETE` sets an `is_deleted = true` flag and populates a `deleted_at` timestamp. Standard queries filter out deleted rows, while a `POST /:id/restore` endpoint allows restoring soft-deleted records.
+
+4. **Optimistic Concurrency Control (OCC)**:
+   - When multiple users attempt to update the same record simultaneously, a **Lost Update** anomaly can occur.
+   - OCC assigns a `Version` (or `ETag`) counter to each record. Updating a record requires passing the expected version (via `If-Match` header or JSON body). If `CurrentVersion != ExpectedVersion`, the API rejects the write with a `409 Conflict` status code.
+
+---
+
+# 🏗️ Architecture & Component Flow
+
+```text
+  +---------------------------------------------------------------------------------+
+  |                       Client / API Consumer (Postman / HTTP)                    |
+  +---------------------------------------------------------------------------------+
+                                           |
+                   Header: X-Request-ID & Optional If-Match: <version>
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                 RequestIDMiddleware & StructuredLoggerMiddleware                |
+  |             Attaches X-Request-ID -> Context & Audits HTTP Execution            |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                       HTTP Handlers (handler/product_handler.go)                |
+  |     Binds JSON (Create / Bulk / Patch) -> Extracts If-Match Concurrency Header    |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                     Business UseCase Layer (usecase/product_usecase.go)         |
+  |     Enforces Non-Nil Field Merging, SKU Uniqueness, Soft Delete & Restoration   |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                    Repository Layer (repository/product_repository.go)           |
+  |   Verifies Version Match (Returns 409 on Mismatch), Mutates State, Increments Ver|
+  +---------------------------------------------------------------------------------+
+```
+
+---
+
+# ⚡ Endpoint Matrix
+
+| Method | Endpoint | Description | Status Code | Notes |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/products` | Create Single Product | `201 Created` | Sets initial `Version = 1` |
+| `POST` | `/api/v1/products/bulk` | Bulk Insert Products | `201 Created` | Atomically inserts multiple products |
+| `GET` | `/api/v1/products` | List Products | `200 OK` | Excludes soft deleted (`?include_deleted=true`) |
+| `GET` | `/api/v1/products/:id` | Fetch Product by ID | `200 OK` / `404 Not Found` | Returns ETag header with `Version` |
+| `PATCH` | `/api/v1/products/:id` | Partial Update Product | `200 OK` / `409 Conflict` | Validates `If-Match` or `expected_version` |
+| `POST` | `/api/v1/products/:id/restore` | Restore Soft-Deleted Product | `200 OK` | Resets `is_deleted = false` |
+| `DELETE` | `/api/v1/products/:id` | Soft Delete Product | `200 OK` | Sets `is_deleted = true`, populates `deleted_at` |
+| `POST` | `/api/v1/products/bulk-delete` | Bulk Soft Delete | `200 OK` | Marks multiple IDs as soft-deleted |
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 31 Project
+
+### 1. Domain Entities & Concurrency Errors (`domain/product.go`)
+
+```go
+package domain
+
+import (
+	"context"
+	"errors"
+	"time"
+)
+
+type ContextKey string
+
+const (
+	RequestIDKey ContextKey = "X-Request-ID"
+)
+
+var (
+	ErrProductNotFound     = errors.New("product record not found")
+	ErrSKUExists           = errors.New("product SKU already exists")
+	ErrAlreadyDeleted      = errors.New("product is already soft deleted")
+	ErrNotDeleted          = errors.New("product is not deleted")
+	ErrConcurrencyConflict = errors.New("concurrency conflict: record was modified by another request")
+	ErrInvalidInput        = errors.New("invalid request input parameters")
+	ErrEmptyBulkRequest    = errors.New("bulk payload cannot be empty")
+)
+
+type Product struct {
+	ID        string     `json:"id"`
+	SKU       string     `json:"sku"`
+	Name      string     `json:"name"`
+	Category  string     `json:"category"`
+	Price     float64    `json:"price"`
+	Stock     int        `json:"stock"`
+	Version   int        `json:"version"` // Optimistic Concurrency Control counter
+	IsDeleted bool       `json:"is_deleted"`
+	DeletedAt *time.Time `json:"deleted_at,omitempty"`
+	CreatedAt time.Time  `json:"created_at"`
+	UpdatedAt time.Time  `json:"updated_at"`
+}
+
+type CreateProductInput struct {
+	SKU      string  `json:"sku" binding:"required"`
+	Name     string  `json:"name" binding:"required"`
+	Category string  `json:"category" binding:"required"`
+	Price    float64 `json:"price" binding:"required,gt=0"`
+	Stock    int     `json:"stock" binding:"gte=0"`
+}
+
+type BulkCreateInput struct {
+	Items []CreateProductInput `json:"items" binding:"required,dive"`
+}
+
+type PatchProductInput struct {
+	Name            *string  `json:"name,omitempty"`
+	Category        *string  `json:"category,omitempty"`
+	Price           *float64 `json:"price,omitempty"`
+	Stock           *int     `json:"stock,omitempty"`
+	ExpectedVersion *int     `json:"expected_version,omitempty"`
+}
+
+type BulkDeleteInput struct {
+	IDs []string `json:"ids" binding:"required"`
+}
+
+type Logger interface {
+	Info(ctx context.Context, msg string, keysAndValues ...interface{})
+	Warn(ctx context.Context, msg string, keysAndValues ...interface{})
+	Error(ctx context.Context, msg string, keysAndValues ...interface{})
+	Debug(ctx context.Context, msg string, keysAndValues ...interface{})
+}
+
+type ProductRepository interface {
+	Save(ctx context.Context, product *Product) error
+	BulkSave(ctx context.Context, products []*Product) ([]*Product, error)
+	FindByID(ctx context.Context, id string, includeDeleted bool) (*Product, error)
+	FindBySKU(ctx context.Context, sku string) (*Product, error)
+	FindAll(ctx context.Context, includeDeleted bool) ([]*Product, error)
+	PatchUpdate(ctx context.Context, id string, input PatchProductInput) (*Product, error)
+	SoftDelete(ctx context.Context, id string) error
+	Restore(ctx context.Context, id string) (*Product, error)
+	BulkSoftDelete(ctx context.Context, ids []string) (int, error)
+}
+```
+
+---
+
+### 2. Repository with Optimistic Concurrency & Soft Delete (`repository/product_repository.go`)
+
+```go
+package repository
+
+import (
+	"context"
+	"strings"
+	"sync"
+	"time"
+
+	"day-31/domain"
+)
+
+type memoryProductRepository struct {
+	mu       sync.RWMutex
+	products map[string]*domain.Product
+	skus     map[string]string
+	logger   domain.Logger
+}
+
+func NewMemoryProductRepository(logger domain.Logger) domain.ProductRepository {
+	return &memoryProductRepository{
+		products: make(map[string]*domain.Product),
+		skus:     make(map[string]string),
+		logger:   logger,
+	}
+}
+
+func (r *memoryProductRepository) PatchUpdate(ctx context.Context, id string, input domain.PatchProductInput) (*domain.Product, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	product, exists := r.products[id]
+	if !exists || product.IsDeleted {
+		return nil, domain.ErrProductNotFound
+	}
+
+	if input.ExpectedVersion != nil {
+		if product.Version != *input.ExpectedVersion {
+			r.logger.Warn(ctx, "DB Concurrency Conflict detected", "product_id", id, "current_version", product.Version, "expected_version", *input.ExpectedVersion)
+			return nil, domain.ErrConcurrencyConflict
+		}
+	}
+
+	if input.Name != nil && strings.TrimSpace(*input.Name) != "" {
+		product.Name = strings.TrimSpace(*input.Name)
+	}
+	if input.Category != nil && strings.TrimSpace(*input.Category) != "" {
+		product.Category = strings.ToUpper(strings.TrimSpace(*input.Category))
+	}
+	if input.Price != nil && *input.Price > 0 {
+		product.Price = *input.Price
+	}
+	if input.Stock != nil && *input.Stock >= 0 {
+		product.Stock = *input.Stock
+	}
+
+	product.Version++
+	product.UpdatedAt = time.Now()
+
+	r.products[id] = product
+	r.logger.Info(ctx, "DB Product patched & version incremented", "product_id", id, "new_version", product.Version)
+	return product, nil
+}
+
+func (r *memoryProductRepository) SoftDelete(ctx context.Context, id string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	product, exists := r.products[id]
+	if !exists {
+		return domain.ErrProductNotFound
+	}
+	if product.IsDeleted {
+		return domain.ErrAlreadyDeleted
+	}
+
+	now := time.Now()
+	product.IsDeleted = true
+	product.DeletedAt = &now
+	product.UpdatedAt = now
+
+	r.products[id] = product
+	return nil
+}
+
+func (r *memoryProductRepository) Restore(ctx context.Context, id string) (*domain.Product, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	product, exists := r.products[id]
+	if !exists {
+		return nil, domain.ErrProductNotFound
+	}
+	if !product.IsDeleted {
+		return nil, domain.ErrNotDeleted
+	}
+
+	product.IsDeleted = false
+	product.DeletedAt = nil
+	product.UpdatedAt = time.Now()
+
+	r.products[id] = product
+	return product, nil
+}
+```
+
+---
+
+### 3. Business Use Case Layer (`usecase/product_usecase.go`)
+
+```go
+package usecase
+
+import (
+	"context"
+	"fmt"
+	"strings"
+	"time"
+
+	"day-31/domain"
+
+	"github.com/google/uuid"
+)
+
+type ProductUseCase struct {
+	repo   domain.ProductRepository
+	logger domain.Logger
+}
+
+func NewProductUseCase(repo domain.ProductRepository, logger domain.Logger) *ProductUseCase {
+	return &ProductUseCase{repo: repo, logger: logger}
+}
+
+func (u *ProductUseCase) CreateProduct(ctx context.Context, input domain.CreateProductInput) (*domain.Product, error) {
+	sku := strings.ToUpper(strings.TrimSpace(input.SKU))
+	existing, err := u.repo.FindBySKU(ctx, sku)
+	if err == nil && existing != nil {
+		return nil, domain.ErrSKUExists
+	}
+
+	now := time.Now()
+	product := &domain.Product{
+		ID:        fmt.Sprintf("prd_%s", uuid.New().String()[:8]),
+		SKU:       sku,
+		Name:      strings.TrimSpace(input.Name),
+		Category:  strings.ToUpper(strings.TrimSpace(input.Category)),
+		Price:     input.Price,
+		Stock:     input.Stock,
+		Version:   1,
+		IsDeleted: false,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+
+	if err := u.repo.Save(ctx, product); err != nil {
+		return nil, err
+	}
+	return product, nil
+}
+
+func (u *ProductUseCase) PatchUpdateProduct(ctx context.Context, id string, input domain.PatchProductInput) (*domain.Product, error) {
+	return u.repo.PatchUpdate(ctx, id, input)
+}
+```
+
+---
+
+### 4. Gin HTTP Handler (`handler/product_handler.go`)
+
+```go
+package handler
+
+import (
+	"net/http"
+	"strconv"
+
+	"day-31/domain"
+	"day-31/usecase"
+
+	"github.com/gin-gonic/gin"
+)
+
+type ProductHandler struct {
+	productUseCase *usecase.ProductUseCase
+	logger         domain.Logger
+}
+
+func NewProductHandler(productUseCase *usecase.ProductUseCase, logger domain.Logger) *ProductHandler {
+	return &ProductHandler{productUseCase: productUseCase, logger: logger}
+}
+
+func (h *ProductHandler) PatchUpdateProduct(c *gin.Context) {
+	id := c.Param("id")
+	var input domain.PatchProductInput
+
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload", "details": err.Error()})
+		return
+	}
+
+	if ifMatch := c.GetHeader("If-Match"); ifMatch != "" {
+		if ver, err := strconv.Atoi(ifMatch); err == nil {
+			input.ExpectedVersion = &ver
+		}
+	}
+
+	product, err := h.productUseCase.PatchUpdateProduct(c.Request.Context(), id, input)
+	if err != nil {
+		switch err {
+		case domain.ErrConcurrencyConflict:
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+		case domain.ErrProductNotFound:
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		}
+		return
+	}
+
+	c.Header("ETag", strconv.Itoa(product.Version))
+	c.JSON(http.StatusOK, gin.H{"message": "Product patched successfully", "data": product})
+}
+```
+
+---
+
+### 5. Integration Test Suite (`handler/product_handler_test.go`)
+
+```go
+package handler_test
+
+import (
+	"bytes"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"day-31/domain"
+	"day-31/handler"
+	"day-31/logger"
+	"day-31/middleware"
+	"day-31/repository"
+	"day-31/usecase"
+
+	"github.com/gin-gonic/gin"
+)
+
+func TestAdvancedCRUD_Lifecycle(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	zapLog, _ := logger.NewZapLogger("test", "")
+	productRepo := repository.NewMemoryProductRepository(zapLog)
+	productUC := usecase.NewProductUseCase(productRepo, zapLog)
+	productHandler := handler.NewProductHandler(productUC, zapLog)
+
+	router := gin.New()
+	router.Use(middleware.RequestIDMiddleware())
+	router.Use(middleware.StructuredLoggerMiddleware(zapLog))
+
+	v1 := router.Group("/api/v1/products")
+	{
+		v1.POST("", productHandler.CreateProduct)
+		v1.PATCH("/:id", productHandler.PatchUpdateProduct)
+		v1.DELETE("/:id", productHandler.SoftDeleteProduct)
+		v1.POST("/:id/restore", productHandler.RestoreProduct)
+	}
+
+	createInput := domain.CreateProductInput{
+		SKU:      "TEST-SKU-01",
+		Name:     "Test Keyboard",
+		Category: "PERIPHERALS",
+		Price:    89.99,
+		Stock:    20,
+	}
+	body, _ := json.Marshal(createInput)
+	req1, _ := http.NewRequest("POST", "/api/v1/products", bytes.NewBuffer(body))
+	req1.Header.Set("Content-Type", "application/json")
+	w1 := httptest.NewRecorder()
+	router.ServeHTTP(w1, req1)
+
+	var res1 map[string]interface{}
+	json.Unmarshal(w1.Body.Bytes(), &res1)
+	productData := res1["data"].(map[string]interface{})
+	productID := productData["id"].(string)
+
+	// Test Optimistic Concurrency Conflict (Stale Version)
+	staleVersion := 0
+	newPrice := 79.99
+	patchInputStale := domain.PatchProductInput{Price: &newPrice, ExpectedVersion: &staleVersion}
+	staleBody, _ := json.Marshal(patchInputStale)
+	req3, _ := http.NewRequest("PATCH", "/api/v1/products/"+productID, bytes.NewBuffer(staleBody))
+	req3.Header.Set("Content-Type", "application/json")
+	w3 := httptest.NewRecorder()
+	router.ServeHTTP(w3, req3)
+
+	if w3.Code != http.StatusConflict {
+		t.Errorf("expected status 403 Conflict on stale version, got %d", w3.Code)
+	}
+}
+```
+
+---
+
+# 📘 Day 31 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is the technical difference between `PUT` and `PATCH` in HTTP REST APIs, and how is `PATCH` implemented in Go?
+
+### ✅ Answer:
+- **`PUT`**: Is an idempotent replacement operation. The request payload must represent the full state of the resource. Any omitted fields are reset to their default zero values (`""`, `0`, `nil`).
+- **`PATCH`**: Applies a partial update. Only the fields present in the request body are modified.
+In Go, `PATCH` is implemented by defining DTO fields as **pointers** (e.g. `*string`, `*float64`). If a field is omitted in the JSON request, its pointer value is `nil` and the repository leaves that struct field untouched. If a field is provided, its pointer is non-nil and the value is updated.
+
+---
+
+## ❓ Q2: What is Optimistic Concurrency Control (OCC) and how does it prevent "Lost Updates" in REST APIs?
+
+### ✅ Answer:
+Optimistic Concurrency Control assumes database write conflicts are rare and avoids expensive pessimistic locks (e.g. `SELECT FOR UPDATE`).
+Each record maintains a `Version` counter (or `ETag`). When a client reads a resource, it receives `Version = N`. When submitting a `PATCH` or `PUT` request, the client supplies `ExpectedVersion = N` (or `If-Match: N`). The database query updates the record only `WHERE id = ID AND version = N`, incrementing `version = N + 1`. If another request updated the record first (`version = N + 1`), zero rows are updated, and the API returns `409 Conflict`.
+
+---
+
+## ❓ Q3: What is Soft Deletion and what are its performance and architectural trade-offs?
+
+### ✅ Answer:
+**Soft Deletion** retains the database row while marking `is_deleted = true` and setting `deleted_at = NOW()`.
+- **Pros**: Prevents accidental data loss, maintains audit history, preserves foreign key integrity, and allows simple restoration (`POST /restore`).
+- **Cons**: Database tables grow continuously over time, requiring all queries to include `WHERE is_deleted = false`. Unique constraints (e.g. unique `sku`) must be composite indexes (`sku, deleted_at`) to allow re-registering an SKU after soft deletion.
+
+---
+
+## ❓ Q4: How do Batch/Bulk API endpoints improve performance over individual CRUD requests?
+
+### ✅ Answer:
+Individual REST requests incur significant overhead: HTTP network round-trips, TLS handshakes, middleware execution, and separate database transactions (`BEGIN` ... `COMMIT`).
+Bulk API endpoints (e.g. `POST /api/v1/products/bulk`) accept an array of resources and execute multi-row batch inserts (`INSERT INTO products VALUES (...), (...)`) within a single database transaction. This reduces network latency and database log flush operations by orders of magnitude.
+
+---
+
+## ❓ Q5: How do you handle conditional requests using HTTP `ETag` and `If-Match` headers in Go REST handlers?
+
+### ✅ Answer:
+In the `GET` handler, the server returns the record's current version formatted as an `ETag` header (`ETag: "2"`).
+During subsequent `PATCH` or `PUT` requests, the client sends `If-Match: "2"`. The Gin handler extracts `c.GetHeader("If-Match")`, converts it to an integer `expected_version`, and passes it to the use case. If the database record version does not match, the handler responds with `409 Conflict` or `412 Precondition Failed`.
+
+---
+
+# 📚 Day 31 Summary
+
+Today I completed **Day 31 Advanced CRUD APIs in Go**:
+- Implemented **Partial Updates (`PATCH`)** using pointer DTO fields to update only supplied JSON properties.
+- Built **Bulk Operations (`POST /bulk`, `POST /bulk-delete`)** for batch creation and deletion.
+- Implemented **Soft Deletion & Restoration** (`is_deleted`, `deleted_at`, `POST /:id/restore`).
+- Implemented **Optimistic Concurrency Control (OCC)** using version counters and `If-Match` header validation returning `409 Conflict`.
+- Integrated Uber Zap structured logging and request ID correlation tracing.
+- Wrote integration unit tests verifying PATCH updates, OCC conflicts, and soft delete/restore lifecycles.
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+✅ Day 27 Completed  
+✅ Day 28 Completed  
+✅ Day 29 Completed  
+✅ Day 30 Completed  
+✅ Day 31 Completed  
+🚀 Next: Pagination & Filtering in Go
