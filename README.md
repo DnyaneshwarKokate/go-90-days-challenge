@@ -96,7 +96,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 29 | Logging System | ✅ |
 | Day 30 | Student Management REST API Project | ✅ |
 | Day 31 | Advanced CRUD APIs | ✅ |
-| Day 32 | Pagination & Filtering | ⏳ |
+| Day 32 | Pagination & Filtering | ✅ |
 | Day 33 | File Upload API | ⏳ |
 | Day 34 | Email Sending in Go | ⏳ |
 | Day 35 | REST Client & External APIs | ⏳ |
@@ -15649,4 +15649,682 @@ Today I completed **Day 31 Advanced CRUD APIs in Go**:
 ✅ Day 29 Completed  
 ✅ Day 30 Completed  
 ✅ Day 31 Completed  
-🚀 Next: Pagination & Filtering in Go
+✅ Day 32 Completed  
+🚀 Next: File Upload API in Go
+
+---
+
+# ✅ Day 32 — Pagination & Filtering in Go
+
+---
+
+# 📖 Introduction to Pagination & Filtering in Go
+
+When building production REST APIs handling millions of records, returning entire datasets in a single HTTP response causes severe performance issues: excessive database CPU/memory usage, network bandwidth congestion, and slow client rendering.
+
+To solve this, APIs employ **Pagination**, **Filtering**, and **Sorting**.
+
+---
+
+# ⚔️ Pagination Strategies: Offset vs. Cursor (Keyset)
+
+| Feature | Offset-based Pagination | Cursor-based (Keyset) Pagination |
+| :--- | :--- | :--- |
+| **HTTP Query Parameters** | `?page=2&limit=10` | `?cursor=MTc4NjM...&limit=10` |
+| **SQL Implementation** | `LIMIT 10 OFFSET 10` | `WHERE (published_at, id) < ($1, $2) ORDER BY published_at DESC LIMIT 10` |
+| **Database Performance** | $O(N)$ — Slows down as page number increases (`OFFSET 100000` scans 100K rows) | $O(1)$ — Fast using indexed B-Tree lookups regardless of dataset size |
+| **Record Drift / Duplication** | ❌ Vulnerable to missing or duplicate items if rows are inserted/deleted while paging | ✅ Immune to drift; guarantees exact item sequence |
+| **Jumping to Arbitrary Pages**| ✅ Easy (e.g. jump to page 15 directly) | ❌ Cannot jump to arbitrary page; supports Next/Prev traversal |
+| **Best Used For** | Admin dashboards with numbered paginators | Social media feeds, mobile infinite scrolling, public APIs |
+
+---
+
+# 🏗️ Architecture & Query Execution Flow
+
+```text
+  +---------------------------------------------------------------------------------+
+  |                       Client Request (Postman / Web Frontend)                   |
+  |     GET /api/v1/articles/offset?page=2&limit=5&category=TECH&sort_by=views      |
+  |     OR GET /api/v1/articles/cursor?cursor=MTc4NjM...&limit=5                    |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                      RequestID & Structured Logger Middleware                   |
+  |           Injects X-Request-ID into context & Audits HTTP Execution             |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                       HTTP Handlers (handler/article_handler.go)                |
+  |    Binds Query Structs (PaginationQuery, CursorQuery, FilterParams)             |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                       Business UseCase (usecase/article_usecase.go)             |
+  |   Enforces Limit Bounds (1-100), Decodes Base64 Cursors & Computes Meta Output  |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                     Repository Layer (repository/article_repository.go)         |
+  |  Applies Multi-Attribute Filters, Dynamic Sorting, & Slice/Keyset Paging        |
+  +---------------------------------------------------------------------------------+
+```
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 32 Project
+
+### 1. Domain Models & Query Structs (`domain/article.go`)
+
+```go
+package domain
+
+import (
+	"context"
+	"errors"
+	"time"
+)
+
+type ContextKey string
+
+const (
+	RequestIDKey ContextKey = "X-Request-ID"
+)
+
+var (
+	ErrInvalidInput = errors.New("invalid request input parameters")
+)
+
+type Article struct {
+	ID          string    `json:"id"`
+	Title       string    `json:"title"`
+	Category    string    `json:"category"`
+	Author      string    `json:"author"`
+	Views       int       `json:"views"`
+	PublishedAt time.Time `json:"published_at"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+type FilterParams struct {
+	Category string `form:"category"`
+	MinViews int    `form:"min_views"`
+	Search   string `form:"search"`
+}
+
+type PaginationQuery struct {
+	Page   int    `form:"page,default=1"`
+	Limit  int    `form:"limit,default=10"`
+	SortBy string `form:"sort_by,default=created_at"`
+	Order  string `form:"order,default=desc"`
+}
+
+type CursorQuery struct {
+	Cursor string `form:"cursor"`
+	Limit  int    `form:"limit,default=10"`
+}
+
+type PaginationMeta struct {
+	Page         int  `json:"page"`
+	Limit        int  `json:"limit"`
+	TotalRecords int  `json:"total_records"`
+	TotalPages   int  `json:"total_pages"`
+	HasNext      bool `json:"has_next"`
+	HasPrev      bool `json:"has_prev"`
+}
+
+type CursorMeta struct {
+	NextCursor string `json:"next_cursor"`
+	HasNext    bool   `json:"has_next"`
+	Limit      int    `json:"limit"`
+}
+
+type PaginatedResponse struct {
+	Data []*Article     `json:"data"`
+	Meta PaginationMeta `json:"meta"`
+}
+
+type CursorPaginatedResponse struct {
+	Data []*Article `json:"data"`
+	Meta CursorMeta `json:"meta"`
+}
+
+type Logger interface {
+	Info(ctx context.Context, msg string, keysAndValues ...interface{})
+	Warn(ctx context.Context, msg string, keysAndValues ...interface{})
+	Error(ctx context.Context, msg string, keysAndValues ...interface{})
+	Debug(ctx context.Context, msg string, keysAndValues ...interface{})
+}
+
+type ArticleRepository interface {
+	Save(ctx context.Context, article *Article) error
+	BulkSave(ctx context.Context, articles []*Article) error
+	FindWithOffset(ctx context.Context, filters FilterParams, pag PaginationQuery) ([]*Article, int, error)
+	FindWithCursor(ctx context.Context, filters FilterParams, limit int, cursorID string, cursorTime *time.Time) ([]*Article, bool, error)
+}
+```
+
+---
+
+### 2. Repository with Offset & Keyset Cursor Logic (`repository/article_repository.go`)
+
+```go
+package repository
+
+import (
+	"context"
+	"sort"
+	"strings"
+	"sync"
+	"time"
+
+	"day-32/domain"
+)
+
+type memoryArticleRepository struct {
+	mu       sync.RWMutex
+	articles map[string]*domain.Article
+	logger   domain.Logger
+}
+
+func NewMemoryArticleRepository(logger domain.Logger) domain.ArticleRepository {
+	return &memoryArticleRepository{
+		articles: make(map[string]*domain.Article),
+		logger:   logger,
+	}
+}
+
+func (r *memoryArticleRepository) Save(ctx context.Context, article *domain.Article) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.articles[article.ID] = article
+	return nil
+}
+
+func (r *memoryArticleRepository) BulkSave(ctx context.Context, articles []*domain.Article) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for _, a := range articles {
+		r.articles[a.ID] = a
+	}
+	r.logger.Info(ctx, "DB BulkSave articles completed", "count", len(articles))
+	return nil
+}
+
+func (r *memoryArticleRepository) filterArticles(filters domain.FilterParams) []*domain.Article {
+	filtered := make([]*domain.Article, 0)
+	for _, a := range r.articles {
+		if filters.Category != "" && !strings.EqualFold(a.Category, filters.Category) {
+			continue
+		}
+		if filters.MinViews > 0 && a.Views < filters.MinViews {
+			continue
+		}
+		if filters.Search != "" {
+			term := strings.ToLower(filters.Search)
+			if !strings.Contains(strings.ToLower(a.Title), term) && !strings.Contains(strings.ToLower(a.Author), term) {
+				continue
+			}
+		}
+		filtered = append(filtered, a)
+	}
+	return filtered
+}
+
+func (r *memoryArticleRepository) sortArticles(articles []*domain.Article, sortBy string, order string) {
+	desc := strings.ToLower(order) == "desc"
+	sort.Slice(articles, func(i, j int) bool {
+		switch strings.ToLower(sortBy) {
+		case "views":
+			if desc {
+				return articles[i].Views > articles[j].Views
+			}
+			return articles[i].Views < articles[j].Views
+		case "published_at":
+			if desc {
+				return articles[i].PublishedAt.After(articles[j].PublishedAt)
+			}
+			return articles[i].PublishedAt.Before(articles[j].PublishedAt)
+		case "title":
+			if desc {
+				return articles[i].Title > articles[j].Title
+			}
+			return articles[i].Title < articles[j].Title
+		default:
+			if desc {
+				return articles[i].CreatedAt.After(articles[j].CreatedAt)
+			}
+			return articles[i].CreatedAt.Before(articles[j].CreatedAt)
+		}
+	})
+}
+
+func (r *memoryArticleRepository) FindWithOffset(ctx context.Context, filters domain.FilterParams, pag domain.PaginationQuery) ([]*domain.Article, int, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	filtered := r.filterArticles(filters)
+	totalCount := len(filtered)
+
+	r.sortArticles(filtered, pag.SortBy, pag.Order)
+
+	offset := (pag.Page - 1) * pag.Limit
+	if offset >= totalCount {
+		return []*domain.Article{}, totalCount, nil
+	}
+
+	end := offset + pag.Limit
+	if end > totalCount {
+		end = totalCount
+	}
+
+	return filtered[offset:end], totalCount, nil
+}
+
+func (r *memoryArticleRepository) FindWithCursor(ctx context.Context, filters domain.FilterParams, limit int, cursorID string, cursorTime *time.Time) ([]*domain.Article, bool, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	filtered := r.filterArticles(filters)
+
+	sort.Slice(filtered, func(i, j int) bool {
+		if filtered[i].PublishedAt.Equal(filtered[j].PublishedAt) {
+			return filtered[i].ID > filtered[j].ID
+		}
+		return filtered[i].PublishedAt.After(filtered[j].PublishedAt)
+	})
+
+	startIndex := 0
+	if cursorTime != nil && cursorID != "" {
+		for i, a := range filtered {
+			if a.PublishedAt.Before(*cursorTime) || (a.PublishedAt.Equal(*cursorTime) && a.ID < cursorID) {
+				startIndex = i
+				break
+			}
+			if i == len(filtered)-1 {
+				startIndex = len(filtered)
+			}
+		}
+	}
+
+	if startIndex >= len(filtered) {
+		return []*domain.Article{}, false, nil
+	}
+
+	end := startIndex + limit + 1
+	hasNext := false
+
+	if end > len(filtered) {
+		end = len(filtered)
+	} else {
+		hasNext = true
+	}
+
+	slice := filtered[startIndex:end]
+	if hasNext && len(slice) > limit {
+		slice = slice[:limit]
+	}
+
+	return slice, hasNext, nil
+}
+```
+
+---
+
+### 3. Business UseCase Layer (`usecase/article_usecase.go`)
+
+```go
+package usecase
+
+import (
+	"context"
+	"encoding/base64"
+	"fmt"
+	"math"
+	"math/rand"
+	"strconv"
+	"strings"
+	"time"
+
+	"day-32/domain"
+
+	"github.com/google/uuid"
+)
+
+type ArticleUseCase struct {
+	repo   domain.ArticleRepository
+	logger domain.Logger
+}
+
+func NewArticleUseCase(repo domain.ArticleRepository, logger domain.Logger) *ArticleUseCase {
+	return &ArticleUseCase{repo: repo, logger: logger}
+}
+
+func (u *ArticleUseCase) GetArticlesWithOffset(ctx context.Context, filters domain.FilterParams, pag domain.PaginationQuery) (*domain.PaginatedResponse, error) {
+	if pag.Page < 1 {
+		pag.Page = 1
+	}
+	if pag.Limit < 1 {
+		pag.Limit = 10
+	}
+	if pag.Limit > 100 {
+		pag.Limit = 100
+	}
+
+	articles, totalRecords, err := u.repo.FindWithOffset(ctx, filters, pag)
+	if err != nil {
+		return nil, err
+	}
+
+	totalPages := int(math.Ceil(float64(totalRecords) / float64(pag.Limit)))
+	if totalPages == 0 {
+		totalPages = 1
+	}
+
+	meta := domain.PaginationMeta{
+		Page:         pag.Page,
+		Limit:        pag.Limit,
+		TotalRecords: totalRecords,
+		TotalPages:   totalPages,
+		HasNext:      pag.Page < totalPages,
+		HasPrev:      pag.Page > 1,
+	}
+
+	return &domain.PaginatedResponse{Data: articles, Meta: meta}, nil
+}
+
+func (u *ArticleUseCase) encodeCursor(publishedAt time.Time, id string) string {
+	raw := fmt.Sprintf("%d:%s", publishedAt.UnixNano(), id)
+	return base64.StdEncoding.EncodeToString([]byte(raw))
+}
+
+func (u *ArticleUseCase) decodeCursor(cursorStr string) (string, *time.Time, error) {
+	if cursorStr == "" {
+		return "", nil, nil
+	}
+
+	decodedBytes, err := base64.StdEncoding.DecodeString(cursorStr)
+	if err != nil {
+		return "", nil, fmt.Errorf("invalid cursor base64 string: %w", err)
+	}
+
+	parts := strings.Split(string(decodedBytes), ":")
+	if len(parts) != 2 {
+		return "", nil, fmt.Errorf("invalid cursor format")
+	}
+
+	nanoUnix, err := strconv.ParseInt(parts[0], 10, 64)
+	if err != nil {
+		return "", nil, fmt.Errorf("invalid cursor timestamp")
+	}
+
+	pubTime := time.Unix(0, nanoUnix)
+	return parts[1], &pubTime, nil
+}
+
+func (u *ArticleUseCase) GetArticlesWithCursor(ctx context.Context, filters domain.FilterParams, cursorQuery domain.CursorQuery) (*domain.CursorPaginatedResponse, error) {
+	limit := cursorQuery.Limit
+	if limit < 1 {
+		limit = 10
+	}
+	if limit > 100 {
+		limit = 100
+	}
+
+	cursorID, cursorTime, err := u.decodeCursor(cursorQuery.Cursor)
+	if err != nil {
+		return nil, domain.ErrInvalidInput
+	}
+
+	articles, hasNext, err := u.repo.FindWithCursor(ctx, filters, limit, cursorID, cursorTime)
+	if err != nil {
+		return nil, err
+	}
+
+	var nextCursor string
+	if hasNext && len(articles) > 0 {
+		lastItem := articles[len(articles)-1]
+		nextCursor = u.encodeCursor(lastItem.PublishedAt, lastItem.ID)
+	}
+
+	meta := domain.CursorMeta{
+		NextCursor: nextCursor,
+		HasNext:    hasNext,
+		Limit:      limit,
+	}
+
+	return &domain.CursorPaginatedResponse{Data: articles, Meta: meta}, nil
+}
+```
+
+---
+
+### 4. Gin HTTP Handler (`handler/article_handler.go`)
+
+```go
+package handler
+
+import (
+	"net/http"
+
+	"day-32/domain"
+	"day-32/usecase"
+
+	"github.com/gin-gonic/gin"
+)
+
+type ArticleHandler struct {
+	articleUseCase *usecase.ArticleUseCase
+	logger          domain.Logger
+}
+
+func NewArticleHandler(articleUseCase *usecase.ArticleUseCase, logger domain.Logger) *ArticleHandler {
+	return &ArticleHandler{articleUseCase: articleUseCase, logger: logger}
+}
+
+func (h *ArticleHandler) GetArticlesOffset(c *gin.Context) {
+	var filters domain.FilterParams
+	c.ShouldBindQuery(&filters)
+
+	var pag domain.PaginationQuery
+	c.ShouldBindQuery(&pag)
+
+	res, err := h.articleUseCase.GetArticlesWithOffset(c.Request.Context(), filters, pag)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (h *ArticleHandler) GetArticlesCursor(c *gin.Context) {
+	var filters domain.FilterParams
+	c.ShouldBindQuery(&filters)
+
+	var cursorQuery domain.CursorQuery
+	c.ShouldBindQuery(&cursorQuery)
+
+	res, err := h.articleUseCase.GetArticlesWithCursor(c.Request.Context(), filters, cursorQuery)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid pagination request or cursor string"})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+```
+
+---
+
+### 5. Automated Test Suite (`handler/article_handler_test.go`)
+
+```go
+package handler_test
+
+import (
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"day-32/handler"
+	"day-32/logger"
+	"day-32/middleware"
+	"day-32/repository"
+	"day-32/usecase"
+
+	"github.com/gin-gonic/gin"
+)
+
+func setupTestRouter() *gin.Engine {
+	gin.SetMode(gin.TestMode)
+	zapLog, _ := logger.NewZapLogger("test", "")
+	articleRepo := repository.NewMemoryArticleRepository(zapLog)
+	articleUC := usecase.NewArticleUseCase(articleRepo, zapLog)
+	articleHandler := handler.NewArticleHandler(articleUC, zapLog)
+
+	router := gin.New()
+	router.Use(middleware.RequestIDMiddleware())
+	router.Use(middleware.StructuredLoggerMiddleware(zapLog))
+
+	v1 := router.Group("/api/v1/articles")
+	{
+		v1.POST("/seed", articleHandler.SeedArticles)
+		v1.GET("/offset", articleHandler.GetArticlesOffset)
+		v1.GET("/cursor", articleHandler.GetArticlesCursor)
+	}
+
+	return router
+}
+
+func TestPagination_OffsetAndCursor(t *testing.T) {
+	router := setupTestRouter()
+
+	reqSeed, _ := http.NewRequest("POST", "/api/v1/articles/seed?count=20", nil)
+	wSeed := httptest.NewRecorder()
+	router.ServeHTTP(wSeed, reqSeed)
+
+	reqP1, _ := http.NewRequest("GET", "/api/v1/articles/offset?page=1&limit=5", nil)
+	wP1 := httptest.NewRecorder()
+	router.ServeHTTP(wP1, reqP1)
+
+	if wP1.Code != http.StatusOK {
+		t.Fatalf("expected status 200 OK, got %d", wP1.Code)
+	}
+
+	reqC1, _ := http.NewRequest("GET", "/api/v1/articles/cursor?limit=5", nil)
+	wC1 := httptest.NewRecorder()
+	router.ServeHTTP(wC1, reqC1)
+
+	var resC1 map[string]interface{}
+	json.Unmarshal(wC1.Body.Bytes(), &resC1)
+	meta1 := resC1["meta"].(map[string]interface{})
+	nextCursor := meta1["next_cursor"].(string)
+
+	urlP2 := fmt.Sprintf("/api/v1/articles/cursor?limit=5&cursor=%s", nextCursor)
+	reqC2, _ := http.NewRequest("GET", urlP2, nil)
+	wC2 := httptest.NewRecorder()
+	router.ServeHTTP(wC2, reqC2)
+
+	if wC2.Code != http.StatusOK {
+		t.Fatalf("expected 200 OK for cursor page 2, got %d", wC2.Code)
+	}
+}
+```
+
+---
+
+# 📘 Day 32 Interview Questions & Answers
+
+---
+
+## ❓ Q1: Why does Offset Pagination (`OFFSET 100000 LIMIT 10`) perform poorly in relational databases like PostgreSQL?
+
+### ✅ Answer:
+In SQL databases, `OFFSET N` does not skip rows at the index level. The database engine must scan and evaluate $N + \text{Limit}$ rows in memory, discard the first $N$ rows, and return the remaining $\text{Limit}$ rows. As $N$ grows into hundreds of thousands, query execution time grows linearly ($O(N)$), causing high CPU and I/O load.
+
+---
+
+## ❓ Q2: How does Cursor-based (Keyset) Pagination achieve $O(1)$ constant query time?
+
+### ✅ Answer:
+Cursor pagination replaces `OFFSET` with a deterministic `WHERE` clause using indexed columns (e.g. `WHERE (published_at, id) < ($last_published_at, $last_id) ORDER BY published_at DESC LIMIT 10`). Because the database can seek directly to the B-Tree index location matching the cursor values, it evaluates exactly `Limit` rows, resulting in constant $O(1)$ execution time regardless of whether fetching page 1 or page 10,000.
+
+---
+
+## ❓ Q3: What is "Pagination Drift" (or Page Invalidation) and how does Cursor Pagination resolve it?
+
+### ✅ Answer:
+In Offset Pagination (`?page=2&limit=10`), if new records are inserted at the top of the database while a user is browsing page 1, all existing rows shift down by one position. When the user navigates to page 2 (`OFFSET 10`), the last item from page 1 appears again at the top of page 2 (duplicate item). Conversely, if an item is deleted, an item is skipped entirely.
+Cursor pagination uses absolute column values as bookmarks (`next_cursor`), making it immune to insertions or deletions.
+
+---
+
+## ❓ Q4: How are Cursor Strings securely encoded in Go APIs?
+
+### ✅ Answer:
+Cursor values typically combine the primary sort key (e.g., `published_at` Unix timestamp) and a unique tie-breaker key (e.g., `id`) separated by a delimiter (`timestamp:id`). In Go, this payload is Base64 encoded (`base64.StdEncoding.EncodeToString`) before sending to clients. This hides internal database column formats and prevents clients from tampering with raw query parameters.
+
+---
+
+## ❓ Q5: When should an engineer choose Offset Pagination over Cursor Pagination?
+
+### ✅ Answer:
+- **Choose Offset Pagination when**:
+  - Building administrative user interfaces requiring numbered pagination controls (`[1] [2] [3] ... [10]`) and direct page jumping.
+  - The dataset size is small to medium (under 100,000 rows).
+- **Choose Cursor Pagination when**:
+  - Building mobile app infinite scrolling feeds, activity logs, or high-throughput public REST APIs.
+  - The underlying database contains millions of records where $O(1)$ query speed and zero record drift are required.
+
+---
+
+# 📚 Day 32 Summary
+
+Today I completed **Day 32 Pagination & Filtering in Go**:
+- Implemented **Offset-based Pagination** (`page`, `limit`, `total_records`, `total_pages`, `has_next`, `has_prev`).
+- Implemented **Cursor-based Keyset Pagination** using Base64 encoded cursors (`timestamp:id`) for $O(1)$ database querying and zero drift.
+- Implemented **Multi-Attribute Filtering** (`category`, `min_views`, `search`) and **Dynamic Sorting** (`sort_by`, `order`).
+- Integrated Uber Zap structured logging and request ID correlation tracing.
+- Wrote unit and HTTP integration tests asserting pagination metadata calculations and Base64 cursor decoding.
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+✅ Day 27 Completed  
+✅ Day 28 Completed  
+✅ Day 29 Completed  
+✅ Day 30 Completed  
+✅ Day 31 Completed  
+✅ Day 32 Completed  
+🚀 Next: File Upload API in Go
