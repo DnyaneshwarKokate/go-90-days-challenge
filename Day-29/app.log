@@ -1,0 +1,15 @@
+{"level":"info","ts":1786370327.669711,"caller":"Day-29/main.go:36","msg":"Logger initialized successfully","log_file":"app.log","environment":"development"}
+{"level":"info","ts":1786370327.6702468,"caller":"usecase/user_usecase.go:27","msg":"Processing user registration request","request_id":"req-trace-101","name":"Dnyaneshwar Kokate","email":"dnyaneshwar@example.com"}
+{"level":"info","ts":1786370327.670335,"caller":"repository/user_repository.go:41","msg":"DB Write successful","request_id":"req-trace-101","user_id":"usr_dbb24ddf","duration_ms":0}
+{"level":"info","ts":1786370327.6703439,"caller":"usecase/user_usecase.go:65","msg":"User successfully registered","request_id":"req-trace-101","user_id":"usr_dbb24ddf","email":"dnyaneshwar@example.com","role":"ADMIN"}
+{"level":"info","ts":1786370327.670389,"caller":"middleware/logger_middleware.go:71","msg":"HTTP Request Completed","request_id":"req-trace-101","status":201,"method":"POST","path":"/api/v1/users","ip":"","latency_ms":0,"latency_human":"208µs","user_agent":""}
+{"level":"info","ts":1786370327.670418,"caller":"usecase/user_usecase.go:27","msg":"Processing user registration request","request_id":"req-trace-102","name":"Rahul Sharma","email":"rahul@example.com"}
+{"level":"info","ts":1786370327.670433,"caller":"repository/user_repository.go:41","msg":"DB Write successful","request_id":"req-trace-102","user_id":"usr_540516ae","duration_ms":0}
+{"level":"info","ts":1786370327.670441,"caller":"usecase/user_usecase.go:65","msg":"User successfully registered","request_id":"req-trace-102","user_id":"usr_540516ae","email":"rahul@example.com","role":"DEVELOPER"}
+{"level":"info","ts":1786370327.670454,"caller":"middleware/logger_middleware.go:71","msg":"HTTP Request Completed","request_id":"req-trace-102","status":201,"method":"POST","path":"/api/v1/users","ip":"","latency_ms":0,"latency_human":"39.792µs","user_agent":""}
+{"level":"info","ts":1786370327.67047,"caller":"usecase/user_usecase.go:27","msg":"Processing user registration request","request_id":"req-trace-103","name":"Duplicate User","email":"dnyaneshwar@example.com"}
+{"level":"warn","ts":1786370327.6704829,"caller":"usecase/user_usecase.go:41","msg":"User registration rejected: Email already registered","request_id":"req-trace-103","email":"dnyaneshwar@example.com"}
+{"level":"warn","ts":1786370327.670491,"caller":"middleware/logger_middleware.go:69","msg":"HTTP Request Warning (Client Error)","request_id":"req-trace-103","status":409,"method":"POST","path":"/api/v1/users","ip":"","latency_ms":0,"latency_human":"22.916µs","user_agent":""}
+{"level":"info","ts":1786370327.670505,"caller":"usecase/user_usecase.go:86","msg":"Listing all active users","request_id":"req-trace-104"}
+{"level":"info","ts":1786370327.670517,"caller":"repository/user_repository.go:88","msg":"DB Records fetched","request_id":"req-trace-104","count":2,"duration_ms":0}
+{"level":"info","ts":1786370327.6705332,"caller":"middleware/logger_middleware.go:71","msg":"HTTP Request Completed","request_id":"req-trace-104","status":200,"method":"GET","path":"/api/v1/users","ip":"","latency_ms":0,"latency_human":"27.458µs","user_agent":""}

@@ -93,7 +93,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 26 | Clean Architecture | ✅ |
 | Day 27 | Repository Pattern | ✅ |
 | Day 28 | Dependency Injection | ✅ |
-| Day 29 | Logging System | ⏳ |
+| Day 29 | Logging System | ✅ |
 | Day 30 | Student Management REST API Project | ⏳ |
 | Day 31 | Advanced CRUD APIs | ⏳ |
 | Day 32 | Pagination & Filtering | ⏳ |
@@ -13660,4 +13660,778 @@ Today I learned:
 ✅ Day 26 Completed  
 ✅ Day 27 Completed  
 ✅ Day 28 Completed  
-🚀 Next: Logging System in Go
+✅ Day 29 Completed  
+🚀 Next: Student Management REST API Project in Go
+
+---
+
+# ✅ Day 29 — Logging System in Go
+
+---
+
+# 📖 Introduction to Production Logging in Go
+
+**Logging** is a critical operational foundation for modern backend services and microservices. In production, logs provide visibility into system behavior, aid in debugging errors, monitor health metrics, and enable security auditing.
+
+### Why Unstructured Logging Fails in Production
+Traditional unstructured logging (using `fmt.Println` or Go's standard `log.Printf`) outputs plain text strings without standardized keys:
+```text
+2026/08/10 19:30:00 Failed to save user dnyaneshwar@example.com due to duplicate email
+```
+Parsing millions of such unstructured log lines in log aggregators (Elasticsearch / ELK, Grafana Loki, Datadog, Splunk) requires complex regular expressions and is error-prone.
+
+### Structured Logging & Log Levels
+**Structured Logging** outputs logs in standardized formats (such as JSON or logfmt) with key-value pairs:
+```json
+{
+  "timestamp": "2026-08-10T19:30:00.123Z",
+  "level": "WARN",
+  "message": "User registration rejected: Email already registered",
+  "request_id": "req-trace-103",
+  "email": "dnyaneshwar@example.com"
+}
+```
+
+Common **Log Levels**:
+- **`DEBUG`**: Detailed diagnostic information for developers during local debugging.
+- **`INFO`**: Normal operational events (e.g., service startup, successful order creation).
+- **`WARN`**: Unexpected non-fatal conditions (e.g., invalid user input, duplicate email attempt).
+- **`ERROR`**: Actionable errors or failures (e.g., DB connection loss, repository write failures).
+- **`FATAL`**: Critical errors causing application termination (`os.Exit(1)`).
+
+---
+
+# 🏗️ Architecture & Contextual Log Flow
+
+```text
+  +---------------------------------------------------------------+
+  |                     Incoming HTTP Request                     |
+  |                  (Header: X-Request-ID / UUID)                |
+  +---------------------------------------------------------------+
+                                  |
+                                  v
+  +---------------------------------------------------------------+
+  |                 RequestIDMiddleware (Gin)                     |
+  |    Generates/Extracts Request ID -> Attaches to context.Ctx   |
+  +---------------------------------------------------------------+
+                                  |
+                                  v
+  +---------------------------------------------------------------+
+  |             StructuredLoggerMiddleware (Gin)                  |
+  |     Intercepts status, method, path, IP, latency, errors     |
+  +---------------------------------------------------------------+
+                                  |
+                                  v
+  +---------------------------------------------------------------+
+  |                     HTTP Handler Layer                        |
+  |             (Passes c.Request.Context() down)                 |
+  +---------------------------------------------------------------+
+                                  |
+                                  v
+  +---------------------------------------------------------------+
+  |                     Business UseCase Layer                    |
+  |           Logger.Info(ctx, "Processing user...", ...)         |
+  +---------------------------------------------------------------+
+                                  |
+                                  v
+  +---------------------------------------------------------------+
+  |                    Repository / DB Layer                      |
+  |           Logger.Debug(ctx, "Executing query...", ...)        |
+  +---------------------------------------------------------------+
+                                  |
+                                  v
+  +---------------------------------------------------------------+
+  |                     Zap / Slog Core Logger                    |
+  |    Extracts Request ID from Context -> Formats JSON Record    |
+  +---------------------------------------------------------------+
+                   |                             |
+                   v                             v
+  +-------------------------------+ +-----------------------------+
+  |    Stdout (Console Output)    | |   app.log (Persistent File) |
+  +-------------------------------+ +-----------------------------+
+```
+
+---
+
+# ⚡ Go Logging Ecosystem Comparison
+
+| Logger | Mechanism / Features | Allocation Performance | Structured JSON | Go Stdlib Inclusion |
+| :--- | :--- | :--- | :--- | :--- |
+| **Standard `log`** | Basic string formatting (`Printf`) | Moderate | ❌ Manual string building | Built-in |
+| **Standard `log/slog`** | Structured logging, Handlers, `slog.Attr` | Extremely High | ✅ Built-in JSON & Text Handlers | Built-in (Go 1.21+) |
+| **`go.uber.org/zap`** | Ultra high-performance, zero allocation fields | Maximum | ✅ JSON & Console Encoders | External Library |
+| **`zerolog`** | Fast JSON logger with fluent API | Maximum | ✅ JSON | External Library |
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 29 Project
+
+### 1. Module Definition (`go.mod`)
+
+```go
+module day-29
+
+go 1.22.0
+
+require (
+	github.com/gin-gonic/gin v1.9.1
+	github.com/google/uuid v1.6.0
+	go.uber.org/zap v1.27.0
+)
+```
+
+---
+
+### 2. Domain Models & Logger Interface (`domain/user.go`)
+
+```go
+package domain
+
+import (
+	"context"
+	"errors"
+	"time"
+)
+
+type contextKey string
+
+const (
+	RequestIDKey contextKey = "X-Request-ID"
+)
+
+var (
+	ErrUserNotFound       = errors.New("user not found")
+	ErrEmailAlreadyExists = errors.New("user with this email already exists")
+	ErrInvalidEmail       = errors.New("invalid email address format")
+	ErrEmptyName          = errors.New("user name cannot be empty")
+)
+
+type User struct {
+	ID        string    `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	Role      string    `json:"role"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type CreateUserInput struct {
+	Name  string `json:"name" binding:"required"`
+	Email string `json:"email" binding:"required,email"`
+	Role  string `json:"role"`
+}
+
+type UserRepository interface {
+	Save(ctx context.Context, user *User) error
+	FindByID(ctx context.Context, id string) (*User, error)
+	FindByEmail(ctx context.Context, email string) (*User, error)
+	FindAll(ctx context.Context) ([]*User, error)
+}
+
+type Logger interface {
+	Info(ctx context.Context, msg string, keysAndValues ...interface{})
+	Warn(ctx context.Context, msg string, keysAndValues ...interface{})
+	Error(ctx context.Context, msg string, keysAndValues ...interface{})
+	Debug(ctx context.Context, msg string, keysAndValues ...interface{})
+}
+```
+
+---
+
+### 3. Zap & Slog Structured Logger Implementation (`logger/logger.go`)
+
+```go
+package logger
+
+import (
+	"context"
+	"log/slog"
+	"os"
+
+	"day-29/domain"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+)
+
+type ZapLogger struct {
+	logger *zap.Logger
+}
+
+func NewZapLogger(env string, logFilePath string) (*ZapLogger, error) {
+	var encoderConfig zapcore.EncoderConfig
+
+	if env == "production" {
+		encoderConfig = zap.NewProductionEncoderConfig()
+		encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+		encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
+	} else {
+		encoderConfig = zap.NewDevelopmentEncoderConfig()
+		encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+		encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
+	}
+
+	var core zapcore.Core
+
+	consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
+	if env == "production" {
+		consoleEncoder = zapcore.NewJSONEncoder(encoderConfig)
+	}
+
+	consoleSyncer := zapcore.AddSync(os.Stdout)
+
+	var syncers []zapcore.WriteSyncer
+	syncers = append(syncers, consoleSyncer)
+
+	if logFilePath != "" {
+		file, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+		if err == nil {
+			jsonEncoder := zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
+			fileSyncer := zapcore.AddSync(file)
+			fileCore := zapcore.NewCore(jsonEncoder, fileSyncer, zap.InfoLevel)
+
+			consoleCore := zapcore.NewCore(consoleEncoder, consoleSyncer, zap.DebugLevel)
+			core = zapcore.NewTee(consoleCore, fileCore)
+		} else {
+			core = zapcore.NewCore(consoleEncoder, consoleSyncer, zap.DebugLevel)
+		}
+	} else {
+		core = zapcore.NewCore(consoleEncoder, consoleSyncer, zap.DebugLevel)
+	}
+
+	zapLog := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+
+	return &ZapLogger{logger: zapLog}, nil
+}
+
+func (z *ZapLogger) extractFields(ctx context.Context, keysAndValues ...interface{}) []zap.Field {
+	fields := make([]zap.Field, 0, len(keysAndValues)/2+1)
+
+	if reqID, ok := ctx.Value(domain.RequestIDKey).(string); ok && reqID != "" {
+		fields = append(fields, zap.String("request_id", reqID))
+	}
+
+	for i := 0; i < len(keysAndValues); i += 2 {
+		if i+1 < len(keysAndValues) {
+			key, ok := keysAndValues[i].(string)
+			if !ok {
+				key = "invalid_key"
+			}
+			fields = append(fields, zap.Any(key, keysAndValues[i+1]))
+		}
+	}
+
+	return fields
+}
+
+func (z *ZapLogger) Info(ctx context.Context, msg string, keysAndValues ...interface{}) {
+	fields := z.extractFields(ctx, keysAndValues...)
+	z.logger.Info(msg, fields...)
+}
+
+func (z *ZapLogger) Warn(ctx context.Context, msg string, keysAndValues ...interface{}) {
+	fields := z.extractFields(ctx, keysAndValues...)
+	z.logger.Warn(msg, fields...)
+}
+
+func (z *ZapLogger) Error(ctx context.Context, msg string, keysAndValues ...interface{}) {
+	fields := z.extractFields(ctx, keysAndValues...)
+	z.logger.Error(msg, fields...)
+}
+
+func (z *ZapLogger) Debug(ctx context.Context, msg string, keysAndValues ...interface{}) {
+	fields := z.extractFields(ctx, keysAndValues...)
+	z.logger.Debug(msg, fields...)
+}
+
+func (z *ZapLogger) Sync() error {
+	return z.logger.Sync()
+}
+
+type SlogLogger struct {
+	logger *slog.Logger
+}
+
+func NewSlogLogger(env string) *SlogLogger {
+	var handler slog.Handler
+	opts := &slog.HandlerOptions{Level: slog.LevelDebug}
+
+	if env == "production" {
+		handler = slog.NewJSONHandler(os.Stdout, opts)
+	} else {
+		handler = slog.NewTextHandler(os.Stdout, opts)
+	}
+
+	return &SlogLogger{logger: slog.New(handler)}
+}
+
+func (s *SlogLogger) extractAttrs(ctx context.Context, keysAndValues ...interface{}) []interface{} {
+	attrs := make([]interface{}, 0, len(keysAndValues)+2)
+	if reqID, ok := ctx.Value(domain.RequestIDKey).(string); ok && reqID != "" {
+		attrs = append(attrs, "request_id", reqID)
+	}
+	attrs = append(attrs, keysAndValues...)
+	return attrs
+}
+
+func (s *SlogLogger) Info(ctx context.Context, msg string, keysAndValues ...interface{}) {
+	s.logger.InfoContext(ctx, msg, s.extractAttrs(ctx, keysAndValues...)...)
+}
+
+func (s *SlogLogger) Warn(ctx context.Context, msg string, keysAndValues ...interface{}) {
+	s.logger.WarnContext(ctx, msg, s.extractAttrs(ctx, keysAndValues...)...)
+}
+
+func (s *SlogLogger) Error(ctx context.Context, msg string, keysAndValues ...interface{}) {
+	s.logger.ErrorContext(ctx, msg, s.extractAttrs(ctx, keysAndValues...)...)
+}
+
+func (s *SlogLogger) Debug(ctx context.Context, msg string, keysAndValues ...interface{}) {
+	s.logger.DebugContext(ctx, msg, s.extractAttrs(ctx, keysAndValues...)...)
+}
+```
+
+---
+
+### 4. Gin Request ID & HTTP Access Middleware (`middleware/logger_middleware.go`)
+
+```go
+package middleware
+
+import (
+	"context"
+	"time"
+
+	"day-29/domain"
+
+	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+)
+
+func RequestIDMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		reqID := c.GetHeader("X-Request-ID")
+		if reqID == "" {
+			reqID = uuid.New().String()
+		}
+
+		c.Header("X-Request-ID", reqID)
+
+		ctx := context.WithValue(c.Request.Context(), domain.RequestIDKey, reqID)
+		c.Request = c.Request.WithContext(ctx)
+		c.Set(string(domain.RequestIDKey), reqID)
+
+		c.Next()
+	}
+}
+
+func StructuredLoggerMiddleware(log domain.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		start := time.Now()
+		path := c.Request.URL.Path
+		rawQuery := c.Request.URL.RawQuery
+
+		c.Next()
+
+		latency := time.Since(start)
+		clientIP := c.ClientIP()
+		method := c.Request.Method
+		statusCode := c.Writer.Status()
+		errorMessage := c.Errors.ByType(gin.ErrorTypePrivate).String()
+
+		fullPath := path
+		if rawQuery != "" {
+			fullPath = path + "?" + rawQuery
+		}
+
+		keysAndValues := []interface{}{
+			"status", statusCode,
+			"method", method,
+			"path", fullPath,
+			"ip", clientIP,
+			"latency_ms", latency.Milliseconds(),
+			"latency_human", latency.String(),
+			"user_agent", c.Request.UserAgent(),
+		}
+
+		if errorMessage != "" {
+			keysAndValues = append(keysAndValues, "error", errorMessage)
+		}
+
+		ctx := c.Request.Context()
+
+		if statusCode >= 500 {
+			log.Error(ctx, "HTTP Request Failed (Server Error)", keysAndValues...)
+		} else if statusCode >= 400 {
+			log.Warn(ctx, "HTTP Request Warning (Client Error)", keysAndValues...)
+		} else {
+			log.Info(ctx, "HTTP Request Completed", keysAndValues...)
+		}
+	}
+}
+```
+
+---
+
+### 5. Repository Layer with Logging (`repository/user_repository.go`)
+
+```go
+package repository
+
+import (
+	"context"
+	"sync"
+	"time"
+
+	"day-29/domain"
+)
+
+type memoryUserRepository struct {
+	mu     sync.RWMutex
+	users  map[string]*domain.User
+	emails map[string]string
+	logger domain.Logger
+}
+
+func NewMemoryUserRepository(logger domain.Logger) domain.UserRepository {
+	return &memoryUserRepository{
+		users:  make(map[string]*domain.User),
+		emails: make(map[string]string),
+		logger: logger,
+	}
+}
+
+func (r *memoryUserRepository) Save(ctx context.Context, user *domain.User) error {
+	start := time.Now()
+	r.mu.Lock()
+	defer r.mu.Unlock()
+
+	r.logger.Debug(ctx, "Executing DB query: Save User", "user_id", user.ID, "email", user.Email)
+
+	if existingID, exists := r.emails[user.Email]; exists && existingID != user.ID {
+		r.logger.Warn(ctx, "DB Conflict: Email already exists", "email", user.Email, "existing_user_id", existingID)
+		return domain.ErrEmailAlreadyExists
+	}
+
+	r.users[user.ID] = user
+	r.emails[user.Email] = user.ID
+
+	r.logger.Info(ctx, "DB Write successful", "user_id", user.ID, "duration_ms", time.Since(start).Milliseconds())
+	return nil
+}
+
+func (r *memoryUserRepository) FindByID(ctx context.Context, id string) (*domain.User, error) {
+	start := time.Now()
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	r.logger.Debug(ctx, "Executing DB query: FindByID", "user_id", id)
+
+	user, exists := r.users[id]
+	if !exists {
+		r.logger.Warn(ctx, "DB Record not found", "user_id", id, "duration_ms", time.Since(start).Milliseconds())
+		return nil, domain.ErrUserNotFound
+	}
+
+	r.logger.Debug(ctx, "DB Record retrieved", "user_id", id, "duration_ms", time.Since(start).Milliseconds())
+	return user, nil
+}
+
+func (r *memoryUserRepository) FindByEmail(ctx context.Context, email string) (*domain.User, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	r.logger.Debug(ctx, "Executing DB query: FindByEmail", "email", email)
+
+	id, exists := r.emails[email]
+	if !exists {
+		return nil, domain.ErrUserNotFound
+	}
+
+	return r.users[id], nil
+}
+
+func (r *memoryUserRepository) FindAll(ctx context.Context) ([]*domain.User, error) {
+	start := time.Now()
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+
+	r.logger.Debug(ctx, "Executing DB query: FindAll")
+
+	result := make([]*domain.User, 0, len(r.users))
+	for _, user := range r.users {
+		result = append(result, user)
+	}
+
+	r.logger.Info(ctx, "DB Records fetched", "count", len(result), "duration_ms", time.Since(start).Milliseconds())
+	return result, nil
+}
+```
+
+---
+
+### 6. Business UseCase Layer (`usecase/user_usecase.go`)
+
+```go
+package usecase
+
+import (
+	"context"
+	"fmt"
+	"strings"
+	"time"
+
+	"day-29/domain"
+
+	"github.com/google/uuid"
+)
+
+type UserUseCase struct {
+	repo   domain.UserRepository
+	logger domain.Logger
+}
+
+func NewUserUseCase(repo domain.UserRepository, logger domain.Logger) *UserUseCase {
+	return &UserUseCase{
+		repo:   repo,
+		logger: logger,
+	}
+}
+
+func (u *UserUseCase) RegisterUser(ctx context.Context, input domain.CreateUserInput) (*domain.User, error) {
+	u.logger.Info(ctx, "Processing user registration request", "name", input.Name, "email", input.Email)
+
+	if strings.TrimSpace(input.Name) == "" {
+		u.logger.Warn(ctx, "Validation failed: Empty user name")
+		return nil, domain.ErrEmptyName
+	}
+
+	if !strings.Contains(input.Email, "@") {
+		u.logger.Warn(ctx, "Validation failed: Invalid email format", "email", input.Email)
+		return nil, domain.ErrInvalidEmail
+	}
+
+	existingUser, err := u.repo.FindByEmail(ctx, input.Email)
+	if err == nil && existingUser != nil {
+		u.logger.Warn(ctx, "User registration rejected: Email already registered", "email", input.Email)
+		return nil, domain.ErrEmailAlreadyExists
+	}
+
+	role := input.Role
+	if role == "" {
+		role = "USER"
+	}
+
+	now := time.Now()
+	user := &domain.User{
+		ID:        fmt.Sprintf("usr_%s", uuid.New().String()[:8]),
+		Name:      strings.TrimSpace(input.Name),
+		Email:     strings.ToLower(strings.TrimSpace(input.Email)),
+		Role:      strings.ToUpper(role),
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+
+	if err := u.repo.Save(ctx, user); err != nil {
+		u.logger.Error(ctx, "Failed to persist new user to repository", "user_id", user.ID, "error", err.Error())
+		return nil, err
+	}
+
+	u.logger.Info(ctx, "User successfully registered", "user_id", user.ID, "email", user.Email, "role", user.Role)
+	return user, nil
+}
+
+func (u *UserUseCase) GetUserByID(ctx context.Context, id string) (*domain.User, error) {
+	u.logger.Debug(ctx, "Fetching user profile by ID", "user_id", id)
+
+	user, err := u.repo.FindByID(ctx, id)
+	if err != nil {
+		if err == domain.ErrUserNotFound {
+			u.logger.Warn(ctx, "User profile requested but not found", "user_id", id)
+		} else {
+			u.logger.Error(ctx, "Unexpected error retrieving user", "user_id", id, "error", err.Error())
+		}
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func (u *UserUseCase) ListUsers(ctx context.Context) ([]*domain.User, error) {
+	u.logger.Info(ctx, "Listing all active users")
+	return u.repo.FindAll(ctx)
+}
+```
+
+---
+
+### 7. Main Application Entry Point (`main.go`)
+
+```go
+package main
+
+import (
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"os"
+
+	"day-29/domain"
+	"day-29/handler"
+	"day-29/logger"
+	"day-29/middleware"
+	"day-29/repository"
+	"day-29/usecase"
+
+	"github.com/gin-gonic/gin"
+)
+
+func main() {
+	fmt.Println("==================================================")
+	fmt.Println("🚀 Day 29: Production-Grade Logging System in Go")
+	fmt.Println("==================================================")
+
+	logFilePath := "app.log"
+	zapLog, err := logger.NewZapLogger("development", logFilePath)
+	if err != nil {
+		fmt.Printf("Failed to initialize Zap Logger: %v\n", err)
+		os.Exit(1)
+	}
+	defer zapLog.Sync()
+
+	ctx := context.Background()
+	zapLog.Info(ctx, "Logger initialized successfully", "log_file", logFilePath, "environment", "development")
+
+	userRepo := repository.NewMemoryUserRepository(zapLog)
+	userUC := usecase.NewUserUseCase(userRepo, zapLog)
+	userHandler := handler.NewUserHandler(userUC, zapLog)
+
+	gin.SetMode(gin.ReleaseMode)
+	router := gin.New()
+
+	router.Use(gin.Recovery())
+	router.Use(middleware.RequestIDMiddleware())
+	router.Use(middleware.StructuredLoggerMiddleware(zapLog))
+
+	api := router.Group("/api/v1")
+	{
+		api.POST("/users", userHandler.RegisterUser)
+		api.GET("/users", userHandler.ListUsers)
+		api.GET("/users/:id", userHandler.GetUserByID)
+	}
+
+	createUser(router, "Dnyaneshwar Kokate", "dnyaneshwar@example.com", "ADMIN", "req-trace-101")
+	createUser(router, "Duplicate User", "dnyaneshwar@example.com", "USER", "req-trace-103")
+	listUsers(router, "req-trace-104")
+}
+
+func createUser(router *gin.Engine, name, email, role, requestID string) {
+	payload := domain.CreateUserInput{Name: name, Email: email, Role: role}
+	body, _ := json.Marshal(payload)
+	req, _ := http.NewRequest("POST", "/api/v1/users", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
+	if requestID != "" {
+		req.Header.Set("X-Request-ID", requestID)
+	}
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+}
+
+func listUsers(router *gin.Engine, requestID string) {
+	req, _ := http.NewRequest("GET", "/api/v1/users", nil)
+	if requestID != "" {
+		req.Header.Set("X-Request-ID", requestID)
+	}
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+}
+```
+
+---
+
+# 📘 Day 29 Interview Questions & Answers
+
+---
+
+## ❓ Q1: Why is structured JSON logging preferred over standard `fmt.Printf` or `log.Printf` in production backend systems?
+
+### ✅ Answer:
+Standard `log.Printf` outputs plain text strings that are difficult to parse and index in log management tools (e.g., Elasticsearch, Grafana Loki, Datadog). Structured JSON logging outputs key-value pairs (`{"level":"INFO","user_id":"123","request_id":"abc"}`), allowing log aggregation systems to automatically index fields. This enables fast searching, metric aggregation, filtering by user ID or request ID, and real-time dashboard visualization.
+
+---
+
+## ❓ Q2: What is Request Tracing / Correlation ID and how is it propagated in Go microservices?
+
+### ✅ Answer:
+A Correlation ID (`X-Request-ID`) is a unique string assigned to an incoming HTTP request at the API gateway or ingress middleware.
+In Go, it is attached to the request's `context.Context` (`context.WithValue(ctx, RequestIDKey, reqID)`). As the request traverses handlers, use cases, repository queries, and downstream HTTP/gRPC client calls, the context is passed along, allowing the logger to attach `request_id` to every log entry emitted during that request lifecycle.
+
+---
+
+## ❓ Q3: How does `go.uber.org/zap` achieve near-zero memory allocations compared to traditional loggers?
+
+### ✅ Answer:
+`Zap` avoids interface boxing (`interface{}`) and runtime reflection by using strongly typed fields (`zap.String()`, `zap.Int()`, `zap.Duration()`). It also uses an internal buffer pool (`zapcore.BufferPool`) to construct log messages without allocating memory on the heap for every log call.
+
+---
+
+## ❓ Q4: What is `log/slog` introduced in Go 1.21, and how does it compare to `zap` and `zerolog`?
+
+### ✅ Answer:
+`log/slog` is the standard library structured logging package added in Go 1.21. It defines standard `Logger`, `Record`, and `Handler` interfaces (`slog.TextHandler`, `slog.JSONHandler`). While `zap` and `zerolog` offer slightly higher raw throughput in extreme benchmarks, `log/slog` provides a standardized interface built into the standard library without external third-party dependencies.
+
+---
+
+## ❓ Q5: How do you handle multi-output logging (writing to both Stdout and a persistent log file) in Zap?
+
+### ✅ Answer:
+In Zap, multi-output logging is implemented using `zapcore.NewTee(...)` to combine multiple `zapcore.Core` instances. One core writes formatted console output (or JSON) to `os.Stdout` (for container log collectors like Docker/K8s), while a second core writes JSON output to an appended file writer (`os.OpenFile("app.log", ...)`).
+
+---
+
+# 📚 Day 29 Summary
+
+Today I learned:
+- The necessity of **Structured JSON Logging** and standard **Log Levels** (`DEBUG`, `INFO`, `WARN`, `ERROR`).
+- Integrating **Uber Zap Logger** and Go 1.21+ **`log/slog`** with Clean Architecture.
+- Implementing **Request Tracing (`X-Request-ID`)** via Gin middleware and `context.Context` propagation.
+- Building custom **Structured HTTP Access Logging Middleware** to measure latency, status codes, and IP addresses.
+- Multi-output logging configuration using `zapcore.NewTee` for simultaneous Console and File (`app.log`) persistence.
+- Writing unit tests verifying request ID headers and HTTP logging behavior.
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+✅ Day 27 Completed  
+✅ Day 28 Completed  
+✅ Day 29 Completed  
+🚀 Next: Student Management REST API Project in Go
