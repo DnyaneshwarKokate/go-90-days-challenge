@@ -94,7 +94,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 27 | Repository Pattern | ✅ |
 | Day 28 | Dependency Injection | ✅ |
 | Day 29 | Logging System | ✅ |
-| Day 30 | Student Management REST API Project | ⏳ |
+| Day 30 | Student Management REST API Project | ✅ |
 | Day 31 | Advanced CRUD APIs | ⏳ |
 | Day 32 | Pagination & Filtering | ⏳ |
 | Day 33 | File Upload API | ⏳ |
@@ -14434,4 +14434,653 @@ Today I learned:
 ✅ Day 27 Completed  
 ✅ Day 28 Completed  
 ✅ Day 29 Completed  
-🚀 Next: Student Management REST API Project in Go
+✅ Day 30 Completed  
+🚀 Next: Advanced CRUD APIs in Go
+
+---
+
+# ✅ Day 30 — Student Management REST API Project
+
+---
+
+# 📖 Overview — Milestone REST API Project
+
+Day 30 marks the **First Major Milestone REST API Project** in the 90-day Go Challenge. This production-grade application consolidates all architecture and infrastructure patterns developed over Days 15 to 29 into a complete, modular, tested Student Management Backend Microservice.
+
+### Key Integrated Technologies & Features
+- **Clean Architecture & SOLID Principles**: Decoupled layers (`domain`, `repository`, `usecase`, `handler`, `middleware`, `logger`, `config`, `di`).
+- **Dependency Injection (DI)**: Manual constructor injection and a central application container (`di/container.go`).
+- **JWT Authentication & RBAC Authorization**: Role-based endpoints for `ADMIN`, `TEACHER`, and `STUDENT` roles using `golang-jwt/jwt/v5`.
+- **Security & Hashing**: Bcrypt password hashing (`golang.org/x/crypto/bcrypt`).
+- **Structured Logging & Tracing**: High-performance Uber Zap (`go.uber.org/zap`) with custom HTTP access logging and `X-Request-ID` correlation context tracking.
+- **RESTful API Operations**: Full CRUD lifecycle for Student resources with status and department filtering.
+- **Automated Testing**: Comprehensive HTTP integration test suite (`tests/student_api_test.go`).
+
+---
+
+# 🏗️ Architecture & Component Flow
+
+```text
+  +---------------------------------------------------------------------------------+
+  |                            Incoming HTTP Client / Postman                       |
+  +---------------------------------------------------------------------------------+
+                                           |
+                    Header: Authorization: Bearer <JWT> & X-Request-ID
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                       RequestIDMiddleware (Gin Middleware)                      |
+  |         Extracts/Generates UUID -> Injects into c.Request.Context()             |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                   StructuredLoggerMiddleware (Gin Middleware)                   |
+  |           Audits HTTP Method, Path, Status Code, Client IP, Latency             |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                     JWTAuthMiddleware (Authentication Layer)                    |
+  |         Parses & Validates HMAC Token -> Sets UserID, Role in Context           |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                  RequireRoleMiddleware (Authorization / RBAC)                   |
+  |           Verifies Role Permissions (ADMIN / TEACHER / STUDENT)                 |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                       HTTP Handlers (handler/*_handler.go)                      |
+  |               Parses JSON Payloads & Returns JSON Responses                     |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                       Business Use Cases (usecase/*_usecase.go)                 |
+  |         Contains Password Hashing, Validation, Business Workflows               |
+  +---------------------------------------------------------------------------------+
+                                           |
+                                           v
+  +---------------------------------------------------------------------------------+
+  |                     Repositories (repository/*_repository.go)                   |
+  |         Thread-Safe In-Memory / PostgreSQL Database Persistence                 |
+  +---------------------------------------------------------------------------------+
+```
+
+---
+
+# 🌐 API Endpoint Matrix & Permission Matrix
+
+| Method | Endpoint | Description | Allowed Roles | Auth Required |
+| :--- | :--- | :--- | :--- | :--- |
+| `POST` | `/api/v1/auth/register` | Register a new User Account | Public | ❌ |
+| `POST` | `/api/v1/auth/login` | Authenticate User & Issue JWT | Public | ❌ |
+| `GET` | `/api/v1/students` | List All Students (with filters) | `ADMIN`, `TEACHER`, `STUDENT` | ✅ Bearer JWT |
+| `GET` | `/api/v1/students/:id` | Fetch Student Profile by ID | `ADMIN`, `TEACHER`, `STUDENT` | ✅ Bearer JWT |
+| `POST` | `/api/v1/students` | Register New Student Profile | `ADMIN`, `TEACHER` | ✅ Bearer JWT |
+| `PUT` | `/api/v1/students/:id` | Update Student Details / GPA / Status | `ADMIN`, `TEACHER` | ✅ Bearer JWT |
+| `DELETE` | `/api/v1/students/:id` | Permanently Delete Student Profile | `ADMIN` Only | ✅ Bearer JWT |
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 30 Project
+
+### 1. Configuration Loader (`config/config.go`)
+
+```go
+package config
+
+import (
+	"os"
+	"time"
+)
+
+type Config struct {
+	Port         string
+	Environment  string
+	JWTSecret    string
+	JWTExpiresIn time.Duration
+	LogFilePath  string
+}
+
+func LoadConfig() Config {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	env := os.Getenv("ENV")
+	if env == "" {
+		env = "development"
+	}
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = "super-secret-student-mgmt-key-90-days-challenge"
+	}
+	logPath := os.Getenv("LOG_FILE_PATH")
+	if logPath == "" {
+		logPath = "student_app.log"
+	}
+
+	return Config{
+		Port:         port,
+		Environment:  env,
+		JWTSecret:    secret,
+		JWTExpiresIn: 24 * time.Hour,
+		LogFilePath:  logPath,
+	}
+}
+```
+
+---
+
+### 2. Domain Entities & Interfaces (`domain/student.go`)
+
+```go
+package domain
+
+import (
+	"context"
+	"errors"
+	"time"
+)
+
+type ContextKey string
+
+const (
+	RequestIDKey ContextKey = "X-Request-ID"
+	UserIDKey    ContextKey = "user_id"
+	UserRoleKey  ContextKey = "user_role"
+	UserEmailKey ContextKey = "user_email"
+)
+
+const (
+	RoleAdmin   = "ADMIN"
+	RoleTeacher = "TEACHER"
+	RoleStudent = "STUDENT"
+)
+
+var (
+	ErrUserNotFound       = errors.New("user not found")
+	ErrStudentNotFound    = errors.New("student record not found")
+	ErrEmailExists        = errors.New("email address is already registered")
+	ErrInvalidCredentials = errors.New("invalid email or password")
+	ErrUnauthorized       = errors.New("authentication token is missing or invalid")
+	ErrForbidden          = errors.New("access forbidden: insufficient permissions")
+	ErrInvalidInput       = errors.New("invalid request payload")
+)
+
+type User struct {
+	ID        string    `json:"id"`
+	Email     string    `json:"email"`
+	Password  string    `json:"-"`
+	Role      string    `json:"role"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+type Student struct {
+	ID         string    `json:"id"`
+	UserID     string    `json:"user_id"`
+	FullName   string    `json:"full_name"`
+	Email      string    `json:"email"`
+	Department string    `json:"department"`
+	GPA        float64   `json:"gpa"`
+	Status     string    `json:"status"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+}
+
+type RegisterInput struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
+	Role     string `json:"role"`
+}
+
+type LoginInput struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
+type TokenResponse struct {
+	Token     string    `json:"token"`
+	ExpiresAt time.Time `json:"expires_at"`
+	User      *User     `json:"user"`
+}
+
+type CreateStudentInput struct {
+	FullName   string  `json:"full_name" binding:"required"`
+	Email      string  `json:"email" binding:"required,email"`
+	Department string  `json:"department" binding:"required"`
+	GPA        float64 `json:"gpa" binding:"min=0,max=4"`
+}
+
+type UpdateStudentInput struct {
+	FullName   string  `json:"full_name"`
+	Department string  `json:"department"`
+	GPA        float64 `json:"gpa" binding:"min=0,max=4"`
+	Status     string  `json:"status"`
+}
+
+type Logger interface {
+	Info(ctx context.Context, msg string, keysAndValues ...interface{})
+	Warn(ctx context.Context, msg string, keysAndValues ...interface{})
+	Error(ctx context.Context, msg string, keysAndValues ...interface{})
+	Debug(ctx context.Context, msg string, keysAndValues ...interface{})
+}
+
+type UserRepository interface {
+	SaveUser(ctx context.Context, user *User) error
+	FindUserByEmail(ctx context.Context, email string) (*User, error)
+	FindUserByID(ctx context.Context, id string) (*User, error)
+}
+
+type StudentRepository interface {
+	Save(ctx context.Context, student *Student) error
+	FindByID(ctx context.Context, id string) (*Student, error)
+	FindByEmail(ctx context.Context, email string) (*Student, error)
+	FindAll(ctx context.Context, department string, status string) ([]*Student, error)
+	Update(ctx context.Context, student *Student) error
+	Delete(ctx context.Context, id string) error
+}
+```
+
+---
+
+### 3. JWT Authentication & Role Middlewares (`middleware/auth_middleware.go`)
+
+```go
+package middleware
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+	"strings"
+
+	"day-30/domain"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+)
+
+func JWTAuthMiddleware(jwtSecret string, logger domain.Logger) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			logger.Warn(c.Request.Context(), "Authentication failed: missing Authorization header")
+			c.JSON(http.StatusUnauthorized, gin.H{"error": domain.ErrUnauthorized.Error()})
+			c.Abort()
+			return
+		}
+
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			logger.Warn(c.Request.Context(), "Authentication failed: malformed Authorization header")
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header must be Bearer token"})
+			c.Abort()
+			return
+		}
+
+		tokenString := parts[1]
+		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
+			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+			}
+			return []byte(jwtSecret), nil
+		})
+
+		if err != nil || !token.Valid {
+			logger.Warn(c.Request.Context(), "Authentication failed: invalid or expired token", "error", err)
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired authentication token"})
+			c.Abort()
+			return
+		}
+
+		claims, ok := token.Claims.(jwt.MapClaims)
+		if !ok {
+			logger.Warn(c.Request.Context(), "Authentication failed: invalid token claims payload")
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+			c.Abort()
+			return
+		}
+
+		userID, _ := claims["sub"].(string)
+		role, _ := claims["role"].(string)
+		email, _ := claims["email"].(string)
+
+		ctx := c.Request.Context()
+		ctx = context.WithValue(ctx, domain.UserIDKey, userID)
+		ctx = context.WithValue(ctx, domain.UserRoleKey, role)
+		ctx = context.WithValue(ctx, domain.UserEmailKey, email)
+
+		c.Request = c.Request.WithContext(ctx)
+
+		c.Set(string(domain.UserIDKey), userID)
+		c.Set(string(domain.UserRoleKey), role)
+
+		c.Next()
+	}
+}
+
+func RequireRoleMiddleware(logger domain.Logger, allowedRoles ...string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		roleVal, exists := c.Get(string(domain.UserRoleKey))
+		if !exists {
+			logger.Warn(c.Request.Context(), "Authorization rejected: Role missing from context")
+			c.JSON(http.StatusForbidden, gin.H{"error": domain.ErrForbidden.Error()})
+			c.Abort()
+			return
+		}
+
+		userRole, _ := roleVal.(string)
+		roleAllowed := false
+		for _, allowed := range allowedRoles {
+			if strings.EqualFold(userRole, allowed) {
+				roleAllowed = true
+				break
+			}
+		}
+
+		if !roleAllowed {
+			logger.Warn(c.Request.Context(), "Authorization rejected: Access denied for role", "user_role", userRole, "required_roles", allowedRoles)
+			c.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("Role '%s' is not authorized to perform this operation", userRole)})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}
+```
+
+---
+
+### 4. Dependency Injection Container (`di/container.go`)
+
+```go
+package di
+
+import (
+	"day-30/config"
+	"day-30/domain"
+	"day-30/handler"
+	"day-30/logger"
+	"day-30/middleware"
+	"day-30/repository"
+	"day-30/usecase"
+
+	"github.com/gin-gonic/gin"
+)
+
+type Container struct {
+	Config         config.Config
+	Logger         domain.Logger
+	UserRepo       domain.UserRepository
+	StudentRepo    domain.StudentRepository
+	AuthUseCase    *usecase.AuthUseCase
+	StudentUseCase *usecase.StudentUseCase
+	AuthHandler    *handler.AuthHandler
+	StudentHandler *handler.StudentHandler
+}
+
+func NewContainer(cfg config.Config) (*Container, error) {
+	appLogger, err := logger.NewZapLogger(cfg.Environment, cfg.LogFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	userRepo := repository.NewMemoryUserRepository(appLogger)
+	studentRepo := repository.NewMemoryStudentRepository(appLogger)
+
+	authUseCase := usecase.NewAuthUseCase(userRepo, cfg, appLogger)
+	studentUseCase := usecase.NewStudentUseCase(studentRepo, appLogger)
+
+	authHandler := handler.NewAuthHandler(authUseCase, appLogger)
+	studentHandler := handler.NewStudentHandler(studentUseCase, appLogger)
+
+	return &Container{
+		Config:         cfg,
+		Logger:         appLogger,
+		UserRepo:       userRepo,
+		StudentRepo:    studentRepo,
+		AuthUseCase:    authUseCase,
+		StudentUseCase: studentUseCase,
+		AuthHandler:    authHandler,
+		StudentHandler: studentHandler,
+	}, nil
+}
+
+func (c *Container) SetupRouter() *gin.Engine {
+	if c.Config.Environment == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
+
+	router := gin.New()
+	router.Use(gin.Recovery())
+	router.Use(middleware.RequestIDMiddleware())
+	router.Use(middleware.StructuredLoggerMiddleware(c.Logger))
+
+	v1 := router.Group("/api/v1")
+	{
+		authGroup := v1.Group("/auth")
+		{
+			authGroup.POST("/register", c.AuthHandler.Register)
+			authGroup.POST("/login", c.AuthHandler.Login)
+		}
+
+		studentGroup := v1.Group("/students")
+		studentGroup.Use(middleware.JWTAuthMiddleware(c.Config.JWTSecret, c.Logger))
+		{
+			studentGroup.GET("", middleware.RequireRoleMiddleware(c.Logger, domain.RoleAdmin, domain.RoleTeacher, domain.RoleStudent), c.StudentHandler.ListStudents)
+			studentGroup.GET("/:id", middleware.RequireRoleMiddleware(c.Logger, domain.RoleAdmin, domain.RoleTeacher, domain.RoleStudent), c.StudentHandler.GetStudentByID)
+			studentGroup.POST("", middleware.RequireRoleMiddleware(c.Logger, domain.RoleAdmin, domain.RoleTeacher), c.StudentHandler.CreateStudent)
+			studentGroup.PUT("/:id", middleware.RequireRoleMiddleware(c.Logger, domain.RoleAdmin, domain.RoleTeacher), c.StudentHandler.UpdateStudent)
+			studentGroup.DELETE("/:id", middleware.RequireRoleMiddleware(c.Logger, domain.RoleAdmin), c.StudentHandler.DeleteStudent)
+		}
+	}
+
+	return router
+}
+```
+
+---
+
+### 5. Automated Integration Test Suite (`tests/student_api_test.go`)
+
+```go
+package tests
+
+import (
+	"bytes"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
+	"day-30/config"
+	"day-30/di"
+	"day-30/domain"
+)
+
+func setupTestApp() (*di.Container, http.Handler) {
+	cfg := config.LoadConfig()
+	cfg.Environment = "test"
+
+	container, _ := di.NewContainer(cfg)
+	router := container.SetupRouter()
+	return container, router
+}
+
+func getAuthToken(t *testing.T, handler http.Handler, email, password, role string) string {
+	regPayload := domain.RegisterInput{Email: email, Password: password, Role: role}
+	regBody, _ := json.Marshal(regPayload)
+	req1, _ := http.NewRequest("POST", "/api/v1/auth/register", bytes.NewBuffer(regBody))
+	req1.Header.Set("Content-Type", "application/json")
+	w1 := httptest.NewRecorder()
+	handler.ServeHTTP(w1, req1)
+
+	loginPayload := domain.LoginInput{Email: email, Password: password}
+	loginBody, _ := json.Marshal(loginPayload)
+	req2, _ := http.NewRequest("POST", "/api/v1/auth/login", bytes.NewBuffer(loginBody))
+	req2.Header.Set("Content-Type", "application/json")
+	w2 := httptest.NewRecorder()
+	handler.ServeHTTP(w2, req2)
+
+	var res map[string]interface{}
+	json.Unmarshal(w2.Body.Bytes(), &res)
+	dataMap := res["data"].(map[string]interface{})
+	return dataMap["token"].(string)
+}
+
+func TestStudentAPI_FullLifecycle(t *testing.T) {
+	_, handler := setupTestApp()
+
+	adminToken := getAuthToken(t, handler, "test.admin@school.com", "AdminPassword123", "ADMIN")
+	studentToken := getAuthToken(t, handler, "test.student@school.com", "StudentPassword123", "STUDENT")
+
+	createPayload := domain.CreateStudentInput{
+		FullName:   "Alice Johnson",
+		Email:      "alice.johnson@school.com",
+		Department: "PHYSICS",
+		GPA:        3.88,
+	}
+	createBody, _ := json.Marshal(createPayload)
+
+	reqCreate, _ := http.NewRequest("POST", "/api/v1/students", bytes.NewBuffer(createBody))
+	reqCreate.Header.Set("Content-Type", "application/json")
+	reqCreate.Header.Set("Authorization", "Bearer "+adminToken)
+	wCreate := httptest.NewRecorder()
+	handler.ServeHTTP(wCreate, reqCreate)
+
+	if wCreate.Code != http.StatusCreated {
+		t.Fatalf("expected status 201 Created, got %d. Body: %s", wCreate.Code, wCreate.Body.String())
+	}
+
+	var createRes map[string]interface{}
+	json.Unmarshal(wCreate.Body.Bytes(), &createRes)
+	studentData := createRes["data"].(map[string]interface{})
+	studentID := studentData["id"].(string)
+
+	reqGet, _ := http.NewRequest("GET", "/api/v1/students/"+studentID, nil)
+	reqGet.Header.Set("Authorization", "Bearer "+studentToken)
+	wGet := httptest.NewRecorder()
+	handler.ServeHTTP(wGet, reqGet)
+
+	if wGet.Code != http.StatusOK {
+		t.Fatalf("expected status 200 OK, got %d", wGet.Code)
+	}
+
+	reqForbiddenDelete, _ := http.NewRequest("DELETE", "/api/v1/students/"+studentID, nil)
+	reqForbiddenDelete.Header.Set("Authorization", "Bearer "+studentToken)
+	wForbiddenDelete := httptest.NewRecorder()
+	handler.ServeHTTP(wForbiddenDelete, reqForbiddenDelete)
+
+	if wForbiddenDelete.Code != http.StatusForbidden {
+		t.Errorf("expected status 403 Forbidden for STUDENT role deletion, got %d", wForbiddenDelete.Code)
+	}
+
+	reqDelete, _ := http.NewRequest("DELETE", "/api/v1/students/"+studentID, nil)
+	reqDelete.Header.Set("Authorization", "Bearer "+adminToken)
+	wDelete := httptest.NewRecorder()
+	handler.ServeHTTP(wDelete, reqDelete)
+
+	if wDelete.Code != http.StatusOK {
+		t.Fatalf("expected status 200 OK for ADMIN role deletion, got %d", wDelete.Code)
+	}
+}
+```
+
+---
+
+# 📘 Day 30 Interview Questions & Answers
+
+---
+
+## ❓ Q1: How does Clean Architecture decouple business logic from framework and database dependencies in a production REST API?
+
+### ✅ Answer:
+Clean Architecture enforces strict **Dependency Inversion**:
+1. **Domain Layer**: Defines core business entities and abstract interfaces (`UserRepository`, `StudentRepository`, `Logger`) with zero external imports.
+2. **Use Case Layer**: Contains business rules (e.g. validating input, hashing passwords with Bcrypt, issuing JWTs) relying solely on domain interfaces.
+3. **Handler / Infrastructure Layer**: Implements web routing (Gin framework), persistence (in-memory map / GORM PostgreSQL), and logging (Uber Zap).
+Because high-level business use cases depend on interfaces rather than concrete structs, database drivers or web frameworks can be replaced without modifying core business logic.
+
+---
+
+## ❓ Q2: How does JWT Authentication and Role-Based Authorization (RBAC) work in Gin middleware?
+
+### ✅ Answer:
+1. **Authentication Middleware (`JWTAuthMiddleware`)**: Intercepts `Authorization: Bearer <token>`, validates HMAC-SHA256 signature using secret key, extracts claims (`sub`, `role`, `email`), and attaches them to `c.Request.Context()`.
+2. **Authorization Middleware (`RequireRoleMiddleware`)**: Reads the user's role from request context and compares it against allowed roles (e.g. `ADMIN`, `TEACHER`, `STUDENT`). If unauthorized, it immediately halts execution (`c.Abort()`) and returns `403 Forbidden`.
+
+---
+
+## ❓ Q3: Why is Request Correlation Tracing (`X-Request-ID`) vital in production REST APIs and Microservices?
+
+### ✅ Answer:
+In a multi-threaded web server handling thousands of concurrent requests, log lines from different requests interleave in stdout. A **Correlation ID** (`X-Request-ID`) generated at the ingress middleware assigns a unique UUID to each request. Propagating this ID through `context.Context` enables loggers to tag every log record across middleware, use case, and repository layers, allowing engineers to trace a single request's full lifecycle in log aggregators (ELK, Grafana Loki).
+
+---
+
+## ❓ Q4: What are the security benefits of using Bcrypt for password storage in Go REST APIs?
+
+### ✅ Answer:
+Bcrypt is a salted, adaptive cryptographic key derivation function. It includes:
+1. **Automatic Salting**: Unique random salts prevent rainbow table lookup attacks.
+2. **Configurable Cost Factor**: Increasing the cost factor increases computation time per password hash, making brute-force dictionary attacks computationally infeasible while keeping API authentication fast for legitimate users.
+
+---
+
+## ❓ Q5: How does a Dependency Injection Container (`di/container.go`) simplify application setup and testing?
+
+### ✅ Answer:
+A Central DI Container instantiates components in topological order (Config -> Logger -> Repositories -> Use Cases -> Handlers -> Router). It centralizes route definitions and dependency wiring, eliminating initialization boilerplate in `main.go`. In unit or integration test environments, mock dependencies can be injected into the container without changing production application code.
+
+---
+
+# 📚 Day 30 Summary
+
+Today I completed the **Day 30 Student Management REST API Milestone Project**:
+- Consolidated Clean Architecture, Dependency Injection, Repository Pattern, JWT Authentication, and RBAC into a unified backend service.
+- Configured Uber Zap structured logging with contextual `X-Request-ID` correlation tracing.
+- Implemented full REST API CRUD endpoints for Student resources with status and department filtering.
+- Implemented password hashing with Bcrypt and JWT token authentication.
+- Wrote end-to-end integration tests (`httptest`) asserting authentication, student lifecycle, and role permission enforcement.
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+✅ Day 27 Completed  
+✅ Day 28 Completed  
+✅ Day 29 Completed  
+✅ Day 30 Completed  
+🚀 Next: Advanced CRUD APIs in Go
