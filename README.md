@@ -92,7 +92,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 25 | Environment Variables | ✅ |
 | Day 26 | Clean Architecture | ✅ |
 | Day 27 | Repository Pattern | ✅ |
-| Day 28 | Dependency Injection | ⏳ |
+| Day 28 | Dependency Injection | ✅ |
 | Day 29 | Logging System | ⏳ |
 | Day 30 | Student Management REST API Project | ⏳ |
 | Day 31 | Advanced CRUD APIs | ⏳ |
@@ -13044,4 +13044,620 @@ Today I learned:
 ✅ Day 25 Completed  
 ✅ Day 26 Completed  
 ✅ Day 27 Completed  
-🚀 Next: Dependency Injection in Go
+✅ Day 28 Completed  
+🚀 Next: Logging System in Go
+
+---
+
+# ✅ Day 28 — Dependency Injection in Go
+
+---
+
+# 📖 Introduction to Dependency Injection in Go
+
+**Dependency Injection (DI)** is a fundamental software design technique in object-oriented and functional architecture that implements **Inversion of Control (IoC)**. Instead of a struct or component creating its own dependencies (such as initializing database clients, HTTP clients, logger instances, or notification services internally), dependencies are **supplied ("injected") from the outside**, usually through constructor functions.
+
+In Go, Dependency Injection directly upholds the **Dependency Inversion Principle (DIP)** from SOLID principles:
+1. **High-level modules** (business use cases & HTTP handlers) should not depend on low-level modules (database drivers, SQL queries, SMTP servers). Both should depend on **abstractions** (Go interfaces).
+2. **Abstractions** should not depend on details. Details (concrete implementations) should depend on abstractions.
+
+---
+
+# 🏗️ Architecture & Component Flow
+
+```text
+  +---------------------------------------------------------------+
+  |                     Main Entrypoint / Container               |
+  |                       (di/container.go & main.go)             |
+  +---------------------------------------------------------------+
+           |                        |                       |
+  Constructs & Injects    Constructs & Injects   Constructs & Injects
+           |                        |                       |
+           v                        v                       v
+  +--------------------+   +--------------------+  +------------------+
+  |  Console Logger    |   | Memory Order Repo  |  |  Email Notifier  |
+  +--------------------+   +--------------------+  +------------------+
+           |                        |                       |
+  Satisfies interface      Satisfies interface     Satisfies interface
+           |                        |                       |
+           v                        v                       v
+  +---------------------------------------------------------------+
+  |                    Domain Interface Contracts                 |
+  |          (domain.Logger, OrderRepository, NotificationService)|
+  +---------------------------------------------------------------+
+                                    ^
+                                    | Injected via Constructor
+  +---------------------------------------------------------------+
+  |                     Business Use Case Layer                   |
+  |                   (usecase/order_usecase.go)                  |
+  +---------------------------------------------------------------+
+                                    ^
+                                    | Injected via Constructor
+  +---------------------------------------------------------------+
+  |                    HTTP Handler / Delivery                    |
+  |                   (handler/order_handler.go)                  |
+  +---------------------------------------------------------------+
+```
+
+---
+
+# 🎯 Why Dependency Injection Matters in Go
+
+- **Effortless Unit Testing & Mocking**: Business logic can be tested in isolation in milliseconds without connecting to external databases or live SMTP servers.
+- **Decoupled Architecture**: Components can be swapped (e.g., swapping `MemoryOrderRepository` with `PostgresOrderRepository` or `EmailService` with `MockEmailService`) without altering business logic.
+- **Explicit Component Contracts**: Dependencies are explicitly declared in constructor parameters (`NewOrderUseCase(...)`), making codebase dependencies clear and readable.
+- **Single Responsibility Principle**: Individual components focus solely on their core logic rather than managing the lifecycles of their dependencies.
+
+---
+
+# 💡 Key DI Patterns in Go
+
+### 1. Constructor Injection (Idiomatic Go)
+In Go, constructor functions (`New...`) accepting interface types are the standard and most explicit form of dependency injection:
+
+```go
+func NewOrderUseCase(
+    repo domain.OrderRepository,
+    notifier domain.NotificationService,
+    logger domain.Logger,
+) *OrderUseCase {
+    return &OrderUseCase{
+        repo:     repo,
+        notifier: notifier,
+        logger:   logger,
+    }
+}
+```
+
+### 2. Functional Options Pattern for Dynamic DI
+When dependencies or configurations are optional, Go developers use the **Functional Options Pattern**:
+
+```go
+type Option func(*OrderUseCase)
+
+func WithLogger(logger domain.Logger) Option {
+    return func(u *OrderUseCase) {
+        if logger != nil {
+            u.logger = logger
+        }
+    }
+}
+
+func NewOrderUseCase(repo domain.OrderRepository, opts ...Option) *OrderUseCase {
+    uc := &OrderUseCase{repo: repo}
+    for _, opt := range opts {
+        opt(uc)
+    }
+    return uc
+}
+```
+
+### 3. Application DI Container
+A centralized container handles instantiating components in topological order (Infrastructure -> Repositories -> Services -> Handlers):
+
+```go
+type Container struct {
+    Logger       domain.Logger
+    OrderRepo    domain.OrderRepository
+    Notification domain.NotificationService
+    OrderUseCase *usecase.OrderUseCase
+    OrderHandler *handler.OrderHandler
+}
+
+func NewContainer(cfg Config) *Container { ... }
+```
+
+---
+
+# ⚖️ Manual DI vs. Framework DI (Google Wire vs. Uber FX)
+
+| Feature | Manual DI (Idiomatic) | Google Wire | Uber FX |
+| :--- | :--- | :--- | :--- |
+| **Mechanism** | Handcrafted Constructors & Containers | Code Generation (`wire` CLI) | Runtime Reflection |
+| **Safety** | Compile-time safe | Compile-time safe | Runtime errors on missing dependencies |
+| **Reflection Overhead** | None | None | Uses `reflect` package |
+| **Debugging** | Extremely easy & visible stack traces | Generates readable Go code | Harder to debug runtime graph failures |
+| **Best Used For** | Small to Medium Microservices | Medium to Large Codebases | Large Enterprise Applications |
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 28 Project
+
+### 1. Domain Interfaces (`domain/order.go`)
+
+```go
+package domain
+
+import (
+	"errors"
+	"time"
+)
+
+var (
+	ErrOrderNotFound      = errors.New("order not found")
+	ErrInvalidOrderAmount = errors.New("order amount must be greater than zero")
+	ErrEmptyCustomerEmail = errors.New("customer email cannot be empty")
+)
+
+type Order struct {
+	ID            string    `json:"id"`
+	CustomerEmail string    `json:"customer_email"`
+	Amount        float64   `json:"amount"`
+	Status        string    `json:"status"`
+	CreatedAt     time.Time `json:"created_at"`
+}
+
+type CreateOrderInput struct {
+	CustomerEmail string  `json:"customer_email" binding:"required,email"`
+	Amount        float64 `json:"amount" binding:"required,gt=0"`
+}
+
+type Logger interface {
+	Info(msg string, args ...interface{})
+	Error(msg string, args ...interface{})
+}
+
+type NotificationService interface {
+	SendOrderConfirmation(order *Order) error
+}
+
+type OrderRepository interface {
+	Save(order *Order) error
+	FindByID(id string) (*Order, error)
+	FindAll() ([]*Order, error)
+}
+```
+
+---
+
+### 2. Concrete Logger Implementation (`logger/logger.go`)
+
+```go
+package logger
+
+import (
+	"fmt"
+	"log"
+	"sync"
+
+	"day-28/domain"
+)
+
+type ConsoleLogger struct {
+	prefix string
+}
+
+func NewConsoleLogger(prefix string) domain.Logger {
+	return &ConsoleLogger{prefix: prefix}
+}
+
+func (l *ConsoleLogger) Info(msg string, args ...interface{}) {
+	log.Printf("[INFO] [%s] %s", l.prefix, fmt.Sprintf(msg, args...))
+}
+
+func (l *ConsoleLogger) Error(msg string, args ...interface{}) {
+	log.Printf("[ERROR] [%s] %s", l.prefix, fmt.Sprintf(msg, args...))
+}
+
+type MockLogger struct {
+	mu   sync.Mutex
+	Logs []string
+}
+
+func NewMockLogger() *MockLogger {
+	return &MockLogger{Logs: make([]string, 0)}
+}
+
+func (m *MockLogger) Info(msg string, args ...interface{}) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.Logs = append(m.Logs, fmt.Sprintf("[INFO] "+msg, args...))
+}
+
+func (m *MockLogger) Error(msg string, args ...interface{}) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.Logs = append(m.Logs, fmt.Sprintf("[ERROR] "+msg, args...))
+}
+```
+
+---
+
+### 3. Notification Service Implementation (`notification/email_service.go`)
+
+```go
+package notification
+
+import (
+	"fmt"
+	"sync"
+
+	"day-28/domain"
+)
+
+type EmailNotificationService struct {
+	logger domain.Logger
+}
+
+func NewEmailNotificationService(logger domain.Logger) domain.NotificationService {
+	return &EmailNotificationService{logger: logger}
+}
+
+func (s *EmailNotificationService) SendOrderConfirmation(order *domain.Order) error {
+	s.logger.Info("📧 Sending email confirmation for Order ID %s to %s ($%.2f)",
+		order.ID, order.CustomerEmail, order.Amount)
+	return nil
+}
+
+type MockNotificationService struct {
+	mu         sync.Mutex
+	SentOrders []*domain.Order
+	ShouldFail bool
+}
+
+func NewMockNotificationService() *MockNotificationService {
+	return &MockNotificationService{SentOrders: make([]*domain.Order, 0)}
+}
+
+func (m *MockNotificationService) SendOrderConfirmation(order *domain.Order) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
+	if m.ShouldFail {
+		return fmt.Errorf("simulated notification failure")
+	}
+	m.SentOrders = append(m.SentOrders, order)
+	return nil
+}
+```
+
+---
+
+### 4. Repository Implementation (`repository/order_repository.go`)
+
+```go
+package repository
+
+import (
+	"sync"
+
+	"day-28/domain"
+)
+
+type memoryOrderRepository struct {
+	mu     sync.RWMutex
+	orders map[string]*domain.Order
+}
+
+func NewMemoryOrderRepository() domain.OrderRepository {
+	return &memoryOrderRepository{
+		orders: make(map[string]*domain.Order),
+	}
+}
+
+func (r *memoryOrderRepository) Save(order *domain.Order) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.orders[order.ID] = order
+	return nil
+}
+
+func (r *memoryOrderRepository) FindByID(id string) (*domain.Order, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	order, exists := r.orders[id]
+	if !exists {
+		return nil, domain.ErrOrderNotFound
+	}
+	return order, nil
+}
+
+func (r *memoryOrderRepository) FindAll() ([]*domain.Order, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	result := make([]*domain.Order, 0, len(r.orders))
+	for _, order := range r.orders {
+		result = append(result, order)
+	}
+	return result, nil
+}
+```
+
+---
+
+### 5. Business Use Case with DI (`usecase/order_usecase.go`)
+
+```go
+package usecase
+
+import (
+	"fmt"
+	"time"
+
+	"day-28/domain"
+)
+
+type OrderUseCase struct {
+	repo     domain.OrderRepository
+	notifier domain.NotificationService
+	logger   domain.Logger
+}
+
+type Option func(*OrderUseCase)
+
+func WithLogger(logger domain.Logger) Option {
+	return func(u *OrderUseCase) {
+		if logger != nil {
+			u.logger = logger
+		}
+	}
+}
+
+func NewOrderUseCase(
+	repo domain.OrderRepository,
+	notifier domain.NotificationService,
+	logger domain.Logger,
+	opts ...Option,
+) *OrderUseCase {
+	uc := &OrderUseCase{
+		repo:     repo,
+		notifier: notifier,
+		logger:   logger,
+	}
+	for _, opt := range opts {
+		opt(uc)
+	}
+	return uc
+}
+
+func (u *OrderUseCase) CreateOrder(input domain.CreateOrderInput) (*domain.Order, error) {
+	if input.Amount <= 0 {
+		u.logger.Error("Validation failed: order amount must be positive (received %.2f)", input.Amount)
+		return nil, domain.ErrInvalidOrderAmount
+	}
+	if input.CustomerEmail == "" {
+		u.logger.Error("Validation failed: customer email is empty")
+		return nil, domain.ErrEmptyCustomerEmail
+	}
+
+	order := &domain.Order{
+		ID:            fmt.Sprintf("ORD-%d", time.Now().UnixNano()),
+		CustomerEmail: input.CustomerEmail,
+		Amount:        input.Amount,
+		Status:        "COMPLETED",
+		CreatedAt:     time.Now(),
+	}
+
+	if err := u.repo.Save(order); err != nil {
+		u.logger.Error("Failed to save order %s: %v", order.ID, err)
+		return nil, fmt.Errorf("repository save error: %w", err)
+	}
+
+	u.logger.Info("Order %s saved successfully", order.ID)
+
+	if u.notifier != nil {
+		if err := u.notifier.SendOrderConfirmation(order); err != nil {
+			u.logger.Error("Failed to send order confirmation for %s: %v", order.ID, err)
+		}
+	}
+
+	return order, nil
+}
+```
+
+---
+
+### 6. Application Container (`di/container.go`)
+
+```go
+package di
+
+import (
+	"day-28/domain"
+	"day-28/handler"
+	"day-28/logger"
+	"day-28/notification"
+	"day-28/repository"
+	"day-28/usecase"
+
+	"github.com/gin-gonic/gin"
+)
+
+type Container struct {
+	Logger       domain.Logger
+	OrderRepo    domain.OrderRepository
+	Notification domain.NotificationService
+	OrderUseCase *usecase.OrderUseCase
+	OrderHandler *handler.OrderHandler
+}
+
+type Config struct {
+	Env string
+}
+
+func NewContainer(cfg Config) *Container {
+	var appLogger domain.Logger
+	var notifier domain.NotificationService
+
+	if cfg.Env == "test" {
+		appLogger = logger.NewMockLogger()
+		notifier = notification.NewMockNotificationService()
+	} else {
+		appLogger = logger.NewConsoleLogger("APP")
+		notifier = notification.NewEmailNotificationService(appLogger)
+	}
+
+	orderRepo := repository.NewMemoryOrderRepository()
+	orderUseCase := usecase.NewOrderUseCase(orderRepo, notifier, appLogger)
+	orderHandler := handler.NewOrderHandler(orderUseCase, appLogger)
+
+	return &Container{
+		Logger:       appLogger,
+		OrderRepo:    orderRepo,
+		Notification: notifier,
+		OrderUseCase: orderUseCase,
+		OrderHandler: orderHandler,
+	}
+}
+
+func (c *Container) SetupRoutes(router *gin.Engine) {
+	api := router.Group("/api/v1")
+	{
+		api.POST("/orders", c.OrderHandler.CreateOrder)
+		api.GET("/orders", c.OrderHandler.ListOrders)
+		api.GET("/orders/:id", c.OrderHandler.GetOrder)
+	}
+}
+```
+
+---
+
+### 7. Unit Testing with Mock Injection (`usecase/order_usecase_test.go`)
+
+```go
+package usecase_test
+
+import (
+	"testing"
+
+	"day-28/domain"
+	"day-28/logger"
+	"day-28/notification"
+	"day-28/repository"
+	"day-28/usecase"
+)
+
+func TestCreateOrder_Success(t *testing.T) {
+	mockRepo := repository.NewMemoryOrderRepository()
+	mockNotifier := notification.NewMockNotificationService()
+	mockLogger := logger.NewMockLogger()
+
+	orderUC := usecase.NewOrderUseCase(mockRepo, mockNotifier, mockLogger)
+
+	input := domain.CreateOrderInput{
+		CustomerEmail: "alice@example.com",
+		Amount:        150.75,
+	}
+
+	order, err := orderUC.CreateOrder(input)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+
+	if order.ID == "" {
+		t.Errorf("expected generated Order ID, got empty string")
+	}
+
+	if len(mockNotifier.SentOrders) != 1 {
+		t.Errorf("expected 1 sent notification, got %d", len(mockNotifier.SentOrders))
+	}
+}
+```
+
+---
+
+# 📘 Day 28 Interview Questions & Answers
+
+---
+
+## ❓ Q1: What is Dependency Injection (DI) and how does it relate to SOLID principles in Go?
+
+### ✅ Answer:
+Dependency Injection is a design pattern implementing **Inversion of Control (IoC)**, where a struct receives its dependencies from an external caller rather than constructing them internally.
+It directly relates to the **Dependency Inversion Principle (DIP)**: High-level modules (usecases/handlers) depend on abstractions (Go interfaces) rather than concrete implementations (SQL DB, HTTP clients, SMTP servers).
+
+---
+
+## ❓ Q2: What are the main advantages of using manual Constructor Injection in Go over magic DI frameworks?
+
+### ✅ Answer:
+1. **Compile-Time Safety**: Type errors or missing dependencies are caught by the Go compiler at compile time, eliminating runtime panics.
+2. **Zero Performance Overhead**: No runtime reflection (`reflect` package) or indirect lookup tables are needed.
+3. **Transparency & Debuggability**: Navigation to constructors (`NewService(...)`) is clear in IDEs and stack traces are straightforward without framework-generated stack noise.
+
+---
+
+## ❓ Q3: How does Dependency Injection improve Unit Testability?
+
+### ✅ Answer:
+When components depend on interfaces rather than concrete structs, unit test suites can pass lightweight **Mock**, **Fake**, or **Stub** implementations into constructors. This isolates business logic testing from external networks, databases, or third-party APIs, allowing thousands of unit tests to execute in milliseconds without external side effects.
+
+---
+
+## ❓ Q4: How does the Functional Options Pattern work with Dependency Injection in Go?
+
+### ✅ Answer:
+The Functional Options Pattern uses functions matching `type Option func(*Struct)` to configure optional or secondary dependencies on a struct during initialization. It avoids long parameter lists in constructor functions (`NewService(...)`) and preserves backward compatibility when adding new optional dependencies.
+
+---
+
+## ❓ Q5: What is the difference between Google Wire and Uber FX in the Go ecosystem?
+
+### ✅ Answer:
+- **Google Wire**: Uses static analysis and code generation (`wire` CLI) to generate compile-time standard Go constructor calls. It has zero runtime performance impact and guarantees compile-time type safety.
+- **Uber FX**: Uses runtime reflection (`reflect`) to automatically discover, construct, and wire dependencies into an application container graph with lifecycle hooks (`OnStart`, `OnStop`).
+
+---
+
+# 📚 Day 28 Summary
+
+Today I learned:
+- The core principles of **Dependency Injection (DI)** and **Dependency Inversion Principle (DIP)** in Go.
+- Implementing **Constructor Injection** using small, focused Go interfaces.
+- Designing an **Application DI Container** for centralized dependency wireup.
+- Utilizing the **Functional Options Pattern** for dynamic dependency configuration.
+- Writing fast, isolated unit tests by injecting mock dependencies.
+- Evaluating **Manual DI vs Compile-Time DI (Google Wire) vs Runtime DI (Uber FX)**.
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+✅ Day 27 Completed  
+✅ Day 28 Completed  
+🚀 Next: Logging System in Go
