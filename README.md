@@ -108,7 +108,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 41 | Rate Limiting | ✅ |
 | Day 42 | Unit Testing in Go | ✅ |
 | Day 43 | Benchmark Testing | ✅ |
-| Day 44 | Docker Basics | ⏳ |
+| Day 44 | Docker Basics | ✅ |
 | Day 45 | Dockerizing Go API | ⏳ |
 | Day 46 | Docker Compose | ⏳ |
 | Day 47 | Kubernetes Basics | ⏳ |
@@ -18466,6 +18466,201 @@ Today I completed **Day 43 Benchmark Testing in Go**:
 
 ---
 
+# ✅ Day 44 — Docker Basics in Go
+
+---
+
+# 📖 Introduction to Docker & Containerization
+
+In modern backend software engineering, **containerization** is the process of packaging an application together with its runtime environment, dependencies, system libraries, configuration, and binaries into a single portable artifact called a **Docker Image**.
+
+### 💡 Why Docker for Go Microservices?
+Go compiles directly to a single statically linked binary (`CGO_ENABLED=0`). Combining Go with Docker offers distinct advantages in cloud-native microservice deployments:
+1. **Ultra-Minimal Footprint**: By eliminating heavy OS dependencies, runtime frameworks (like JVM or Node.js runtime), and C dynamic libraries, Go container images can be kept as small as ~15MB (using Minimal Alpine) or ~2MB (using `scratch` distroless).
+2. **Consistency Across Environments**: "Works on my machine" is eliminated. Developers, CI/CD runners, and production Kubernetes clusters run identical container images.
+3. **OS Kernel Isolation**: Linux Namespaces isolate processes, network interfaces, process IDs, and mount points, while Control Groups (`cgroups`) enforce memory and CPU resource limits.
+
+---
+
+# 🏗️ Docker Architecture & Container Lifecycle
+
+```text
+  +---------------------------------------------------------------------------------+
+  |                                Docker Host                                      |
+  |                                                                                 |
+  |   +-------------------+        API        +---------------------------------+   |
+  |   | Docker CLI        | -------------->  | Docker Daemon (dockerd)         |   |
+  |   | (docker build/run)|                  | - Builds Images                 |   |
+  |   +-------------------+                  | - Manages Containers            |   |
+  |                                          | - Pulls/Pushes to Registry      |   |
+  |                                          +---------------------------------+   |
+  |                                                           |                     |
+  |                                                           v                     |
+  |                                          +---------------------------------+   |
+  |                                          | Container Instances             |   |
+  |                                          | [App Container (Port 8080)]     |   |
+  |                                          +---------------------------------+   |
+  +---------------------------------------------------------------------------------+
+                                                              |
+                                                              v (pull/push)
+                                             +---------------------------------+
+                                             | Docker Registry                 |
+                                             | (Docker Hub / AWS ECR / GCR)    |
+                                             +---------------------------------+
+```
+
+### 🔑 Key Docker Concepts & Terms:
+- **Docker Engine / Daemon (`dockerd`)**: Background daemon managing containers, images, networks, and volumes.
+- **Docker CLI (`docker`)**: Command-line client interacting with Docker Daemon via REST API.
+- **Docker Image**: Read-only template containing instructions (`Dockerfile`) and file layers.
+- **Docker Container**: Runnable isolated instance of a Docker Image.
+- **Docker Registry**: Central repository storing versioned Docker images (e.g. Docker Hub, Amazon ECR, GitHub Container Registry).
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 44 Project
+
+### 1. Multi-Stage Build Architecture (`Day-44/Dockerfile`)
+Using multi-stage builds allows us to compile the Go application in a full build environment (`golang:1.24-alpine`) and copy *only* the compiled binary into a lightweight runtime image (`alpine:3.20`), dramatically improving security and build speed.
+
+```dockerfile
+# Stage 1: Build Stage
+FROM golang:1.24-alpine AS builder
+RUN apk add --no-cache ca-certificates git
+WORKDIR /app
+COPY go.mod ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags="-w -s" \
+    -o /app/server main.go
+
+# Stage 2: Minimal Runtime Stage
+FROM alpine:3.20 AS runner
+RUN apk add --no-cache ca-certificates tzdata
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+WORKDIR /app
+COPY --from=builder /app/server /app/server
+RUN chown -R appuser:appgroup /app
+USER appuser
+ENV PORT=8080 APP_ENV=production SERVICE_NAME=go-docker-basics VERSION=1.0.0
+EXPOSE 8080
+ENTRYPOINT ["/app/server"]
+```
+
+### 2. Context Filtering (`Day-44/.dockerignore`)
+`.dockerignore` reduces Docker build context transfer time and prevents secret leaks or cache invalidations caused by unneeded files.
+
+```ignore
+.git
+.gitignore
+.DS_Store
+server
+*.out
+*.log
+.env
+README.md
+Dockerfile
+Makefile
+```
+
+---
+
+# 🧪 Verification & Output Demonstration
+
+### 1. Running Unit Tests
+All HTTP endpoints are validated using standard `httptest` packages:
+
+```bash
+cd Day-44
+go test -v ./...
+```
+
+**Execution Output:**
+```text
+=== RUN   TestHandleHealth
+--- PASS: TestHandleHealth (0.00s)
+=== RUN   TestHandleInfo
+--- PASS: TestHandleInfo (0.00s)
+=== RUN   TestHandleItems_GetAndPost
+--- PASS: TestHandleItems_GetAndPost (0.00s)
+=== RUN   TestHandleItems_InvalidInputs
+--- PASS: TestHandleItems_InvalidInputs (0.00s)
+PASS
+ok  	github.com/dnyaneshwarkokate/go-90-days-challenge/Day-44/handler	0.772s
+```
+
+### 2. Standard Docker CLI Commands Cheat Sheet
+
+| Command | Purpose |
+| :--- | :--- |
+| `docker build -t go-docker-app:v1 .` | Build Docker image from Dockerfile with tag |
+| `docker run -d -p 8080:8080 --name my-app go-docker-app:v1` | Run container in background (`-d`) mapping port 8080 |
+| `docker ps` | List active running containers |
+| `docker ps -a` | List all containers (running and stopped) |
+| `docker logs -f my-app` | Stream realtime logs from container |
+| `docker exec -it my-app sh` | Open interactive shell inside running container |
+| `docker inspect my-app` | View low-level details (IP, mounts, env variables) |
+| `docker stop my-app` | Gracefully stop running container |
+| `docker rm my-app` | Remove stopped container instance |
+| `docker images` | List locally cached Docker images |
+| `docker rmi go-docker-app:v1` | Delete local image from host |
+| `docker system prune -f` | Remove unused containers, networks, and dangling images |
+
+---
+
+# 📘 Day 44 Interview Questions & Answers
+
+## ❓ Q1: What is the difference between Virtual Machines and Docker Containers?
+
+### ✅ Answer:
+- **Virtual Machines (VMs)** run a full Hypervisor layer (e.g. ESXi, KVM, Hyper-V) where each VM contains a complete Guest Operating System, virtual kernel, virtualized drivers, and dedicated allocated memory/disk. Startup times take minutes, and resource consumption is heavy.
+- **Docker Containers** share the host Linux OS kernel directly. Container processes are isolated via **Namespaces** (PID, NET, MNT, IPC, UTS) and resource-constrained via **Control Groups (`cgroups`)**. Containers start in milliseconds and have negligible CPU/RAM virtualization overhead.
+
+---
+
+## ❓ Q2: Why are Multi-Stage Docker builds essential for Go applications in production?
+
+### ✅ Answer:
+Multi-stage Docker builds separate the **compilation environment** from the **deployment image**:
+1. **Image Size Reduction**: A Go build environment (`golang:1.24`) contains compiler tools, standard library source files, and headers (~800MB - 1GB). The runtime stage (`alpine` or `scratch`) only requires the compiled static binary (~15MB or ~2MB).
+2. **Security Hardening**: Build tools, shell interpreters (`bash`, `sh`), package managers (`apk`, `apt`), and source code files are completely excluded from the runtime container, drastically minimizing attack surfaces and vulnerability scan flags (CVEs).
+
+---
+
+## ❓ Q3: What is the purpose of setting `CGO_ENABLED=0` when building Go Docker images?
+
+### ✅ Answer:
+Setting `CGO_ENABLED=0` instructs the Go compiler to produce a **pure, statically linked executable** by disabling dynamic C library bindings (`libc`/`glibc`). Without `CGO_ENABLED=0`, the binary expects `ld-linux.so` and `glibc` on the target host system, which causes runtime `file not found` errors when deployed onto minimal containers like `scratch` or `alpine` (which uses `musl libc`).
+
+---
+
+## ❓ Q4: What is the difference between `CMD` and `ENTRYPOINT` in a Dockerfile?
+
+### ✅ Answer:
+- **`ENTRYPOINT`**: Specifies the main executable command that **always** runs when the container starts. It defines the default identity of the container (e.g., `ENTRYPOINT ["/app/server"]`).
+- **`CMD`**: Supplies **default arguments** to the `ENTRYPOINT` command, or serves as a fallback command if `ENTRYPOINT` is omitted. Arguments passed via `docker run <image> <args>` override `CMD` but do not override `ENTRYPOINT` unless `--entrypoint` is explicitly specified.
+
+---
+
+## ❓ Q5: Why should containers never run as the `root` user (UID 0)?
+
+### ✅ Answer:
+By default, Docker containers execute as the `root` user (`UID 0`). If an attacker escapes a container vulnerability (container breakout), root privileges inside the container map to root privileges on the host Linux kernel. To adhere to the **Principle of Least Privilege**, production `Dockerfile`s define a non-root system user (`USER appuser`, UID 10001) with restricted filesystem permissions.
+
+---
+
+# 📚 Day 44 Summary
+
+Today I completed **Day 44 Docker Basics in Go**:
+- Learned Containerization principles, Linux Namespaces, Cgroups, and Docker architecture.
+- Created a production-grade container-ready Go microservice with health checks, system metrics, and item catalog endpoints.
+- Designed a **Multi-Stage Dockerfile** (`golang:1.24-alpine` -> `alpine:3.20`), producing a tiny ~15MB image.
+- Implemented static binary compilation (`CGO_ENABLED=0 GOOS=linux`) and non-root security enforcement (`USER appuser`).
+- Created `.dockerignore`, `Makefile`, and wrote standard Go unit tests with 100% pass rate.
+
+---
+
 
 # ⭐ Challenge Progress
 ✅ Day 01 Completed  
@@ -18511,4 +18706,5 @@ Today I completed **Day 43 Benchmark Testing in Go**:
 ✅ Day 41 Completed  
 ✅ Day 42 Completed  
 ✅ Day 43 Completed  
-🚀 Next: Docker Basics in Go
+✅ Day 44 Completed  
+🚀 Next: Dockerizing Go API
