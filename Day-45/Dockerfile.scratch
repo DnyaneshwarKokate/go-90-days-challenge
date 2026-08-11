@@ -1,0 +1,35 @@
+# ==============================================================================
+# Ultra-Minimal Scratch Image Dockerfile for Go Microservices
+# ==============================================================================
+# Stage 1: Build binary statically
+FROM golang:1.24-alpine AS builder
+
+RUN apk add --no-cache ca-certificates
+
+WORKDIR /app
+
+COPY go.mod ./
+RUN go mod download
+
+COPY . .
+
+# Force pure static compilation with CGO disabled
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build \
+    -ldflags="-w -s" \
+    -o /app/api-server main.go
+
+# Stage 2: Zero-overhead Scratch runtime
+FROM scratch
+
+# Copy root CA certificates for SSL/TLS support
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+# Copy compiled static binary
+COPY --from=builder /app/api-server /api-server
+
+# Set runtime environment
+ENV PORT=8080 APP_ENV=production APP_VERSION=1.0.0-scratch
+
+EXPOSE 8080
+
+ENTRYPOINT ["/api-server"]

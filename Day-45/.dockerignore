@@ -1,0 +1,25 @@
+# Git
+.git
+.gitignore
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Go binary and temporary build outputs
+api-server
+*.out
+*.exe
+*.test
+bin/
+tmp/
+
+# Log files
+*.log
+
+# Environment & Documentation
+.env
+README.md
+Dockerfile
+Dockerfile.scratch
+Makefile

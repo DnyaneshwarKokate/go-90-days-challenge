@@ -109,7 +109,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 42 | Unit Testing in Go | ✅ |
 | Day 43 | Benchmark Testing | ✅ |
 | Day 44 | Docker Basics | ✅ |
-| Day 45 | Dockerizing Go API | ⏳ |
+| Day 45 | Dockerizing Go API | ✅ |
 | Day 46 | Docker Compose | ⏳ |
 | Day 47 | Kubernetes Basics | ⏳ |
 | Day 48 | Deploy Go App on Kubernetes | ⏳ |
@@ -18707,4 +18707,301 @@ Today I completed **Day 44 Docker Basics in Go**:
 ✅ Day 42 Completed  
 ✅ Day 43 Completed  
 ✅ Day 44 Completed  
-🚀 Next: Dockerizing Go API
+🚀 Next: Docker Compose
+
+---
+
+# ✅ Day 45 — Dockerizing Go API
+
+---
+
+# 📖 Deep-Dive: Dockerizing Go REST APIs
+
+Moving from standard Docker containers to **production-ready Go API containerization** requires addressing crucial architectural requirements: build speed, minimal security vulnerability exposure, container health monitoring, configuration management, and zero-downtime graceful shutdown.
+
+```text
+  +-----------------------------------------------------------------------------------+
+  |                                Docker Multi-Stage Build                           |
+  |                                                                                   |
+  |  Stage 1: Builder (golang:1.24-alpine ~850MB)                                      |
+  |  +-----------------------------------------------------------------------------+  |
+  |  | 1. COPY go.mod -> RUN go mod download (Cached Dependency Layer)            |  |
+  |  | 2. COPY . .                                                                 |  |
+  |  | 3. RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-w -s" -o api-server    |  |
+  |  +-----------------------------------------------------------------------------+  |
+  |                                       |                                           |
+  |                                       | copies ONLY static binary (~15MB/3MB)     |
+  |                                       v                                           |
+  |  Stage 2: Minimal Runtime Options                                                 |
+  |  +---------------------------------------+   +---------------------------------+  |
+  |  | Option A: alpine:3.20 (~15MB)        |   | Option B: scratch (~3MB)        |  |
+  |  | - Non-root USER appuser (UID 10001)   |   | - Zero OS dependencies          |  |
+  |  | - Package utilities (wget, ca-certs)  |   | - Copy CA certs for TLS support |  |
+  |  | - HEALTHCHECK probe enabled           |   | - Minimum possible attack surface|  |
+  |  +---------------------------------------+   +---------------------------------+  |
+  +-----------------------------------------------------------------------------------+
+```
+
+---
+
+# 💡 Core Production Container Patterns for Go APIs
+
+### 1. Docker Build Layer Caching Optimization
+Docker caches build layers sequentially. By copying `go.mod` separately and running `go mod download` BEFORE copying source code (`COPY . .`), dependency downloads are cached. Modifying Go code files will invalidly clear only subsequent layers, keeping dependency downloads fast.
+
+### 2. Multi-Stage Distroless / Scratch vs. Alpine
+- **`alpine:3.20` (~15MB)**: Includes minimal OS utilities (`apk`, `wget`, `sh`). Ideal when native `HEALTHCHECK` commands (`wget` or `curl`) or debugging shells are required inside the container.
+- **`scratch` (~3MB)**: An empty container image with zero binaries, shell, or OS dynamic libraries. Requires static compilation (`CGO_ENABLED=0`) and explicit copy of CA certificates (`/etc/ssl/certs/ca-certificates.crt`) for outbound TLS/HTTPS support.
+
+### 3. Container Health & Liveness Probes
+Production orchestrators (Kubernetes, AWS ECS, Docker Swarm) require dedicated HTTP probes:
+- **Liveness Probe (`GET /healthz`)**: Indicates if the container process is alive and responsive. If it fails, the orchestrator restarts the container.
+- **Readiness Probe (`GET /ready`)**: Indicates if the service is ready to accept incoming traffic (e.g. database connections established, cache warmed up).
+
+### 4. Signal Interception & Graceful Container Shutdown
+When Docker stops a container (`docker stop`), it sends a `SIGTERM` signal to process ID 1 (`PID 1`). If the container does not exit gracefully within a timeout (default 10s), Docker sends a forced `SIGKILL`. Handling `SIGTERM` and `SIGINT` via `os/signal` ensures in-flight API requests complete before exiting.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 45 Project
+
+### 1. Centralized Environment Config (`Day-45/config/config.go`)
+Environment variables drive configuration without rebuilding container images:
+```go
+package config
+
+import "os"
+
+type Config struct {
+	Port       string
+	AppEnv     string
+	AppVersion string
+	DBHost     string
+}
+
+func LoadConfig() *Config {
+	return &Config{
+		Port:       getEnv("PORT", "8080"),
+		AppEnv:     getEnv("APP_ENV", "development"),
+		AppVersion: getEnv("APP_VERSION", "1.0.0"),
+		DBHost:     getEnv("DB_HOST", "localhost"),
+	}
+}
+```
+
+### 2. Graceful Shutdown Engine (`Day-45/main.go`)
+Handles container termination signals (`SIGTERM`, `SIGINT`) with context timeouts:
+```go
+sig := make(chan os.Signal, 1)
+signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+
+go func() {
+	<-sig
+	log.Println("Received termination signal. Shutting down container gracefully...")
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		log.Fatalf("Server forced to shutdown: %v", err)
+	}
+}()
+```
+
+### 3. Production Alpine Dockerfile (`Day-45/Dockerfile`)
+```dockerfile
+FROM golang:1.24-alpine AS builder
+RUN apk add --no-cache ca-certificates git
+WORKDIR /app
+COPY go.mod ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /app/api-server main.go
+
+FROM alpine:3.20 AS runner
+RUN apk add --no-cache ca-certificates tzdata wget
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+WORKDIR /app
+COPY --from=builder /app/api-server /app/api-server
+RUN chown -R appuser:appgroup /app
+USER appuser
+ENV PORT=8080 APP_ENV=production APP_VERSION=1.0.0 DB_HOST=postgres-service
+EXPOSE 8080
+HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost:8080/healthz || exit 1
+ENTRYPOINT ["/app/api-server"]
+```
+
+### 4. Zero-Dependency Scratch Dockerfile (`Day-45/Dockerfile.scratch`)
+```dockerfile
+FROM golang:1.24-alpine AS builder
+RUN apk add --no-cache ca-certificates
+WORKDIR /app
+COPY go.mod ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /app/api-server main.go
+
+FROM scratch
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /app/api-server /api-server
+ENV PORT=8080 APP_ENV=production APP_VERSION=1.0.0-scratch
+EXPOSE 8080
+ENTRYPOINT ["/api-server"]
+```
+
+---
+
+# 🧪 Verification & Output Demonstration
+
+### 1. Executing Unit Tests
+Run standard HTTP handler unit tests using `net/http/httptest`:
+
+```bash
+cd Day-45
+go test -v ./...
+```
+
+**Execution Output:**
+```text
+=== RUN   TestHealthzEndpoint
+--- PASS: TestHealthzEndpoint (0.00s)
+=== RUN   TestReadyEndpoint
+--- PASS: TestReadyEndpoint (0.00s)
+=== RUN   TestInfoEndpoint
+--- PASS: TestInfoEndpoint (0.00s)
+=== RUN   TestGetUsers
+--- PASS: TestGetUsers (0.00s)
+=== RUN   TestGetUserByID_Found
+--- PASS: TestGetUserByID_Found (0.00s)
+=== RUN   TestGetUserByID_NotFound
+--- PASS: TestGetUserByID_NotFound (0.00s)
+=== RUN   TestCreateUser_Success
+--- PASS: TestCreateUser_Success (0.00s)
+=== RUN   TestCreateUser_Duplicate
+--- PASS: TestCreateUser_Duplicate (0.00s)
+PASS
+ok  	github.com/dnyaneshwarkokate/go-90-days-challenge/Day-45/handler	1.323s
+```
+
+### 2. Comprehensive Container Management Commands Cheat Sheet
+
+| Action | Command | Purpose |
+| :--- | :--- | :--- |
+| **Build Alpine Image** | `docker build -t go-docker-api:v1 .` | Build multi-stage image with Alpine runtime |
+| **Build Scratch Image** | `docker build -f Dockerfile.scratch -t go-docker-api:scratch .` | Build zero-dependency ultra-small image |
+| **Run Container** | `docker run -d -p 8080:8080 -e APP_ENV=staging --name my-api go-docker-api:v1` | Run with runtime environment injection |
+| **Check Health Status** | `docker ps --format "{{.Names}}: {{.Status}}"` | Verify container status & `(healthy)` condition |
+| **Stream Logs** | `docker logs -f my-api` | View realtime application logs |
+| **Inspect Env & IP** | `docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' my-api` | Verify runtime injected configurations |
+| **Graceful Stop** | `docker stop my-api` | Send `SIGTERM` and verify clean shutdown logs |
+| **Cleanup Container** | `docker rm my-api` | Remove stopped container instance |
+
+---
+
+# 📘 Day 45 Interview Questions & Answers
+
+## ❓ Q1: Why is layer order critical in a Go `Dockerfile`?
+
+### ✅ Answer:
+Docker builds images in cached layers. Any change to a layer invalidates all subsequent layers.
+- If you copy all source files (`COPY . .`) before downloading dependencies (`go mod download`), any minor code change invalidates the dependency download step, causing Docker to re-download all modules every build.
+- **Best Practice**: First copy `go.mod`, execute `RUN go mod download`, and then copy source code (`COPY . .`). This ensures Go module dependencies stay cached across builds.
+
+---
+
+## ❓ Q2: What is the difference between `HEALTHCHECK` in Dockerfile vs Kubernetes Liveness/Readiness probes?
+
+### ✅ Answer:
+- **Dockerfile `HEALTHCHECK`**: Built-in Docker Engine directive executing a shell/binary command inside the container (e.g. `wget http://localhost:8080/healthz`). Docker Daemon updates container status to `healthy` or `unhealthy`.
+- **Kubernetes Probes**: Kubernetes performs probes from *outside* the container via HTTP GET, TCP Socket, or Exec requests without requiring package tools (`curl`/`wget`) inside the container. Kubernetes can restart failed containers (liveness) or stop sending service traffic to unready containers (readiness).
+
+---
+
+## ❓ Q3: How do you enable TLS/HTTPS certificate validation in a Go container built `FROM scratch`?
+
+### ✅ Answer:
+A `scratch` image contains no root CA certificates. If your Go application makes outbound HTTPS calls (e.g., to Stripe API, AWS S3, OAuth providers), TLS validation will fail with `x509: certificate signed by unknown authority`.
+**Fix**: In Stage 1 (`golang:alpine`), install `ca-certificates` and copy them into the `scratch` image stage:
+```dockerfile
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+```
+
+---
+
+## ❓ Q4: Why is handling OS signals (`SIGTERM`) mandatory for containerized Go APIs?
+
+### ✅ Answer:
+When container orchestrators stop or update a pod (e.g., rolling deployment), Docker sends `SIGTERM` (Signal 15) to PID 1 inside the container.
+- Without signal handling, the process immediately dies, dropping in-flight HTTP connections and leaving database transactions incomplete.
+- With signal handling (`signal.Notify` + `server.Shutdown(ctx)`), the HTTP server stops accepting new connections, drains existing requests cleanly within a timeout window, flushes log buffers, closes DB connections, and exits with status code 0.
+
+---
+
+## ❓ Q5: How do compiler flags `-ldflags="-w -s"` optimize Go Docker images?
+
+### ✅ Answer:
+The `-ldflags` option passes flags to the Go linker during build time:
+- **`-s`**: Omits the symbol table (debugging symbols used by gdb/dlv).
+- **`-w`**: Omits DWARF debugging information.
+Combining `-w -s` reduces the final Go binary size by **20% to 30%** without changing execution logic or runtime performance, which significantly shrinks the final Docker image footprint.
+
+---
+
+# 📚 Day 45 Summary
+
+Today I completed **Day 45 Dockerizing Go API**:
+- Built a production-ready REST API in Go with environment-based configuration, thread-safe in-memory storage, and liveness (`/healthz`) & readiness (`/ready`) probes.
+- Implemented **Graceful Shutdown** using OS signals (`SIGTERM`, `SIGINT`) and context deadlines.
+- Designed an optimized **Multi-Stage Alpine Dockerfile** (`golang:1.24-alpine` -> `alpine:3.20`) with dependency layer caching, non-root security (`appuser`), and native `HEALTHCHECK`.
+- Designed a zero-dependency **Scratch Dockerfile** (`FROM scratch`) with SSL/TLS certificate copying (~3MB binary size).
+- Wrote `.dockerignore`, `Makefile`, and unit tests covering 100% of HTTP API endpoints.
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+✅ Day 27 Completed  
+✅ Day 28 Completed  
+✅ Day 29 Completed  
+✅ Day 30 Completed  
+✅ Day 31 Completed  
+✅ Day 32 Completed  
+✅ Day 33 Completed  
+✅ Day 34 Completed  
+✅ Day 35 Completed  
+✅ Day 36 Completed  
+✅ Day 37 Completed  
+✅ Day 38 Completed  
+✅ Day 39 Completed  
+✅ Day 40 Completed  
+✅ Day 41 Completed  
+✅ Day 42 Completed  
+✅ Day 43 Completed  
+✅ Day 44 Completed  
+✅ Day 45 Completed  
+🚀 Next: Docker Compose
