@@ -111,7 +111,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 44 | Docker Basics | ✅ |
 | Day 45 | Dockerizing Go API | ✅ |
 | Day 46 | Docker Compose | ✅ |
-| Day 47 | Kubernetes Basics | ⏳ |
+| Day 47 | Kubernetes Basics | ✅ |
 | Day 48 | Deploy Go App on Kubernetes | ⏳ |
 | Day 49 | CI/CD Basics | ⏳ |
 | Day 50 | GitHub Actions CI/CD | ⏳ |
@@ -19364,4 +19364,346 @@ Today I completed **Day 46 Docker Compose**:
 ✅ Day 44 Completed  
 ✅ Day 45 Completed  
 ✅ Day 46 Completed  
-🚀 Next: Kubernetes Basics
+# ✅ Day 47 — Kubernetes Basics
+
+---
+
+# 📖 Deep-Dive: Kubernetes Fundamentals for Go Developers
+
+**Kubernetes (K8s)** is an open-source container orchestration platform that automates deployment, scaling, load balancing, health monitoring, and management of containerized workloads across a cluster of nodes. While Docker and Docker Compose run applications on a single host machine, Kubernetes coordinates containers across multi-node distributed clusters in production environments.
+
+```text
+  +-------------------------------------------------------------------------------------------------+
+  |                                   Kubernetes Architecture Overview                              |
+  |                                                                                                 |
+  |   Control Plane (Master Node)                                                                   |
+  |   +-----------------------------------------------------------------------------------------+   |
+  |   |  API Server (kube-apiserver) <---> etcd Key-Value Store                                 |   |
+  |   |        ^                             ^                                                  |   |
+  |   |        |                             |                                                  |   |
+  |   |  Kube-Scheduler             Kube-Controller-Manager                                     |   |
+  |   +--------+--------------------------------------------------------------------------------+   |
+  |            |                                                                                    |
+  |            +------------------------------+----------------------------------+                  |
+  |                                           |                                  |                  |
+  |   Worker Node 1                           v                                  v                  |
+  |   +---------------------------------------+--+   Worker Node 2               +--------------+   |
+  |   |  Kubelet  <---> Kube-Proxy               |   |  Kubelet  <---> Kube-Proxy               |   |
+  |   |  +------------------------------------+  |   |  +------------------------------------+  |   |
+  |   |  | Pod 1 (go-api-service:v1)          |  |   |  | Pod 3 (go-api-service:v1)          |  |   |
+  |   |  | - App Container (Port 8080)        |  |   |  | - App Container (Port 8080)        |  |   |
+  |   |  | - Liveness Probe /healthz          |  |   |  | - Liveness Probe /healthz          |  |   |
+  |   |  | - Readiness Probe /ready           |  |   |  | - Readiness Probe /ready           |  |   |
+  |   |  +------------------------------------+  |   |  +------------------------------------+  |   |
+  |   |  | Pod 2 (go-api-service:v1)          |  |   +---------------------------------------+  |   |
+  |   |  +------------------------------------+  |                                                  |
+  |   +------------------------------------------+                                                  |
+  |                                                                                                 |
+  |   Service Abstraction (ClusterIP / NodePort: 30080)                                            |
+  |   +-----------------------------------------------------------------------------------------+   |
+  |   | Maps Traffic -> Label Selector: app=go-api -> Load balances active Pods 1, 2, 3        |   |
+  |   +-----------------------------------------------------------------------------------------+   |
+  +-------------------------------------------------------------------------------------------------+
+```
+
+---
+
+# 💡 Core Kubernetes Concepts & Production Patterns
+
+### 1. Pod Lifecycle & Probes
+A **Pod** is the smallest deployable atomic object in Kubernetes. It encapsulates one or more containers sharing network namespaces and storage volumes.
+- **Liveness Probe (`/healthz`)**: Periodic HTTP probe executed by Kubelet to verify if the container process is alive. Failing this probe causes Kubelet to restart the container.
+- **Readiness Probe (`/ready`)**: Verifies if the application is ready to handle incoming network traffic. If it fails, Kube-Proxy removes the Pod IP from the Service endpoint slice.
+- **Zero-Downtime Signal Handling**: When a Pod is terminated, Kubelet sends `SIGTERM`. The Go app sets `/ready` to 503 so Kube-Proxy stops sending new HTTP requests before the process exits.
+
+### 2. Declarative Deployments & Rolling Updates
+A **Deployment** manages a `ReplicaSet` to ensure a specified number of Pod replicas (e.g. 3) are running continuously.
+- **`RollingUpdate` Strategy**: Replaces old Pods with new ones incrementally with zero downtime (`maxSurge: 1`, `maxUnavailable: 0`).
+- **Self-Healing**: If a worker node fails, the Control Plane automatically reschedules missing Pods onto healthy nodes.
+
+### 3. Service Discovery & Load Balancing
+A **Service** provides a stable virtual IP address and DNS name (`go-api-clusterip.default.svc.cluster.local`) over a dynamic set of Pods matching label selectors (`app: go-api`).
+- **ClusterIP**: Internal-only virtual IP address reachable inside the K8s cluster.
+- **NodePort**: Exposes the service on a static port across every node's IP (`30000-32767`).
+- **LoadBalancer**: Provisions an external Cloud Load Balancer (AWS ALB, GCP NLB).
+
+### 4. Configuration Management via ConfigMaps & Secrets
+Decouples configuration parameters from container images:
+- **ConfigMap**: Stores non-sensitive key-value pairs (e.g. `PORT=8080`, `APP_ENV=production`).
+- **Secret**: Stores sensitive tokens, passwords, and TLS certificates (base64 encoded). Secrets are mounted as environment variables or volume files inside Pod containers.
+
+### 5. Resource Limits, Requests & OOMKilled Mitigation
+Kubernetes enforces resource management per container:
+- **Requests (`cpu: 100m`, `memory: 128Mi`)**: Minimum guaranteed resources required for Kube-Scheduler to place a Pod on a node.
+- **Limits (`cpu: 500m`, `memory: 256Mi`)**: Upper boundary limit. Exceeding CPU limits causes CPU throttling; exceeding memory limits triggers kernel Out-Of-Memory termination (`OOMKilled`).
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 47 Project
+
+### 1. ConfigMap Manifest (`Day-47/k8s/01-configmap.yaml`)
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: go-api-config
+  namespace: default
+data:
+  PORT: "8080"
+  APP_ENV: "production"
+  LOG_LEVEL: "info"
+  APP_VERSION: "1.0.0"
+```
+
+### 2. Secret Manifest (`Day-47/k8s/02-secret.yaml`)
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: go-api-secret
+  namespace: default
+type: Opaque
+stringData:
+  API_KEY: "k8s-prod-secret-token-9988"
+  DB_PASSWORD: "supersecretpassword123"
+```
+
+### 3. Production Deployment Spec (`Day-47/k8s/03-deployment.yaml`)
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-api-deployment
+  namespace: default
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: go-api
+  template:
+    metadata:
+      labels:
+        app: go-api
+    spec:
+      containers:
+        - name: go-api-container
+          image: go-api-service:v1
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: go-api-config
+            - secretRef:
+                name: go-api-secret
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+```
+
+### 4. Zero-Downtime K8s Signal Engine (`Day-47/main.go`)
+```go
+sigChan := make(chan os.Signal, 1)
+signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+<-sigChan
+log.Println("Received SIGTERM from Kubelet. Initiating zero-downtime shutdown...")
+
+// Mark readiness probe unready so Kube-Proxy updates endpoints
+apiHandler.SetNotReady()
+time.Sleep(5 * time.Second)
+
+shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+defer cancel()
+server.Shutdown(shutdownCtx)
+```
+
+---
+
+# 🧪 Verification & Output Demonstration
+
+### 1. Executing Unit Tests
+Execute HTTP API unit tests using `httptest`:
+
+```bash
+cd Day-47
+go test -v ./...
+```
+
+**Execution Output:**
+```text
+=== RUN   TestHealthz
+--- PASS: TestHealthz (0.00s)
+=== RUN   TestReady
+--- PASS: TestReady (0.00s)
+=== RUN   TestInfo
+--- PASS: TestInfo (0.00s)
+=== RUN   TestData_Unauthorized
+--- PASS: TestData_Unauthorized (0.00s)
+=== RUN   TestData_Success
+--- PASS: TestData_Success (0.00s)
+PASS
+ok  	github.com/dnyaneshwarkokate/go-90-days-challenge/Day-47/handler	0.687s
+```
+
+### 2. Comprehensive `kubectl` CLI Commands Cheat Sheet
+
+| Action | Command | Purpose |
+| :--- | :--- | :--- |
+| **Apply Manifests** | `kubectl apply -f k8s/` | Declaratively deploy ConfigMap, Secret, Deployment, Service, HPA |
+| **Get Pods** | `kubectl get pods -o wide` | List pod status, IPs, restart count, and assigned worker nodes |
+| **Stream Pod Logs** | `kubectl logs -f deployment/go-api-deployment` | Stream logs from all deployment container replicas |
+| **Check Endpoints** | `kubectl get endpoints go-api-clusterip` | Verify active Pod IP endpoints attached to Service |
+| **Describe Deployment** | `kubectl describe deployment go-api-deployment` | Inspect rollout status, events, and health probes |
+| **Exec Into Pod** | `kubectl exec -it <pod-name> -- sh` | Open interactive shell inside running container pod |
+| **Rollout Status** | `kubectl rollout status deployment/go-api-deployment` | Monitor status of rolling update deployment |
+| **Rollback Deploy** | `kubectl rollout undo deployment/go-api-deployment` | Instantly undo deployment to previous revision |
+| **Purge Stack** | `kubectl delete -f k8s/` | Delete all resources defined in manifests |
+
+---
+
+# 📘 Day 47 Interview Questions & Answers
+
+## ❓ Q1: What is the difference between Liveness, Readiness, and Startup Probes in Kubernetes?
+
+### ✅ Answer:
+- **Liveness Probe**: Checks if the container process is running and alive. If it fails, Kubelet **restarts** the container.
+- **Readiness Probe**: Checks if the container is ready to accept incoming network traffic. If it fails, Kube-Proxy removes the Pod IP from the Service endpoint slice without restarting the container.
+- **Startup Probe**: Disables Liveness and Readiness probes until the application completes initial startup (e.g. schema migrations, cache warming). Prevents slow-starting legacy apps from getting stuck in infinite restart loops.
+
+---
+
+## ❓ Q2: What happens when a container exceeds its CPU limit vs Memory limit in Kubernetes?
+
+### ✅ Answer:
+- **CPU Limit**: CPU is a *compressible resource*. If a container attempts to consume more CPU than allowed by its `limits.cpu`, Kubernetes CFS (Completely Fair Scheduler) throttles the container's CPU allocation. The container slows down but continues running.
+- **Memory Limit**: Memory is an *incompressible resource*. If a container attempts to allocate memory beyond its `limits.memory`, the Linux kernel OOM killer terminates the container process with exit code 137 (`OOMKilled`). Kubelet then restarts the container according to its `restartPolicy`.
+
+---
+
+## ❓ Q3: How does Kubernetes achieve zero-downtime rolling updates (`RollingUpdate`)?
+
+### ✅ Answer:
+During a `RollingUpdate`, Kubernetes creates a new `ReplicaSet` alongside the old one.
+1. Kubelet spawns a new Pod with the updated container image.
+2. The new Pod must pass its `readinessProbe` before Kube-Proxy adds its IP to the Service endpoints.
+3. Kubelet then sends `SIGTERM` to an old Pod.
+4. Old Pods stop receiving traffic while in-flight requests finish draining during the `terminationGracePeriodSeconds` window (default 30s).
+5. Old Pods are terminated and new Pods scale up until the rollout completes.
+
+---
+
+## ❓ Q4: How does a Go application access Pod metadata (Pod Name, Namespace, Node Name) at runtime?
+
+### ✅ Answer:
+Using the **Kubernetes Downward API**. Instead of hardcoding environment values, the Pod manifest injects metadata fields dynamically:
+```yaml
+env:
+  - name: POD_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.name
+  - name: NODE_NAME
+    valueFrom:
+      fieldRef:
+        fieldPath: spec.nodeName
+```
+Inside Go, `os.Getenv("POD_NAME")` retrieves the unique Pod ID assigned by Kubernetes.
+
+---
+
+## ❓ Q5: What is the difference between `ClusterIP`, `NodePort`, and `LoadBalancer` Kubernetes Services?
+
+### ✅ Answer:
+- **`ClusterIP`**: Default internal service type. Exposes an internal virtual IP address accessible **only** within the Kubernetes cluster.
+- **`NodePort`**: Exposes the service on a static high-range port (`30000-32767`) on **every node**'s physical IP address.
+- **`LoadBalancer`**: Extends `NodePort` by interfacing with Cloud Providers (AWS, GCP, Azure) to automatically provision an external Passthrough/Application Load Balancer routing external internet traffic to the cluster nodes.
+
+---
+
+# 📚 Day 47 Summary
+
+Today I completed **Day 47 Kubernetes Basics**:
+- Built a Kubernetes-native Go REST API microservice configured for cluster orchestration.
+- Authored production Kubernetes YAML manifests including `ConfigMap`, `Secret`, `Deployment`, `Service` (ClusterIP & NodePort), and `HorizontalPodAutoscaler` (HPA).
+- Implemented **Liveness (`/healthz`)** and **Readiness (`/ready`)** HTTP probes with Kubelet `SIGTERM` signal coordination for zero-downtime Pod updates.
+- Applied Kubernetes Downward API field references (`metadata.name`, `metadata.namespace`, `spec.nodeName`) into Go environment configuration.
+- Enforced container security contexts (`runAsNonRoot: true`, non-root UID `10001`) and resource limits/requests (`cpu`, `memory`).
+- Wrote unit tests for all HTTP API endpoints with 100% test pass rate.
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+✅ Day 27 Completed  
+✅ Day 28 Completed  
+✅ Day 29 Completed  
+✅ Day 30 Completed  
+✅ Day 31 Completed  
+✅ Day 32 Completed  
+✅ Day 33 Completed  
+✅ Day 34 Completed  
+✅ Day 35 Completed  
+✅ Day 36 Completed  
+✅ Day 37 Completed  
+✅ Day 38 Completed  
+✅ Day 39 Completed  
+✅ Day 40 Completed  
+✅ Day 41 Completed  
+✅ Day 42 Completed  
+✅ Day 43 Completed  
+✅ Day 44 Completed  
+✅ Day 45 Completed  
+✅ Day 46 Completed  
+✅ Day 47 Completed  
+🚀 Next: Deploy Go App on Kubernetes
