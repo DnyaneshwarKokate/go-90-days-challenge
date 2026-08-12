@@ -110,7 +110,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 43 | Benchmark Testing | ✅ |
 | Day 44 | Docker Basics | ✅ |
 | Day 45 | Dockerizing Go API | ✅ |
-| Day 46 | Docker Compose | ⏳ |
+| Day 46 | Docker Compose | ✅ |
 | Day 47 | Kubernetes Basics | ⏳ |
 | Day 48 | Deploy Go App on Kubernetes | ⏳ |
 | Day 49 | CI/CD Basics | ⏳ |
@@ -19004,4 +19004,364 @@ Today I completed **Day 45 Dockerizing Go API**:
 ✅ Day 43 Completed  
 ✅ Day 44 Completed  
 ✅ Day 45 Completed  
-🚀 Next: Docker Compose
+# ✅ Day 46 — Docker Compose
+
+---
+
+# 📖 Deep-Dive: Docker Compose for Multi-Container Go Applications
+
+Modern cloud-native systems rarely run in isolation. A production Go microservice relies on auxiliary services such as relational databases (PostgreSQL/MySQL), in-memory caches (Redis), message queues (RabbitMQ/Kafka), and observability collectors. **Docker Compose** is the industry standard tool for defining, configuring, and orchestrating multi-container Docker applications locally and in CI environments using a declarative YAML specification.
+
+```text
+  +-------------------------------------------------------------------------------------------+
+  |                                 Docker Compose Architecture                               |
+  |                                                                                           |
+  |   Host Machine (Port Mapping: 8080:8080, 5432:5432, 6379:6379)                             |
+  |   +-----------------------------------------------------------------------------------+   |
+  |   |                         Bridge Network: app-network                               |   |
+  |   |                                                                                   |   |
+  |   |   +-------------------+    +--------------------+    +--------------------+   |   |
+  |   |   |   go-api-service  |    |  go-postgres-db    |    |  go-redis-cache    |   |   |
+  |   |   |   (Golang API)    |    |  (PostgreSQL 16)   |    |  (Redis 7 Alpine)  |   |   |
+  |   |   |                   |    |                    |    |                    |   |   |
+  |   |   |   HTTP :8080      |    |  TCP :5432         |    |  TCP :6379         |   |   |
+  |   |   |   HEALTHCHECK     |    |  pg_isready check  |    |  redis-cli ping    |   |   |
+  |   |   +---------+---------+    +---------+----------+    +---------+----------+   |   |
+  |   |             |                        |                         |              |   |
+  |   |             +--- depends_on ---------+                         |              |   |
+  |   |                  (condition: service_healthy)                  |              |   |
+  |   |             +--- depends_on -----------------------------------+              |   |
+  |   |                  (condition: service_healthy)                                 |   |
+  |   +-----------------------------------------------------------------------------------+   |
+  |                                          |                                                |
+  |                                          v                                                |
+  |                        Persistent Local Named Volumes                                     |
+  |                        +-------------------+   +--------------------+                     |
+  |                        |  Volume: pgdata   |   | Volume: redisdata  |                     |
+  |                        +-------------------+   +--------------------+                     |
+  +-------------------------------------------------------------------------------------------+
+```
+
+---
+
+# 💡 Core Production Docker Compose Patterns
+
+### 1. Declarative Service Dependencies & Health Check Conditions
+Standard `depends_on` only waits for a container process to *start*, not for the service inside to be ready to accept network connections. Combining `depends_on` with `condition: service_healthy` ensures that dependent containers (e.g. Go API) start strictly after PostgreSQL (`pg_isready`) and Redis (`redis-cli ping`) pass their health checks.
+
+### 2. Environment Variable Interpolation & `.env` Files
+Docker Compose automatically parses `.env` files located in the project root directory. Variables can be passed directly into container environments or interpolated dynamically in `docker-compose.yml` (e.g., `${PORT:-8080}`).
+
+### 3. Data Persistence with Named Volumes
+Containers are ephemeral by default—deleting a database container deletes its underlying storage. Docker Compose named volumes (`volumes: pgdata:`) decouple data storage from container lifecycles, maintaining data across container restarts and updates.
+
+### 4. Custom Bridge Networks & Internal Service Discovery
+Docker Compose automatically establishes an isolated virtual bridge network (`app-network`). Containers communicate using internal service names as hostname DNS aliases (e.g., `DB_HOST=postgres`, `REDIS_HOST=redis`), preventing unnecessary exposure of internal service ports to the host interface.
+
+### 5. Application Startup Retries & Graceful Backoff
+Even with health checks, microservices should implement exponential backoff retry loops when connecting to database dependencies during startup, preventing crashes caused by temporary network latency or container startup delays.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 46 Project
+
+### 1. Multi-Service Docker Compose Spec (`Day-46/docker-compose.yml`)
+```yaml
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go-api-service
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:8080"
+    environment:
+      PORT: 8080
+      APP_ENV: ${APP_ENV:-production}
+      APP_VERSION: 1.0.0
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-postgrespass}
+      DB_NAME: ${DB_NAME:-go_compose_db}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: go-postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgrespass}
+      POSTGRES_DB: ${DB_NAME:-go_compose_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-go_compose_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: go-redis-cache
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 3s
+    networks:
+      - app-network
+
+volumes:
+  pgdata:
+    driver: local
+  redisdata:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
+```
+
+### 2. Startup Database Connection Retry Engine (`Day-46/db/db.go`)
+```go
+func InitPostgres(cfg *config.Config) (*sql.DB, error) {
+	dsn := cfg.GetDSN()
+	var db *sql.DB
+	var err error
+
+	maxRetries := 10
+	for i := 1; i <= maxRetries; i++ {
+		db, err = sql.Open("postgres", dsn)
+		if err == nil {
+			if err = db.Ping(); err == nil {
+				log.Printf("Connected to PostgreSQL at %s:%s (attempt %d/%d)", cfg.DBHost, cfg.DBPort, i, maxRetries)
+				return db, nil
+			}
+		}
+		log.Printf("PostgreSQL not ready (attempt %d/%d): %v. Retrying...", i, maxRetries, err)
+		time.Sleep(2 * time.Second)
+	}
+	return nil, err
+}
+```
+
+### 3. PostgreSQL & Redis Dual-Layer Repository (`Day-46/repository/user_repository.go`)
+```go
+func (r *PostgresRedisRepo) GetByID(ctx context.Context, id int) (*User, bool, error) {
+	cacheKey := fmt.Sprintf("user:%d", id)
+
+	// Read from Redis cache
+	if r.rdb != nil {
+		val, err := r.rdb.Get(ctx, cacheKey).Result()
+		if err == nil && val != "" {
+			var u User
+			if json.Unmarshal([]byte(val), &u) == nil {
+				atomic.AddInt64(&r.hits, 1)
+				return &u, true, nil
+			}
+		}
+	}
+
+	atomic.AddInt64(&r.misses, 1)
+
+	// Fetch from PostgreSQL DB
+	var u User
+	err := r.db.QueryRowContext(ctx, "SELECT id, name, email, role, created_at FROM users WHERE id = $1", id).
+		Scan(&u.ID, &u.Name, &u.Email, &u.Role, &u.CreatedAt)
+	if err != nil {
+		return nil, false, err
+	}
+
+	// Write cache back to Redis
+	if r.rdb != nil {
+		data, _ := json.Marshal(u)
+		_ = r.rdb.Set(ctx, cacheKey, data, 60*time.Second).Err()
+	}
+
+	return &u, false, nil
+}
+```
+
+---
+
+# 🧪 Verification & Output Demonstration
+
+### 1. Executing Unit Tests
+Execute HTTP handler unit tests using `httptest`:
+
+```bash
+cd Day-46
+go test -v ./...
+```
+
+**Execution Output:**
+```text
+=== RUN   TestHealthzEndpoint
+--- PASS: TestHealthzEndpoint (0.00s)
+=== RUN   TestReadyEndpoint_NotReady
+--- PASS: TestReadyEndpoint_NotReady (0.00s)
+=== RUN   TestHandleUsers_Get
+--- PASS: TestHandleUsers_Get (0.00s)
+=== RUN   TestHandleUsers_PostSuccess
+--- PASS: TestHandleUsers_PostSuccess (0.00s)
+=== RUN   TestHandleUsers_MethodNotAllowed
+--- PASS: TestHandleUsers_MethodNotAllowed (0.00s)
+=== RUN   TestHandleUserByID_Found
+--- PASS: TestHandleUserByID_Found (0.00s)
+=== RUN   TestHandleUserByID_NotFound
+--- PASS: TestHandleUserByID_NotFound (0.00s)
+=== RUN   TestStatsEndpoint
+--- PASS: TestStatsEndpoint (0.00s)
+PASS
+ok  	github.com/dnyaneshwarkokate/go-90-days-challenge/Day-46/handler	0.766s
+```
+
+### 2. Comprehensive Docker Compose Commands Cheat Sheet
+
+| Action | Command | Purpose |
+| :--- | :--- | :--- |
+| **Start Stack** | `docker compose up -d` | Build & launch containers in background |
+| **Rebuild Images** | `docker compose up -d --build` | Force rebuild of modified Dockerfiles |
+| **Check Status** | `docker compose ps` | View container health, status, and exposed ports |
+| **Stream Logs** | `docker compose logs -f api` | Stream real-time logs from Go API service |
+| **Execute CLI** | `docker compose exec postgres psql -U postgres -d go_compose_db` | Interactive shell into PostgreSQL database |
+| **Redis Check** | `docker compose exec redis redis-cli ping` | Verify Redis response (`PONG`) |
+| **Stop Stack** | `docker compose down` | Stop containers without removing persistent volumes |
+| **Purge Everything** | `docker compose down -v` | Stop containers and delete all attached named volumes |
+
+---
+
+# 📘 Day 46 Interview Questions & Answers
+
+## ❓ Q1: What is the difference between `depends_on` with and without `condition: service_healthy` in Docker Compose?
+
+### ✅ Answer:
+- `depends_on` (default): Only guarantees that Docker starts container B after container A's process begins. It does **not** wait for container A's service inside (e.g. database server accepting socket connections) to finish initialization.
+- `depends_on` with `condition: service_healthy`: Forces Docker Compose to wait until container A's defined `healthcheck` probe passes (`healthy` status) before spawning container B. This prevents startup connection failures in microservices dependent on databases or caches.
+
+---
+
+## ❓ Q2: How does internal service discovery work between containers in Docker Compose?
+
+### ✅ Answer:
+Docker Compose automatically creates an isolated user-defined bridge network for each project.
+- Within this network, Docker's embedded DNS server maps service names defined in `docker-compose.yml` (e.g., `postgres`, `redis`) directly to the container's internal IP address.
+- A Go API container can connect to PostgreSQL using `host=postgres` and Redis using `host=redis` without knowing dynamic container IP addresses or exposing internal ports to the host machine.
+
+---
+
+## ❓ Q3: How do volume mounts (`volumes:`) preserve database state during `docker compose down` vs `docker compose down -v`?
+
+### ✅ Answer:
+- `docker compose down`: Removes running containers and virtual networks, but **preserves** named volumes on the host system. Restarting the stack with `docker compose up -d` re-attaches existing volumes with no data loss.
+- `docker compose down -v`: Removes containers, networks, **and deletes all named volumes**. This completely wipes persistent database files and cache state.
+
+---
+
+## ❓ Q4: How does `.env` file variable precedence work in Docker Compose?
+
+### ✅ Answer:
+Docker Compose resolves environment variables according to the following precedence hierarchy (highest to lowest):
+1. Environment variables set on the shell execution CLI (e.g., `PORT=9000 docker compose up`).
+2. Environment variables set directly inside the `environment:` key of `docker-compose.yml`.
+3. Variables defined in an explicit `env_file:` directive.
+4. Variables in the `.env` file located in the project root directory.
+5. Default fallback syntax inside compose file (e.g., `${PORT:-8080}`).
+
+---
+
+## ❓ Q5: Why is it bad practice to expose database ports (`5432:5432`) in production Docker Compose files?
+
+### ✅ Answer:
+Exposing database ports on the host machine (`5432:5432`) binds the service to the host network interface, opening it up to external network traffic.
+- In production, microservices should communicate exclusively over internal bridge or overlay networks.
+- Only public ingress gateways or API servers should expose external ports (e.g. `80:8080`). Keeping database and cache ports unexposed (`expose:` or internal network only) drastically shrinks the attack surface.
+
+---
+
+# 📚 Day 46 Summary
+
+Today I completed **Day 46 Docker Compose**:
+- Orchestrated a complete 3-tier microservices architecture combining a **Go REST API**, **PostgreSQL 16**, and **Redis 7** using `docker-compose.yml`.
+- Configured health-check dependencies (`depends_on` + `condition: service_healthy`) with `pg_isready` and `redis-cli ping` probes.
+- Designed resilient Go database connection logic with exponential backoff retries in `db/db.go`.
+- Implemented a dual-layer data access repository (PostgreSQL persistence + Redis cache-aside strategy).
+- Used named volumes (`pgdata`, `redisdata`) for data persistence and custom bridge networking (`app-network`) for container isolation.
+- Created `scripts/init.sql`, `.env.example`, `Dockerfile`, `Makefile`, and unit tests passing 100% of HTTP API routes.
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+✅ Day 27 Completed  
+✅ Day 28 Completed  
+✅ Day 29 Completed  
+✅ Day 30 Completed  
+✅ Day 31 Completed  
+✅ Day 32 Completed  
+✅ Day 33 Completed  
+✅ Day 34 Completed  
+✅ Day 35 Completed  
+✅ Day 36 Completed  
+✅ Day 37 Completed  
+✅ Day 38 Completed  
+✅ Day 39 Completed  
+✅ Day 40 Completed  
+✅ Day 41 Completed  
+✅ Day 42 Completed  
+✅ Day 43 Completed  
+✅ Day 44 Completed  
+✅ Day 45 Completed  
+✅ Day 46 Completed  
+🚀 Next: Kubernetes Basics
