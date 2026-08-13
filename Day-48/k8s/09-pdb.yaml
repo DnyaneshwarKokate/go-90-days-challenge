@@ -1,0 +1,10 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: go-k8s-pdb
+  namespace: go-app
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: go-k8s-app

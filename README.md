@@ -112,7 +112,7 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 45 | Dockerizing Go API | ✅ |
 | Day 46 | Docker Compose | ✅ |
 | Day 47 | Kubernetes Basics | ✅ |
-| Day 48 | Deploy Go App on Kubernetes | ⏳ |
+| Day 48 | Deploy Go App on Kubernetes | ✅ |
 | Day 49 | CI/CD Basics | ⏳ |
 | Day 50 | GitHub Actions CI/CD | ⏳ |
 | Day 51 | Microservices Introduction | ⏳ |
@@ -19706,4 +19706,227 @@ Today I completed **Day 47 Kubernetes Basics**:
 ✅ Day 45 Completed  
 ✅ Day 46 Completed  
 ✅ Day 47 Completed  
-🚀 Next: Deploy Go App on Kubernetes
+✅ Day 48 Completed  
+🚀 Next: CI/CD Basics
+
+---
+
+# ✅ Day 48 — Deploy Go App on Kubernetes
+
+---
+
+# 📖 Deep-Dive: Deploying Production Go Microservices on Kubernetes
+
+Deploying a Go application to a production Kubernetes cluster requires moving beyond simple standalone Pods to architecting a complete resilient, scalable, and secure application release package. Production Kubernetes deployments combine multi-stage container optimization, declarative workload controllers, external traffic ingress routing, persistent volume management, horizontal scaling policies, zero-downtime rolling update mechanics, and high availability disruption budgets.
+
+```text
+  +-------------------------------------------------------------------------------------------------------------+
+  |                                 Kubernetes Production Architecture Overview                                 |
+  |                                                                                                             |
+  |    External Client Traffic (e.g. Browser / API Gateway)                                                     |
+  |             |                                                                                               |
+  |             v                                                                                               |
+  |   +-----------------------------------------------------------------------------------------------------+   |
+  |   | Ingress Controller (Host: go-app.local, Path: /)                                                    |   |
+  |   +------------------------------------+----------------------------------------------------------------+   |
+  |                                        |                                                                    |
+  |                                        v                                                                    |
+  |   +-----------------------------------------------------------------------------------------------------+   |
+  |   | Service Abstraction (ClusterIP / NodePort: 30080)                                                   |   |
+  |   | Load Balances Traffic to Active Ready Pods                                                          |   |
+  |   +--------+---------------------------+-----------------------------------+----------------------------+   |
+  |            |                           |                                   |                                |
+  |            v                           v                                   v                                |
+  |   +------------------+        +------------------+                +------------------+                      |
+  |   | Pod 1 (go-app-1) |        | Pod 2 (go-app-2) |                | Pod 3 (go-app-3) |                      |
+  |   | +--------------+ |        | +--------------+ |                | +--------------+ |                      |
+  |   | | InitContainer| |        | | InitContainer| |                | | InitContainer| |                      |
+  |   | | (busybox)    | |        | | (busybox)    | |                | | (busybox)    | |                      |
+  |   | +------+-------+ |        | +------+-------+ |                | +------+-------+ |                      |
+  |   |        |         |        |        |         |                |        |         |                      |
+  |   | +------v-------+ |        | +------v-------+ |                | +------v-------+ |                      |
+  |   | | Go Container | |        | | Go Container | |                | | Go Container | |                      |
+  |   | | (Port 8080)  | |        | | (Port 8080)  | |                | | (Port 8080)  | |                      |
+  |   | +------+-------+ |        | +------+-------+ |                | +------+-------+ |                      |
+  |   +--------|---------+        +--------|---------+                +--------|---------+                      |
+  |            |                           |                                   |                                |
+  |            +---------------------------+-----------------------------------+                                |
+  |                                        |                                                                    |
+  |                                        v                                                                    |
+  |   +-----------------------------------------------------------------------------------------------------+   |
+  |   | PersistentVolumeClaim (go-app-pvc) -> Mounted at /data/orders.json                                  |   |
+  |   +-----------------------------------------------------------------------------------------------------+   |
+  |                                                                                                             |
+  |   Config & Security: ConfigMap (go-app-config) | Secret (go-app-secret) | SecurityContext (UID 10001)       |
+  |   Scaling & HA: HorizontalPodAutoscaler (3-10 Pods) | PodDisruptionBudget (minAvailable: 2)                   |
+  +-------------------------------------------------------------------------------------------------------------+
+```
+
+---
+
+# 💡 Core Concepts & Production Patterns for Kubernetes Deployments
+
+### 1. Multi-Stage Distroless & Minimal Go Containerization
+- **Static Compilation**: Building static Go binaries (`CGO_ENABLED=0 GOOS=linux`) stripped of debugging symbols (`-ldflags="-w -s"`).
+- **Non-Root Execution**: Container images run under a dedicated non-root Linux user (`appuser`, UID `10001`) and group (`10001`), adhering to the principle of least privilege.
+- **Minimal Base Image**: Using minimal Alpine or Distroless runtime images containing only necessary CA certificates and timezone data.
+
+### 2. Pod Lifecycle Management: InitContainers & Volume Mounts
+- **InitContainers**: Initialization containers run sequentially before main app containers start. If an InitContainer fails, Kubelet restarts it until it succeeds. Used for data folder creation, database schema checks, or network dependency checks.
+- **Persistent Volume Claims (PVC)**: Decouples storage requirements from node implementation. Mounts storage path (`/data`) across container restarts.
+
+### 3. Ingress Controllers & HTTP Routing
+- **Ingress Resource**: Manages external HTTP/HTTPS access to services within a cluster. Provides host-based (`go-app.local`) and path-based routing (`/api/v1`) with TLS termination.
+- **Ingress Controller**: The underlying implementation (e.g. NGINX Ingress Controller) evaluating Ingress rules and proxying traffic directly to target Pod IPs.
+
+### 4. High Availability & Resilience: HPA and PDB
+- **Horizontal Pod Autoscaler (HPA v2)**: Automatically scales the number of Deployment Pods up or down based on observed CPU utilization (`70%`) or memory consumption (`80%`).
+- **PodDisruptionBudget (PDB)**: Prevents voluntary cluster disruptions (e.g. node drains, upgrades) from causing downtime by enforcing a minimum number of available Pods (`minAvailable: 2`).
+
+### 5. Downward API Field References
+- Injects Pod runtime metadata (`metadata.name`, `metadata.namespace`, `spec.nodeName`, `status.podIP`) directly into application environment variables without requiring external API calls.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 48 Project
+
+### 1. Go Application Entrypoint (`Day-48/main.go`)
+[main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/main.go)
+```go
+// Wire config, repository store, and HTTP handlers.
+// Implements SIGTERM signal intercepting, readiness probe degradation to 503,
+// 5-second endpoint drain pause, and 10-second graceful server shutdown.
+```
+
+### 2. Multi-Stage Dockerfile (`Day-48/Dockerfile`)
+[Dockerfile](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/Dockerfile)
+```dockerfile
+// Multi-stage build with non-root security context (UID 10001)
+```
+
+### 3. Complete Kubernetes Manifests Suite (`Day-48/k8s/`)
+- [01-namespace.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/k8s/01-namespace.yaml) — `go-app` Namespace.
+- [02-configmap.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/k8s/02-configmap.yaml) — App configuration (`PORT`, `APP_ENV`, `DATA_PATH`).
+- [03-secret.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/k8s/03-secret.yaml) — Opaque API key secret.
+- [04-pvc.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/k8s/04-pvc.yaml) — 1Gi PersistentVolumeClaim.
+- [05-deployment.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/k8s/05-deployment.yaml) — 3-replica Deployment with InitContainers, securityContext, probes, Downward API, PVC volume mounts.
+- [06-service.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/k8s/06-service.yaml) — ClusterIP and NodePort Services.
+- [07-ingress.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/k8s/07-ingress.yaml) — NGINX Ingress rule for `go-app.local`.
+- [08-hpa.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/k8s/08-hpa.yaml) — HorizontalPodAutoscaler (3 to 10 replicas).
+- [09-pdb.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/k8s/09-pdb.yaml) — PodDisruptionBudget (`minAvailable: 2`).
+
+### 4. Unit Test Suite (`Day-48/handler/handler_test.go`)
+[handler_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-48/handler/handler_test.go)
+
+---
+
+# 📘 Day 48 Interview Questions & Answers
+
+## ❓ Q1: How do InitContainers differ from standard App Containers in a Kubernetes Pod?
+
+### ✅ Answer:
+- **Sequential Execution**: InitContainers run sequentially to completion in the order specified in `spec.initContainers` before any main application containers are started.
+- **Block Main Containers**: If an InitContainer fails or errors out, the Pod is restarted according to `restartPolicy`, and main application containers are never initialized.
+- **Resource Independence**: InitContainers can have different container images, security settings, or utility tools (e.g. `busybox`, `curl`, `pg_isready`) not needed in the production runtime container.
+
+---
+
+## ❓ Q2: What is the role of an Ingress Controller versus a Kubernetes Service?
+
+### ✅ Answer:
+- **Service (Layer 4)**: A Service operates at the transport layer (TCP/UDP), routing traffic to Pods via IP/Port matching label selectors. It lacks host-name filtering, URL path routing, and TLS termination.
+- **Ingress Controller (Layer 7)**: An Ingress Controller is a reverse proxy (e.g., NGINX, Traefik, Envoy) that evaluates `Ingress` rules. It manages virtual hosting (`app.example.com`), URL path rewriting (`/api/v1`), SSL/TLS termination, and HTTP header modification before routing traffic to backend Services.
+
+---
+
+## ❓ Q3: Why is a PodDisruptionBudget (PDB) critical for high availability in Kubernetes production environments?
+
+### ✅ Answer:
+A **PodDisruptionBudget (PDB)** limits the number of Pods of a replicated application that are down simultaneously from **voluntary disruptions** (e.g. node drain, cluster auto-scaler scale down, node OS upgrades).
+By defining `minAvailable: 2` or `maxUnavailable: 1`, Kubernetes will reject eviction requests during node maintenance if draining a node would drop available active Pods below the safety threshold.
+
+---
+
+## ❓ Q4: How does Horizontal Pod Autoscaler (HPA) compute scaling decisions for Go microservices?
+
+### ✅ Answer:
+HPA periodically queries the Kubernetes Metrics Server (every 15 seconds by default) to compare current resource utilization metrics against target thresholds using the formula:
+
+$$\text{DesiredReplicas} = \left\lceil \text{CurrentReplicas} \times \left( \frac{\text{CurrentMetricValue}}{\text{TargetMetricValue}} \right) \right\rceil$$
+
+For example, if CPU usage across 3 pods averages 140m against a target of 100m, HPA calculates:
+$$\lceil 3 \times (140 / 100) \rceil = \lceil 4.2 \rceil = 5 \text{ replicas}$$
+
+---
+
+## ❓ Q5: How do you mount Kubernetes ConfigMaps and Secrets into a Go application container securely?
+
+### ✅ Answer:
+Kubernetes supports two primary methods:
+1. **Environment Variables (`envFrom` / `env`)**: Injects key-value pairs directly as environment variables. Accessible in Go via `os.Getenv()`.
+2. **Volume Mounts (`volumeMounts`)**: Mounts ConfigMap or Secret keys as files inside a directory (e.g. `/etc/config`). In Go, files are read via `os.ReadFile()`. Volume mounts have the advantage of automatic atomic file updates when the ConfigMap/Secret is modified in the cluster.
+
+---
+
+# 📚 Day 48 Summary
+
+Today I completed **Day 48 Deploy Go App on Kubernetes**:
+- Engineered a complete production Kubernetes release package for a stateful Go REST microservice.
+- Wrote Kubernetes manifests for Namespace, ConfigMap, Secret, PersistentVolumeClaim (PVC), Deployment, Service (ClusterIP/NodePort), NGINX Ingress, HorizontalPodAutoscaler (HPA), and PodDisruptionBudget (PDB).
+- Configured multi-stage Docker build running under non-root security context (`appuser`, UID `10001`).
+- Implemented `InitContainers` for volume initialization and Downward API environment injection.
+- Applied zero-downtime rolling release principles with readiness degradation and graceful server shutdown.
+- Wrote 100% passing unit tests for probe state handling and REST API endpoints.
+
+---
+
+# ⭐ Challenge Progress
+✅ Day 01 Completed  
+✅ Day 02 Completed  
+✅ Day 03 Completed  
+✅ Day 04 Completed  
+✅ Day 05 Completed  
+✅ Day 06 Completed  
+✅ Day 07 Completed  
+✅ Day 08 Completed  
+✅ Day 09 Completed   
+✅ Day 10 Completed  
+✅ Day 11 Completed  
+✅ Day 12 Completed  
+✅ Day 13 Completed  
+✅ Day 14 Completed   
+✅ Day 15 Completed  
+✅ Day 16 Completed  
+✅ Day 17 Completed  
+✅ Day 18 Completed  
+✅ Day 19 Completed  
+✅ Day 20 Completed  
+✅ Day 21 Completed  
+✅ Day 22 Completed  
+✅ Day 23 Completed  
+✅ Day 24 Completed  
+✅ Day 25 Completed  
+✅ Day 26 Completed  
+✅ Day 27 Completed  
+✅ Day 28 Completed  
+✅ Day 29 Completed  
+✅ Day 30 Completed  
+✅ Day 31 Completed  
+✅ Day 32 Completed  
+✅ Day 33 Completed  
+✅ Day 34 Completed  
+✅ Day 35 Completed  
+✅ Day 36 Completed  
+✅ Day 37 Completed  
+✅ Day 38 Completed  
+✅ Day 39 Completed  
+✅ Day 40 Completed  
+✅ Day 41 Completed  
+✅ Day 42 Completed  
+✅ Day 43 Completed  
+✅ Day 44 Completed  
+✅ Day 45 Completed  
+✅ Day 46 Completed  
+✅ Day 47 Completed  
+✅ Day 48 Completed  
+🚀 Next: CI/CD Basics
