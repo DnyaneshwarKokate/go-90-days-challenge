@@ -113,13 +113,13 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 46 | Docker Compose | ✅ |
 | Day 47 | Kubernetes Basics | ✅ |
 | Day 48 | Deploy Go App on Kubernetes | ✅ |
-| Day 49 | CI/CD Basics | ⏳ |
-| Day 50 | GitHub Actions CI/CD | ⏳ |
-| Day 51 | Microservices Introduction | ⏳ |
-| Day 52 | User Microservice | ⏳ |
-| Day 53 | Product Microservice | ⏳ |
-| Day 54 | API Gateway | ⏳ |
-| Day 55 | Service Communication | ⏳ |
+| Day 49 | CI/CD Basics | ✅ |
+| Day 50 | GitHub Actions CI/CD | ✅ |
+| Day 51 | Microservices Introduction | ✅ |
+| Day 52 | User Microservice | ✅ |
+| Day 53 | Product Microservice | ✅ |
+| Day 54 | API Gateway | ✅ |
+| Day 55 | Service Communication | ✅ |
 | Day 56 | gRPC Basics | ⏳ |
 | Day 57 | Kafka/RabbitMQ Basics | ⏳ |
 | Day 58 | Event-Driven Architecture | ⏳ |
@@ -19880,6 +19880,554 @@ Today I completed **Day 48 Deploy Go App on Kubernetes**:
 
 ---
 
+# ✅ Day 48 Completed  
+
+---
+
+# ✅ Day 49 — CI/CD Basics for Go
+
+---
+
+# 📖 Deep-Dive: Continuous Integration & Continuous Deployment (CI/CD)
+
+**Continuous Integration (CI)** and **Continuous Deployment (CD)** form the backbone of modern cloud-native software engineering. CI/CD automates the building, testing, linting, code quality checks, containerization, and deployment of code changes into staging and production environments.
+
+```text
+  +-------------------------------------------------------------------------------------------------------------+
+  |                                        Go CI/CD Automation Pipeline Flow                                    |
+  |                                                                                                             |
+  |   Developer Commit        Quality Gate 1           Quality Gate 2           Artifact Build     Deployment   |
+  |   +--------------+       +--------------+         +----------------+       +--------------+   +-----------+ |
+  |   | git push     | ----> | go fmt       | ------> | go test -race  | ----> | go build /   | ->| Deploy to | |
+  |   | main branch  |       | go vet       |         | -coverprofile  |       | Docker build |   | K8s / ECS | |
+  |   +--------------+       +--------------+         +----------------+       +--------------+   +-----------+ |
+  |                                                                                                             |
+  |   Feedback Loop: Fail Fast -> Halt Pipeline on Error -> Send Slack / Email Notification to Developer        |
+  +-------------------------------------------------------------------------------------------------------------+
+```
+
+---
+
+# 💡 Core Concepts & Production Patterns for CI/CD
+
+### 1. Fail-Fast Feedback Loops
+- **Automated Verification**: Pipelines run formatted checks (`go fmt`), static analysis (`go vet`), and unit test suites on every pull request.
+- **Strict Quality Gates**: If any step returns a non-zero exit code, the pipeline terminates immediately, preventing broken code from merging.
+
+### 2. Artifact Immutability & Version Tagging
+- Binary compilation produces static binary artifacts or tagged immutable container images (`registry/app:v1.2.0` or git SHA hash `registry/app:a1b2c3d`).
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 49 Project
+
+### 1. Go Service & Test Suite (`Day-49/`)
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-49/main.go) — Baseline REST service entrypoint.
+- [handler/handler.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-49/handler/handler.go) — Health & status handlers.
+- [handler/handler_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-49/handler/handler_test.go) — Unit tests for endpoints.
+
+### 2. Target Automation (`Day-49/Makefile`)
+[Makefile](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-49/Makefile) — Automates `fmt`, `lint`, `test`, `build`, and `ci` commands.
+
+### 3. Pipeline Automation Script (`Day-49/scripts/ci_pipeline.sh`)
+[ci_pipeline.sh](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-49/scripts/ci_pipeline.sh) — Shell script enforcing sequential validation stages.
+
+---
+
+# 📘 Day 49 Interview Questions & Answers
+
+## ❓ Q1: What is the primary distinction between Continuous Delivery and Continuous Deployment?
+### ✅ Answer:
+- **Continuous Delivery**: Automates code linting, testing, and container packaging up to staging/production-ready artifacts, but requires a manual approval trigger to deploy to production.
+- **Continuous Deployment**: Fully automates every step from git push to live production rollout without human intervention if all pipeline stages pass.
+
+## ❓ Q2: Why is running `go test -race` critical in Go CI pipelines?
+### ✅ Answer:
+`go test -race` enables Go's built-in data race detector. It detects unsynchronized concurrent access to shared memory variables across goroutines during test runs.
+
+## ❓ Q3: How do Makefiles simplify local CI pipeline execution?
+### ✅ Answer:
+Makefiles standardize pipeline tasks into repeatable target commands (`make test`, `make lint`, `make build`) ensuring identical validation commands are run locally by developers and remotely by CI runners.
+
+## ❓ Q4: What are Quality Gates in a CI/CD pipeline?
+### ✅ Answer:
+Quality Gates are mandatory automated conditions (e.g. 80%+ unit test coverage, zero static analysis warnings, clean vulnerability scans) that code must satisfy before proceeding to subsequent stages.
+
+## ❓ Q5: How should secrets (e.g. DB passwords, API tokens) be handled in CI pipelines?
+### ✅ Answer:
+Secrets must never be hardcoded in repositories or scripts. They should be injected as encrypted environment variables via secret stores (e.g., GitHub Secrets, HashiCorp Vault, AWS Secrets Manager).
+
+---
+
+# 📚 Day 49 Summary
+Today I completed **Day 49 CI/CD Basics**:
+- Built a Go microservice baseline complete with unit test suites.
+- Created `Makefile` target automations and executable bash CI pipeline validation scripts.
+- Learned core CI/CD pipeline mechanics, quality gates, and artifact lifecycle management.
+
+---
+
+# ✅ Day 50 — GitHub Actions CI/CD for Go
+
+---
+
+# 📖 Deep-Dive: GitHub Actions & Automated Workflows for Go
+
+**GitHub Actions** provides native CI/CD workflow automation directly within GitHub repositories. Workflows are defined in YAML files inside `.github/workflows/` and trigger on repository events (`push`, `pull_request`, `schedule`).
+
+```text
+  +-------------------------------------------------------------------------------------------------------------+
+  |                                 GitHub Actions Workflow Architecture for Go                                 |
+  |                                                                                                             |
+  |   Event Trigger: Git Push to main / PR Opened                                                               |
+  |             |                                                                                               |
+  |             v                                                                                               |
+  |   Job 1: lint-and-test (ubuntu-latest)                                                                      |
+  |   +-----------------------------------------------------------------------------------------------------+   |
+  |   | 1. actions/checkout@v4                                                                              |   |
+  |   | 2. actions/setup-go@v5 (Matrix: Go 1.21, 1.22, Module Cache Enabled)                                 |   |
+  |   | 3. go vet ./...                                                                                     |   |
+  |   | 4. go test -v -race -coverprofile=coverage.out ./...                                               |   |
+  |   | 5. go build -o app main.go                                                                          |   |
+  |   +------------------------------------+----------------------------------------------------------------+   |
+  |                                        | (depends on: lint-and-test SUCCESS)                                |
+  |                                        v                                                                    |
+  |   Job 2: docker-build (ubuntu-latest)                                                                       |
+  |   +-----------------------------------------------------------------------------------------------------+   |
+  |   | 1. docker/setup-buildx-action@v3                                                                    |   |
+  |   | 2. docker/build-push-action@v5 (Build minimal distroless/Alpine container image)                    |   |
+  |   +-----------------------------------------------------------------------------------------------------+   |
+  +-------------------------------------------------------------------------------------------------------------+
+```
+
+---
+
+# 💡 Core Concepts & Production Patterns for GitHub Actions
+
+### 1. Matrix Testing Across Go Versions
+- Matrix strategies run job instances concurrently across different environments (e.g. Go `1.21`, `1.22`) to guarantee backward compatibility.
+
+### 2. Dependency & Build Caching
+- `actions/setup-go` automatically caches `~/.cache/go-build` and `$GOPATH/pkg/mod`, reducing workflow execution times from minutes to seconds.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 50 Project
+
+### 1. Go Application & Dockerfile (`Day-50/`)
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-50/main.go) — Go REST server.
+- [handler/handler.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-50/handler/handler.go) — Status API handler.
+- [handler/handler_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-50/handler/handler_test.go) — Unit tests.
+- [Dockerfile](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-50/Dockerfile) — Multi-stage production build running under non-root UID 10001.
+
+### 2. GitHub Actions Workflow Manifest (`Day-50/.github/workflows/ci.yml`)
+[.github/workflows/ci.yml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-50/.github/workflows/ci.yml) — Complete YAML pipeline configuring checkout, Go setup matrix, dependency caching, testing with code coverage, and Docker image build steps.
+
+---
+
+# 📘 Day 50 Interview Questions & Answers
+
+## ❓ Q1: What is the purpose of `needs` in GitHub Actions workflow job definitions?
+### ✅ Answer:
+`needs` defines job dependencies. Setting `needs: lint-and-test` on `docker-build` ensures the Docker build job runs only after `lint-and-test` completes successfully.
+
+## ❓ Q2: How does `actions/setup-go@v5` cache improve pipeline performance?
+### ✅ Answer:
+By caching Go module downloads and compiled package objects across workflow runs, it eliminates redundant module downloads and compilation overhead.
+
+## ❓ Q3: What are GitHub Action secrets and how are they referenced in YAML?
+### ✅ Answer:
+Secrets are encrypted environment variables stored securely in GitHub settings. They are referenced in YAML using syntax `${{ secrets.DOCKER_PASSWORD }}`.
+
+## ❓ Q4: What is the difference between `GITHUB_SHA` and `GITHUB_REF` in Actions?
+### ✅ Answer:
+- `GITHUB_SHA`: The commit SHA hash that triggered the workflow run.
+- `GITHUB_REF`: The git branch or tag reference (e.g. `refs/heads/main` or `refs/tags/v1.0.0`).
+
+## ❓ Q5: How do you prevent wasted GitHub Actions runner minutes on pull requests?
+### ✅ Answer:
+Use path filtering in workflow triggers (`paths: ['Day-50/**', 'go.mod']`) so jobs run only when relevant files in the pull request are modified.
+
+---
+
+# 📚 Day 50 Summary
+Today I completed **Day 50 GitHub Actions CI/CD**:
+- Created a production-grade GitHub Actions YAML workflow for Go.
+- Implemented matrix testing across multiple Go versions with automatic module caching.
+- Integrated automated Docker build and push simulation stages.
+
+---
+
+# ✅ Day 51 — Microservices Introduction & Architecture in Go
+
+---
+
+# 📖 Deep-Dive: Transitioning Monoliths to Go Microservices
+
+**Microservice Architecture** decomposes monolithic applications into small, loosely coupled, independently deployable services organized around business capabilities. Each service manages its own database and communicates via lightweight network protocols (HTTP/REST, gRPC, messaging).
+
+```text
+  +-------------------------------------------------------------------------------------------------------------+
+  |                                Monolith vs Microservices Architecture                                       |
+  |                                                                                                             |
+  |   Monolithic Architecture                    Microservices Architecture                                     |
+  |   +------------------------------------+     +-------------------+   +------------------+                   |
+  |   | Single Deployable Process          |     | User Service      |   | Product Service  |                   |
+  |   | (Users, Products, Orders, Billing) |     | (Port 8081)       |   | (Port 8082)      |                   |
+  |   |                                    |     | +---------------+ |   | +--------------+ |                   |
+  |   | Single Database                    |     | | User Database | |   | | Product DB   | |                   |
+  |   | +--------------------------------+ |     | +---------------+ |   | +--------------+ |                   |
+  |   | | Shared Relational Database     | |     +---------+---------+   +--------+---------+                   |
+  |   | +--------------------------------+ |               ^                      ^                             |
+  |   +------------------------------------+               | Inter-Service REST   |                             |
+  |                                                        +----------------------+                             |
+  +-------------------------------------------------------------------------------------------------------------+
+```
+
+---
+
+# 💡 Core Concepts & Production Patterns for Microservices
+
+### 1. Database-per-Service Pattern
+- Each microservice owns its data storage exclusively. External services cannot access the database directly; they must query the service API.
+
+### 2. Distributed Tracing & Correlation IDs
+- Incoming requests receive a unique `X-Correlation-ID` HTTP header passed across all downstream inter-service HTTP calls for centralized logging.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 51 Project
+
+### 1. Baseline Microservice Stack (`Day-51/`)
+- [config/config.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-51/config/config.go) — Environment loader.
+- [middleware/correlation.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-51/middleware/correlation.go) — Correlation ID propagation middleware.
+- [handler/health.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-51/handler/health.go) — Health & readiness check handler.
+- [handler/health_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-51/handler/health_test.go) — Unit test suite.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-51/main.go) — Server entrypoint.
+
+---
+
+# 📘 Day 51 Interview Questions & Answers
+
+## ❓ Q1: What are the main trade-offs of Microservices compared to Monoliths?
+### ✅ Answer:
+- **Pros**: Independent deployment, tech stack flexibility, horizontal scalability, fault isolation.
+- **Cons**: Increased operational complexity, distributed transactions (Saga required), network latency, complex debugging.
+
+## ❓ Q2: Why is the Database-per-Service pattern fundamental to microservices?
+### ✅ Answer:
+It guarantees loose coupling. Services can change their internal data schema without breaking other services.
+
+## ❓ Q3: What is a Correlation ID in microservice logging?
+### ✅ Answer:
+A unique request identifier generated at the edge gateway and propagated across microservices via HTTP headers (`X-Correlation-ID`).
+
+## ❓ Q4: How do microservices handle distributed transactions across databases?
+### ✅ Answer:
+Using the **Saga Pattern** (Choreography or Orchestration), which executes a sequence of local transactions with compensating transactions for rollbacks.
+
+## ❓ Q5: What is Conway's Law and how does it relate to Microservices?
+### ✅ Answer:
+Conway's Law states that system designs mirror the communication structures of the organizations that build them. Microservices align well with small, autonomous teams.
+
+---
+
+# 📚 Day 51 Summary
+Today I completed **Day 51 Microservices Introduction**:
+- Architected a modular Go microservice baseline.
+- Implemented correlation ID context propagation middleware for distributed logging.
+- Mastered core microservice trade-offs, Database-per-service patterns, and Saga concepts.
+
+---
+
+# ✅ Day 52 — User Microservice
+
+---
+
+# 📖 Deep-Dive: Building a High-Security User Microservice in Go
+
+The **User Microservice** manages user identities, registration, password security, authentication tokens (JWT), and user profile retrieval.
+
+```text
+  +-------------------------------------------------------------------------------------------------------------+
+  |                                   User Microservice Architecture Flow                                       |
+  |                                                                                                             |
+  |   HTTP Request (POST /register | /login)                                                                    |
+  |        |                                                                                                    |
+  |        v                                                                                                    |
+  |   UserHandler (JSON Decode -> Validate Inputs)                                                              |
+  |        |                                                                                                    |
+  |        v                                                                                                    |
+  |   UserService (Password Hashing / HMAC-SHA256 JWT Issuance)                                                 |
+  |        |                                                                                                    |
+  |        v                                                                                                    |
+  |   UserRepository (Thread-Safe In-Memory Store / DB)                                                       |
+  +-------------------------------------------------------------------------------------------------------------+
+```
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 52 Project
+
+### 1. User Service Components (`Day-52/`)
+- [domain/user.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-52/domain/user.go) — Domain entities & repository interface.
+- [repository/user_repository.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-52/repository/user_repository.go) — Thread-safe user storage.
+- [service/user_service.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-52/service/user_service.go) — Hashing, JWT signing & claims validation.
+- [handler/user_handler.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-52/handler/user_handler.go) — HTTP handlers for register, login, profile.
+- [handler/user_handler_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-52/handler/user_handler_test.go) — Integration flow unit tests.
+
+---
+
+# 📘 Day 52 Interview Questions & Answers
+
+## ❓ Q1: Why should passwords never be stored in plain text?
+### ✅ Answer:
+Storing plain text passwords exposes user credentials in data breaches. Passwords must be hashed using salted cryptographic hash functions.
+
+## ❓ Q2: What are the three parts of a JWT?
+### ✅ Answer:
+1. **Header**: Specifies signing algorithm and token type.
+2. **Payload**: Contains claims (user ID, expiration, roles).
+3. **Signature**: Verifies token integrity using secret key.
+
+## ❓ Q3: How does thread safety work in Go in-memory repositories?
+### ✅ Answer:
+Using `sync.RWMutex`. Read operations use `RLock()` while write operations use `Lock()`.
+
+## ❓ Q4: What is the benefit of separating Domain, Repository, and Service layers?
+### ✅ Answer:
+It enforces Clean Architecture, enabling storage implementation swapping without touching business logic.
+
+## ❓ Q5: How do you handle JWT expiration in Go?
+### ✅ Answer:
+Include an `exp` claim with a Unix timestamp and compare it against `time.Now().Unix()` during validation.
+
+---
+
+# 📚 Day 52 Summary
+Today I completed **Day 52 User Microservice**:
+- Implemented a complete User microservice with registration, login, and profile REST endpoints.
+- Built HMAC-SHA256 JWT token issuance and claim validation.
+- Applied Clean Architecture domain/service/repository isolation with 100% passing tests.
+
+---
+
+# ✅ Day 53 — Product Microservice
+
+---
+
+# 📖 Deep-Dive: Building a High-Throughput Product Catalog Microservice
+
+The **Product Microservice** provides product catalog management, category filtering, search, and stock inventory adjustment.
+
+```text
+  +-------------------------------------------------------------------------------------------------------------+
+  |                                Product Catalog Microservice Data Model                                      |
+  |                                                                                                             |
+  |   Create Product (POST /products) --------> Validate SKU & Price -> Generate Product ID                     |
+  |   Category Filter (GET /products?category=x) -> Query Product Repository                                    |
+  |   Stock Delta Update (PATCH /products/:id/stock) -> Enforce Non-Negative Stock Constraint                  |
+  +-------------------------------------------------------------------------------------------------------------+
+```
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 53 Project
+
+### 1. Product Service Components (`Day-53/`)
+- [domain/product.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-53/domain/product.go) — Domain definitions & stock error definitions.
+- [repository/product_repository.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-53/repository/product_repository.go) — Thread-safe catalog & stock operations.
+- [service/product_service.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-53/service/product_service.go) — Business logic for catalog management.
+- [handler/product_handler.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-53/handler/product_handler.go) — REST API handlers.
+- [handler/product_handler_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-53/handler/product_handler_test.go) — Unit tests.
+
+---
+
+# 📘 Day 53 Interview Questions & Answers
+
+## ❓ Q1: How do you prevent race conditions during inventory stock decrementing in Go?
+### ✅ Answer:
+Using mutex locks (`sync.Mutex`), database transactions (`SELECT FOR UPDATE`), or atomic operations.
+
+## ❓ Q2: What HTTP status code should be returned when an inventory update exceeds stock?
+### ✅ Answer:
+`409 Conflict` or `422 Unprocessable Entity`.
+
+## ❓ Q3: Why is SKU (Stock Keeping Unit) useful alongside Product ID?
+### ✅ Answer:
+SKU is a human-readable business identifier used in inventory management across systems.
+
+## ❓ Q4: How do you design product search endpoint parameters in REST?
+### ✅ Answer:
+Using query parameters (e.g., `/api/v1/products?category=electronics&limit=10`).
+
+## ❓ Q5: What pattern helps handle high read volume on Product Catalog APIs?
+### ✅ Answer:
+Caching product listings using Redis with TTL expiration.
+
+---
+
+# 📚 Day 53 Summary
+Today I completed **Day 53 Product Microservice**:
+- Engineered a Product Catalog microservice with SKU, pricing, and stock management.
+- Implemented category search filtering and safe stock delta adjustments.
+- Added comprehensive unit tests for product management workflows.
+
+---
+
+# ✅ Day 54 — API Gateway in Go
+
+---
+
+# 📖 Deep-Dive: Custom API Gateway Architecture in Go
+
+An **API Gateway** serves as the single entry point for client applications into a microservices cluster. It handles request routing, authentication validation, rate limiting, and header enrichment.
+
+```text
+  +-------------------------------------------------------------------------------------------------------------+
+  |                                        API Gateway Routing Mechanics                                        |
+  |                                                                                                             |
+  |   External Client Traffic                                                                                   |
+  |             |                                                                                               |
+  |             v                                                                                               |
+  |   +-----------------------------------------------------------------------------------------------------+   |
+  |   | Go API Gateway (Port 8000)                                                                          |   |
+  |   | 1. Rate Limiting Middleware (100 req/min per IP)                                                    |   |
+  |   | 2. Auth Middleware (JWT Token Signature Validation)                                                 |   |
+  |   | 3. Reverse Proxy Handler (net/http/httputil.ReverseProxy)                                            |   |
+  |   +-------------------+------------------------------------+--------------------------------------------+   |
+  |                       |                                    |                                                |
+  |                       v                                    v                                                |
+  |   +-----------------------------------+   +------------------------------------+                            |
+  |   | User Microservice (Port 8081)     |   | Product Microservice (Port 8082)   |                            |
+  |   | Route: /api/v1/users              |   | Route: /api/v1/products            |                            |
+  |   +-----------------------------------+   +------------------------------------+                            |
+  +-------------------------------------------------------------------------------------------------------------+
+```
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 54 Project
+
+### 1. API Gateway Components (`Day-54/`)
+- [proxy/reverse_proxy.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-54/proxy/reverse_proxy.go) — `httputil.ReverseProxy` request router.
+- [middleware/auth.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-54/middleware/auth.go) — Gateway-level JWT authentication.
+- [middleware/ratelimit.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-54/middleware/ratelimit.go) — IP rate limiter.
+- [proxy/reverse_proxy_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-54/proxy/reverse_proxy_test.go) — Proxy & auth test suite.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-54/main.go) — Server entrypoint.
+
+---
+
+# 📘 Day 54 Interview Questions & Answers
+
+## ❓ Q1: How does `net/http/httputil.ReverseProxy` work in Go?
+### ✅ Answer:
+`ReverseProxy` takes an incoming HTTP request, rewrites its target URL and Host header to point to a downstream service, proxies the request, and copies the response back to the client.
+
+## ❓ Q2: What are the primary benefits of an API Gateway?
+### ✅ Answer:
+Centralizes cross-cutting concerns (authentication, rate limiting, logging, SSL termination), simplifies client code, and shields internal microservice topology.
+
+## ❓ Q3: What is the difference between an API Gateway and an Ingress Controller?
+### ✅ Answer:
+- **Ingress Controller**: Cluster-level Kubernetes routing component (Layer 7 HTTP routing).
+- **API Gateway**: Application-level component enforcing business policies (JWT claims inspection, rate limiting, request transformation).
+
+## ❓ Q4: How should public vs private routes be configured at the API Gateway?
+### ✅ Answer:
+Maintain a path whitelist (e.g. `/login`, `/register`, `/health`) that bypasses authentication middleware.
+
+## ❓ Q5: What is the Backend-for-Frontend (BFF) pattern?
+### ✅ Answer:
+A variation of API Gateway where separate gateways are created for specific frontend clients (e.g., Mobile BFF, Web BFF).
+
+---
+
+# 📚 Day 54 Summary
+Today I completed **Day 54 API Gateway in Go**:
+- Built a custom reverse proxy API Gateway in Go using `httputil.ReverseProxy`.
+- Integrated centralized JWT authentication and rate limiting middleware.
+- Successfully routed traffic to User and Product microservices with header propagation.
+
+---
+
+# ✅ Day 55 — Service Communication in Microservices
+
+---
+
+# 📖 Deep-Dive: Inter-Service Resilience & Circuit Breaking in Go
+
+When microservices communicate synchronously over HTTP, network glitches or downstream outages can cause cascading failures. Resilient inter-service communication requires **Timeout Contexts**, **Exponential Backoff Retries**, and **Circuit Breakers**.
+
+```text
+  +-------------------------------------------------------------------------------------------------------------+
+  |                                        Circuit Breaker State Machine                                        |
+  |                                                                                                             |
+  |             +-------------------------------------------------------------------+                           |
+  |             | Success (Reset Failure Counter)                                   |                           |
+  |             v                                                                   |                           |
+  |      +--------------+        Failures >= Threshold        +--------------+      |                           |
+  |      |    CLOSED    | ----------------------------------> |     OPEN     |      |                           |
+  |      | (Normal Ops) |                                     | (Reject Req) |      |                           |
+  |      +--------------+                                     +--------------+      |                           |
+  |             ^                                                    |              |                           |
+  |             |                                   Timeout Expired  |              |                           |
+  |             |                                                    v              |                           |
+  |             |                                             +--------------+      |                           |
+  |             +-------------------------------------------- |  HALF-OPEN   | -----+                           |
+  |                               Success                     | (Trial Call) |  Failure -> Back to OPEN          |
+  |                                                           +--------------+                                  |
+  +-------------------------------------------------------------------------------------------------------------+
+```
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 55 Project
+
+### 1. Inter-Service Communication Stack (`Day-55/`)
+- [circuitbreaker/circuit_breaker.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-55/circuitbreaker/circuit_breaker.go) — State machine implementation (Closed, Open, Half-Open).
+- [client/http_client.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-55/client/http_client.go) — Resilient HTTP client with retries.
+- [client/client_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-55/client/client_test.go) — Unit tests for retries & circuit breaker states.
+- [service/order_service.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-55/service/order_service.go) — Aggregates user & product data with fallbacks.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-55/main.go) — Aggregator entrypoint.
+
+---
+
+# 📘 Day 55 Interview Questions & Answers
+
+## ❓ Q1: What are the three states of a Circuit Breaker?
+### ✅ Answer:
+1. **CLOSED**: Normal operation. Calls pass through.
+2. **OPEN**: Failure threshold exceeded. Calls fail immediately without calling downstream service.
+3. **HALF-OPEN**: Timeout expired. Trial requests are allowed to test downstream recovery.
+
+## ❓ Q2: Why is exponential backoff preferred over immediate retries?
+### ✅ Answer:
+Immediate retries flood a struggling downstream service, worsening overload. Exponential backoff increases delay between retries to let the service recover.
+
+## ❓ Q3: What is fallback handling in inter-service calls?
+### ✅ Answer:
+Returning cached or default data when a downstream call fails or trips the circuit breaker instead of failing the entire user request.
+
+## ❓ Q4: How do context timeouts prevent resource leaks in Go HTTP clients?
+### ✅ Answer:
+Using `context.WithTimeout` automatically cancels pending HTTP requests and frees network sockets if the target service does not respond within the allocated time.
+
+## ❓ Q5: What is the difference between synchronous and asynchronous inter-service communication?
+### ✅ Answer:
+- **Synchronous**: Caller waits for response (HTTP/gRPC). Simple, but tightly coupled.
+- **Asynchronous**: Sender publishes events to a broker (Kafka/RabbitMQ) without waiting. Decoupled and fault-tolerant.
+
+---
+
+# 📚 Day 55 Summary
+Today I completed **Day 55 Service Communication in Microservices**:
+- Engineered a Circuit Breaker state machine (Closed, Open, Half-Open).
+- Implemented a resilient HTTP client wrapper supporting retries with backoff and timeout contexts.
+- Built an Order Aggregator microservice featuring automatic graceful fallback responses.
+
+---
+
 # ⭐ Challenge Progress
 ✅ Day 01 Completed  
 ✅ Day 02 Completed  
@@ -19929,4 +20477,11 @@ Today I completed **Day 48 Deploy Go App on Kubernetes**:
 ✅ Day 46 Completed  
 ✅ Day 47 Completed  
 ✅ Day 48 Completed  
-🚀 Next: CI/CD Basics
+✅ Day 49 Completed  
+✅ Day 50 Completed  
+✅ Day 51 Completed  
+✅ Day 52 Completed  
+✅ Day 53 Completed  
+✅ Day 54 Completed  
+✅ Day 55 Completed  
+🚀 Next: gRPC Basics
