@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "day56/proto";
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message UserResponse {
+  string id = 1;
+  string name = 2;
+  string email = 3;
+  string role = 4;
+}
+
+message StreamUsersRequest {
+  int32 count = 1;
+}
+
+service UserService {
+  rpc GetUser (GetUserRequest) returns (UserResponse);
+  rpc StreamUsers (StreamUsersRequest) returns (stream UserResponse);
+}

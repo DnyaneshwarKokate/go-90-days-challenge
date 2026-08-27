@@ -120,12 +120,13 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 53 | Product Microservice | ✅ |
 | Day 54 | API Gateway | ✅ |
 | Day 55 | Service Communication | ✅ |
-| Day 56 | gRPC Basics | ⏳ |
-| Day 57 | Kafka/RabbitMQ Basics | ⏳ |
-| Day 58 | Event-Driven Architecture | ⏳ |
-| Day 59 | Monitoring & Logging | ⏳ |
-| Day 60 | Production API Project | ⏳ |
-| Day 61–70 | Advanced Backend Projects | ⏳ |
+| Day 56 | gRPC Basics & Streaming | ✅ |
+| Day 57 | Message Broker & DLQ | ✅ |
+| Day 58 | Event-Driven Architecture | ✅ |
+| Day 59 | Monitoring & Prometheus Metrics | ✅ |
+| Day 60 | Production API Project | ✅ |
+| Day 61 | Distributed Caching & Singleflight | ✅ |
+| Day 62–70 | Advanced Backend Projects | ⏳ |
 | Day 71–80 | Microservices Projects | ⏳ |
 | Day 81–85 | System Design Basics | ⏳ |
 | Day 86–88 | Interview Preparation | ⏳ |
@@ -20428,6 +20429,325 @@ Today I completed **Day 55 Service Communication in Microservices**:
 
 ---
 
+# ✅ Day 56 — gRPC Basics & Streaming in Go
+
+---
+
+# 📖 Deep-Dive: High-Performance gRPC & Protobuf RPCs in Go
+
+gRPC is a high-performance, open-source universal RPC framework developed by Google. It leverages **Protocol Buffers** for efficient binary serialization and runs over **HTTP/2** for multiplexing and streaming.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 56 Project
+
+### 1. gRPC Service Stack (`Day-56/`)
+- [proto/user.proto](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-56/proto/user.proto) — Protobuf contract definitions for `GetUserRequest` and `UserResponse`.
+- [service/grpc_server.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-56/service/grpc_server.go) — Unary RPC (`GetUser`) and Server Streaming (`StreamUsers`) service handler.
+- [service/grpc_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-56/service/grpc_test.go) — Unit testing suite verifying gRPC responses and streaming.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-56/main.go) — Server entrypoint.
+
+---
+
+# 📘 Day 56 Interview Questions & Answers
+
+## ❓ Q1: Why choose gRPC over traditional REST APIs?
+### ✅ Answer:
+gRPC uses binary Protocol Buffers (smaller payload size) over HTTP/2 (multiplexing, bidirectional streaming), providing significantly lower latency and higher throughput compared to JSON over HTTP/1.1.
+
+## ❓ Q2: What is Protocol Buffers (protobuf)?
+### ✅ Answer:
+Protobuf is a language-neutral, platform-neutral extensible mechanism for serializing structured data into compact binary form.
+
+## ❓ Q3: What are the four types of RPCs supported in gRPC?
+### ✅ Answer:
+1. **Unary RPC**: Single request, single response.
+2. **Server Streaming RPC**: Single request, stream of responses.
+3. **Client Streaming RPC**: Stream of requests, single response.
+4. **Bidirectional Streaming RPC**: Stream of requests, stream of responses.
+
+## ❓ Q4: How does HTTP/2 benefit gRPC?
+### ✅ Answer:
+HTTP/2 enables header compression, multiplexing multiple requests over a single TCP connection, and native server/client streaming support.
+
+## ❓ Q5: How do context timeouts work in gRPC calls?
+### ✅ Answer:
+gRPC client calls pass a `context.Context` carrying deadlines. If the execution time exceeds the deadline, gRPC automatically aborts the call with a `DEADLINE_EXCEEDED` status code.
+
+---
+
+# 📚 Day 56 Summary
+Today I completed **Day 56 gRPC Basics & Streaming**:
+- Defined Protocol Buffer schemas for User Service endpoints.
+- Built a gRPC service supporting Unary requests (`GetUser`) and Server Streaming (`StreamUsers`).
+- Verified service methods and error handling with automated Go unit tests.
+
+---
+
+# ✅ Day 57 — Message Broker & Dead Letter Queue (DLQ) in Go
+
+---
+
+# 📖 Deep-Dive: In-Memory Message Broker & Resilient Queueing
+
+Message brokers facilitate asynchronous decoupled communication. Resilient brokers require handling subscriber failures gracefully using **Dead Letter Queues (DLQ)** to store unprocessable messages without blocking the main workflow.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 57 Project
+
+### 1. Queue Architecture (`Day-57/`)
+- [queue/broker.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-57/queue/broker.go) — Thread-safe `MessageBroker` with topic channels, worker goroutines, and DLQ overflow management.
+- [queue/queue_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-57/queue/queue_test.go) — Unit tests for topic publish, subscribe, negative ACKs, and DLQ routing.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-57/main.go) — Message Broker entrypoint demo.
+
+---
+
+# 📘 Day 57 Interview Questions & Answers
+
+## ❓ Q1: What is a Dead Letter Queue (DLQ)?
+### ✅ Answer:
+A DLQ is a specialized queue where unprocessable or failed messages are sent after repeated processing errors or buffer overflows, allowing for offline inspection and debugging.
+
+## ❓ Q2: Difference between Push and Pull messaging models?
+### ✅ Answer:
+- **Push**: The broker immediately forwards published messages to active consumer listeners.
+- **Pull**: Consumers poll the broker periodically to check for available messages.
+
+## ❓ Q3: How do you prevent race conditions in concurrent message brokers?
+### ✅ Answer:
+Using `sync.RWMutex` to guard shared state (like maps of topic channels) and utilizing thread-safe buffered channels for message passing.
+
+## ❓ Q4: What is message acknowledgment (ACK / NACK)?
+### ✅ Answer:
+- **ACK**: Consumer confirms message was processed successfully so broker can delete it.
+- **NACK**: Consumer reports failure, triggering a retry or routing to a DLQ.
+
+## ❓ Q5: What happens when a topic buffer reaches full capacity?
+### ✅ Answer:
+The broker can either block the publisher, drop the message, or route the overflow message directly to a DLQ buffer.
+
+---
+
+# 📚 Day 57 Summary
+Today I completed **Day 57 Message Broker & DLQ**:
+- Implemented a thread-safe in-memory message broker with topic management.
+- Added non-blocking message publishing and automated routing of un-ACKed/overflow messages to a Dead Letter Queue.
+- Covered publish/subscribe concurrency and DLQ retrieval in unit tests.
+
+---
+
+# ✅ Day 58 — Event-Driven Architecture & Transactional Outbox Pattern
+
+---
+
+# 📖 Deep-Dive: Asynchronous Event Bus & Transactional Consistency
+
+Event-Driven Architecture (EDA) decouples producers from consumers. To prevent dual-write problems (where database updates succeed but event publishing fails), microservices use the **Transactional Outbox Pattern** to write events to an outbox table within the same local database transaction.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 58 Project
+
+### 1. Event System (`Day-58/`)
+- [event/bus.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-58/event/bus.go) — Thread-safe `EventBus` with outbox persistence and concurrent handler execution using `sync.WaitGroup`.
+- [event/event_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-58/event/event_test.go) — Unit tests for event publishing, subscriptions, outbox tracking, and multi-handler dispatch.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-58/main.go) — Event Bus entrypoint demo.
+
+---
+
+# 📘 Day 58 Interview Questions & Answers
+
+## ❓ Q1: What is the Transactional Outbox Pattern?
+### ✅ Answer:
+It guarantees event delivery consistency by persisting outbound events in a database outbox table within the same transaction as state changes, avoiding distributed transaction complexity.
+
+## ❓ Q2: How does an Event Bus differ from a Message Broker?
+### ✅ Answer:
+An Event Bus operates in-process (or lightweight) dispatching domain events to local/in-app handlers, whereas a Message Broker manages cross-network message transport between separate microservices.
+
+## ❓ Q3: How do you guarantee idempotent event handling?
+### ✅ Answer:
+Consumers track processed Event IDs in a database table or cache and skip execution if an incoming Event ID has already been recorded.
+
+## ❓ Q4: Why execute event handlers in separate goroutines?
+### ✅ Answer:
+Executing handlers concurrently in background goroutines prevents slow handlers from blocking the publishing flow or delaying response times.
+
+## ❓ Q5: What is an Aggregate ID in domain events?
+### ✅ Answer:
+An Aggregate ID identifies the primary entity (e.g. `order_123`) associated with the state change represented by the event.
+
+---
+
+# 📚 Day 58 Summary
+Today I completed **Day 58 Event-Driven Architecture**:
+- Built an in-memory `EventBus` supporting dynamic event type registration.
+- Integrated the Transactional Outbox pattern to store events prior to async dispatch.
+- Achieved non-blocking concurrent handler execution using `sync.WaitGroup`.
+
+---
+
+# ✅ Day 59 — Prometheus Metrics & Monitoring Middleware
+
+---
+
+# 📖 Deep-Dive: Observability, RED Metrics, and Custom Instrumentation
+
+Monitoring microservices requires collecting metrics on **Rate**, **Errors**, and **Duration** (the RED method). Go applications expose these telemetry counters and gauges over a standard `/metrics` HTTP endpoint formatted for Prometheus scraping.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 59 Project
+
+### 1. Telemetry Stack (`Day-59/`)
+- [metrics/prometheus.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-59/metrics/prometheus.go) — `MetricsCollector` middleware wrapping `http.ResponseWriter` to track request count, status codes, and latency.
+- [metrics/metrics_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-59/metrics/metrics_test.go) — Unit tests verifying HTTP metric counters, error counting, and Prometheus output text formatting.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-59/main.go) — Monitoring server entrypoint.
+
+---
+
+# 📘 Day 59 Interview Questions & Answers
+
+## ❓ Q1: What are the RED Metrics in software monitoring?
+### ✅ Answer:
+- **R (Rate)**: Number of requests per second.
+- **E (Errors)**: Number of failed requests per second.
+- **D (Duration)**: Time taken for requests to complete (latency).
+
+## ❓ Q2: How does intercepting `http.ResponseWriter` capture HTTP status codes?
+### ✅ Answer:
+By creating a custom struct wrapping `http.ResponseWriter` that overrides `WriteHeader(statusCode int)` to save the status code before passing it to the original writer.
+
+## ❓ Q3: Why use `sync/atomic` for request and error counters?
+### ✅ Answer:
+Atomic operations (`atomic.AddInt64`) provide high-performance, thread-safe counter increments without lock contention across concurrent HTTP request goroutines.
+
+## ❓ Q4: What is the difference between Prometheus Pull and Push metrics collection?
+### ✅ Answer:
+- **Pull**: Prometheus server polls application `/metrics` endpoints periodically (default).
+- **Push**: Applications push metrics to a Pushgateway (used for short-lived batch jobs).
+
+## ❓ Q5: What metric types exist in Prometheus?
+### ✅ Answer:
+- **Counter**: Value only goes up (e.g. total request count).
+- **Gauge**: Value can go up and down (e.g. current memory usage).
+- **Histogram**: Samples observations in configurable buckets.
+- **Summary**: Calculates configurable quantiles over a sliding time window.
+
+---
+
+# 📚 Day 59 Summary
+Today I completed **Day 59 Prometheus Metrics & Monitoring**:
+- Implemented a custom HTTP telemetry middleware intercepting request metrics.
+- Applied `sync/atomic` counters and `sync.RWMutex` latency observers for high-concurrency safety.
+- Built a Prometheus-compliant `/metrics` exporter returning standard telemetry output.
+
+---
+
+# ✅ Day 60 — Production API Service & Health Checks
+
+---
+
+# 📖 Deep-Dive: Enterprise REST API Patterns & Liveness Probes
+
+Production-ready Go APIs require clean handler routing, input validation, secure unique ID generation, thread-safe memory storage, and dedicated health check probes (`/healthz`) for Kubernetes liveness and readiness monitoring.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 60 Project
+
+### 1. Production API Stack (`Day-60/`)
+- [handler/order_handler.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-60/handler/order_handler.go) — `OrderHandler` implementing POST `/api/v1/orders`, GET `/api/v1/orders?id=`, and GET `/healthz`.
+- [handler/order_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-60/handler/order_test.go) — Automated HTTP test suite using `net/http/httptest`.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-60/main.go) — Production API server entrypoint.
+
+---
+
+# 📘 Day 60 Interview Questions & Answers
+
+## ❓ Q1: What is the purpose of the `/healthz` endpoint in production APIs?
+### ✅ Answer:
+It allows container orchestrators like Kubernetes to check if an API instance is healthy (Liveness probe) and ready to serve traffic (Readiness probe).
+
+## ❓ Q2: How do you test HTTP handlers in Go without starting an actual network server?
+### ✅ Answer:
+Using `net/http/httptest.NewRecorder()` and `httptest.NewRequest()` to simulate HTTP requests and inspect status codes/headers directly in memory.
+
+## ❓ Q3: How do you prevent SQL injection / payload corruption in Go APIs?
+### ✅ Answer:
+Use `json.NewDecoder(r.Body).Decode(&req)` for strict payload parsing, validate all fields before processing, and use parameterized queries for database interactions.
+
+## ❓ Q4: Why generate cryptographically secure random IDs with `crypto/rand`?
+### ✅ Answer:
+Standard `math/rand` generates predictable sequences. `crypto/rand` relies on OS entropy sources, preventing ID enumeration or prediction attacks.
+
+## ❓ Q5: How to implement Graceful Shutdown in a Go production server?
+### ✅ Answer:
+Listen for OS signals (`SIGINT`, `SIGTERM`), then invoke `server.Shutdown(ctx)` with a timeout context to allow active HTTP requests to complete cleanly before terminating.
+
+---
+
+# 📚 Day 60 Summary
+Today I completed **Day 60 Production API Service**:
+- Built an enterprise-grade Order API service using standard library `http.ServeMux`.
+- Implemented payload validation, secure hexadecimal ID generation, and thread-safe data access.
+- Integrated `/healthz` endpoint for automated liveness checks and verified with `httptest`.
+
+---
+
+# ✅ Day 61 — Distributed Caching & Singleflight (Thundering Herd Prevention)
+
+---
+
+# 📖 Deep-Dive: High-Performance Caching & Cache Stampede Coalescing
+
+When a popular cache key expires, thousands of concurrent requests can hit the database simultaneously—a problem known as **Cache Stampede** or **Thundering Herd**. Go addresses this using **Singleflight request coalescing**, ensuring only one fetcher executes while duplicate requests wait for the shared result.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 61 Project
+
+### 1. Distributed Cache Stack (`Day-61/`)
+- [cache/distributed_cache.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-61/cache/distributed_cache.go) — `DistributedCache` featuring TTL expiration, thread safety, and `GetOrFetch` singleflight request deduplication.
+- [cache/cache_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-61/cache/cache_test.go) — Unit tests for cache hits, misses, TTL eviction, and concurrent request coalescing.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-61/main.go) — Distributed Cache entrypoint demo.
+
+---
+
+# 📘 Day 61 Interview Questions & Answers
+
+## ❓ Q1: What is the Thundering Herd / Cache Stampede problem?
+### ✅ Answer:
+When a cached key expires under high traffic, multiple concurrent requests simultaneously observe a cache miss and query the database, overloading downstream services.
+
+## ❓ Q2: How does `Singleflight` solve cache stampedes?
+### ✅ Answer:
+It suppresses duplicate in-flight function calls for the same key. Only the first caller executes the database fetch while subsequent concurrent callers block and receive the exact same result once ready.
+
+## ❓ Q3: What is TTL (Time-To-Live) in caching?
+### ✅ Answer:
+TTL defines how long a cached item remains valid before automatically expiring and being evicted from memory.
+
+## ❓ Q4: What is the difference between Cache-Aside and Write-Through caching?
+### ✅ Answer:
+- **Cache-Aside**: Application reads from cache; on miss, fetches from database and writes to cache.
+- **Write-Through**: Application writes data to cache and database simultaneously on update.
+
+## ❓ Q5: How does `sync.RWMutex` improve cache performance over `sync.Mutex`?
+### ✅ Answer:
+`sync.RWMutex` allows multiple goroutines to acquire read locks (`RLock`) concurrently without blocking each other, locking exclusively (`Lock`) only when writing or updating data.
+
+---
+
+# 📚 Day 61 Summary
+Today I completed **Day 61 Distributed Caching & Singleflight**:
+- Built an in-memory thread-safe cache engine supporting TTL auto-expiration.
+- Implemented `GetOrFetch` using Singleflight request coalescing to eliminate Thundering Herd spikes.
+- Validated concurrent request suppression and cache hit rates with unit test suites.
+
+---
+
 # ⭐ Challenge Progress
 ✅ Day 01 Completed  
 ✅ Day 02 Completed  
@@ -20484,4 +20804,10 @@ Today I completed **Day 55 Service Communication in Microservices**:
 ✅ Day 53 Completed  
 ✅ Day 54 Completed  
 ✅ Day 55 Completed  
-🚀 Next: gRPC Basics
+✅ Day 56 Completed  
+✅ Day 57 Completed  
+✅ Day 58 Completed  
+✅ Day 59 Completed  
+✅ Day 60 Completed  
+✅ Day 61 Completed  
+🚀 Next: Day 62 - Advanced Microservices Patterns
