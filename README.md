@@ -135,7 +135,16 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 68 | Distributed Rate Limiting | ✅ |
 | Day 69 | Dead Letter Queue (DLQ) & Poison Message | ✅ |
 | Day 70 | Microservices System Capstone | ✅ |
-| Day 71–80 | Microservices Projects | ⏳ |
+| Day 71 | Service Discovery & Dynamic Registry | ✅ |
+| Day 72 | Client-Side Load Balancing | ✅ |
+| Day 73 | Distributed Locks & Lease Management | ✅ |
+| Day 74 | Database Sharding & Consistent Hashing | ✅ |
+| Day 75 | Distributed ID Generation (Snowflake) | ✅ |
+| Day 76 | Distributed Token Bucket Rate Limiter | ✅ |
+| Day 77 | Event Streaming & Log Compaction | ✅ |
+| Day 78 | Distributed Config & Hot Reloading | ✅ |
+| Day 79 | Cache-Aside & Multi-Region Sync | ✅ |
+| Day 80 | High-Scale Microservices Capstone | ✅ |
 | Day 81–85 | System Design Basics | ⏳ |
 | Day 86–88 | Interview Preparation | ⏳ |
 | Day 89 | Resume & Portfolio Update | ⏳ |
@@ -21215,6 +21224,515 @@ Today I completed **Day 70 Microservices Integration Capstone**:
 
 ---
 
+# ✅ Day 71 — Service Discovery & Dynamic Health Registry
+
+---
+
+# 📖 Deep-Dive: Dynamic Node Registration & Heartbeat Eviction
+
+In dynamic container environments (Kubernetes, AWS ECS), microservice IP addresses change constantly. **Service Discovery** enables microservices to self-register their network endpoints and regularly emit heartbeats. Stale nodes failing heartbeats are automatically evicted from the registry to prevent routing traffic to dead nodes.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 71 Project
+
+### 1. Service Discovery Stack (`Day-71/`)
+- [discovery/registry.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-71/discovery/registry.go) — `ServiceRegistry` node supporting self-registration, heartbeats, and TTL stale node eviction.
+- [discovery/registry_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-71/discovery/registry_test.go) — Unit tests for active node retrieval and TTL eviction.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-71/main.go) — Service discovery registry demonstration server.
+
+---
+
+# 📘 Day 71 Interview Questions & Answers
+
+## ❓ Q1: What is Service Discovery in microservices?
+### ✅ Answer:
+A centralized registry mechanism (e.g. Consul, Eureka, Etcd) allowing microservice instances to dynamically publish their network locations (IP/Port) and discover downstream services without hardcoded configurations.
+
+## ❓ Q2: How does Heartbeat Eviction work in Service Discovery?
+### ✅ Answer:
+Instances send periodic heartbeat pings to the discovery registry. If an instance fails to ping within a configured TTL duration, the registry flags it as `FAILING` and evicts it from active routing pools.
+
+## ❓ Q3: What is the difference between Server-Side and Client-Side Discovery?
+### ✅ Answer:
+- **Server-Side**: Clients send requests to a load balancer/proxy (e.g. NGINX, AWS ALB) which queries the registry and forwards traffic.
+- **Client-Side**: Clients directly query the registry, select a healthy target instance, and balance traffic locally.
+
+## ❓ Q4: How does Kubernetes handle Service Discovery internally?
+### ✅ Answer:
+Kubernetes uses internal **CoreDNS** and virtual IPs (`ClusterIP` Services) backed by `kube-proxy` rules automatically synchronized with Pod Endpoint IP updates.
+
+## ❓ Q5: Why is `sync.RWMutex` critical in a Service Registry?
+### ✅ Answer:
+Service registries experience high-volume concurrent reads (services looking up endpoints) and occasional writes (registration/heartbeats). `RWMutex` allows lock-free concurrent reads without blocking.
+
+---
+
+# 📚 Day 71 Summary
+Today I completed **Day 71 Service Discovery**:
+- Built an in-memory thread-safe Service Registry supporting heartbeat refreshes.
+- Verified automatic eviction of stale nodes under custom TTL expiration intervals.
+
+---
+
+# ✅ Day 72 — Client-Side Load Balancing (Round-Robin & Least Connections)
+
+---
+
+# 📖 Deep-Dive: High-Performance Request Distribution
+
+**Client-Side Load Balancing** eliminates central proxy bottlenecks by delegating server selection directly to microservice clients. Algorithm choices (Round-Robin, Least Connections) ensure equitable traffic distribution and rapid failover.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 72 Project
+
+### 1. Load Balancer Stack (`Day-72/`)
+- [loadbalancer/balancer.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-72/loadbalancer/balancer.go) — `LoadBalancer` implementing Round-Robin and Least-Connections selection strategies.
+- [loadbalancer/balancer_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-72/loadbalancer/balancer_test.go) — Unit tests asserting round-robin index cycling and least-connection targeting.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-72/main.go) — Load balancer selection algorithm runner.
+
+---
+
+# 📘 Day 72 Interview Questions & Answers
+
+## ❓ Q1: What is Client-Side Load Balancing?
+### ✅ Answer:
+A pattern where the client application maintains a list of healthy upstream server instances and applies routing algorithms (Round-Robin, Least-Conns) locally to distribute requests.
+
+## ❓ Q2: When is Least Connections algorithm preferred over Round-Robin?
+### ✅ Answer:
+When request processing times vary significantly (e.g. heavy image rendering vs quick DB lookups). Least Connections prevents overloading nodes handling long-lived tasks.
+
+## ❓ Q3: How do you achieve thread-safe Round-Robin balancing in Go?
+### ✅ Answer:
+Using atomic integer increments (`sync/atomic.AddUint64`) modulo the length of healthy server nodes.
+
+## ❓ Q4: What happens if a selected upstream node fails during execution?
+### ✅ Answer:
+The client-side load balancer intercepts the network error, marks the node temporarily unhealthy, and retries the request on the next available instance in the pool.
+
+## ❓ Q5: What is Weighted Round-Robin?
+### ✅ Answer:
+An extension of Round-Robin where server nodes with higher CPU/RAM capacities are assigned proportional weights to receive more traffic than smaller nodes.
+
+---
+
+# 📚 Day 72 Summary
+Today I completed **Day 72 Client-Side Load Balancing**:
+- Implemented atomic Round-Robin and Least-Connections server selection in Go.
+- Tested load balancing distribution across heterogeneous active nodes.
+
+---
+
+# ✅ Day 73 — Distributed Locks & Lease Management
+
+---
+
+# 📖 Deep-Dive: Mutual Exclusion across Distributed Nodes
+
+When multiple microservice instances process shared resources concurrently (e.g. inventory decrements, payment payouts), local `sync.Mutex` fails across process boundaries. **Distributed Locks** grant exclusive resource access paired with automatic **Lease TTLs** to prevent deadlocks if a lock holder crashes.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 73 Project
+
+### 1. Distributed Lock Stack (`Day-73/`)
+- [distlock/lock.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-73/distlock/lock.go) — `DistributedLockManager` supporting exclusive resource acquisition and TTL lease eviction.
+- [distlock/lock_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-73/distlock/lock_test.go) — Unit tests proving lock mutual exclusion and automatic TTL lease expiration.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-73/main.go) — Concurrent distributed lock acquisition demonstration.
+
+---
+
+# 📘 Day 73 Interview Questions & Answers
+
+## ❓ Q1: Why are Distributed Locks required in microservices?
+### ✅ Answer:
+To enforce mutual exclusion across multiple container instances or process boundaries when updating shared external resources.
+
+## ❓ Q2: What is a Lock Lease TTL and why is it mandatory?
+### ✅ Answer:
+A Time-To-Live duration attached to a lock. If the acquiring node crashes before releasing the lock, the TTL automatically expires the lock to prevent permanent system deadlocks.
+
+## ❓ Q3: What is the Redlock Algorithm?
+### ✅ Answer:
+A distributed lock algorithm created by Redis creators that acquires locks across *N* independent Redis master nodes requiring a majority quorum (*N/2 + 1*) to guarantee fault-tolerant locking.
+
+## ❓ Q4: What is a Fencing Token in distributed locking?
+### ✅ Answer:
+An auto-incrementing counter issued with each lock lease. Downstream storage services reject commands carrying an outdated fencing token if a lock lease expired mid-operation.
+
+## ❓ Q5: How do you handle lock renewal (Heartbeat Keep-Alive)?
+### ✅ Answer:
+Long-running background tasks spawn a goroutine that periodically extends the lock's TTL as long as the task remains active.
+
+---
+
+# 📚 Day 73 Summary
+Today I completed **Day 73 Distributed Locks**:
+- Built an in-memory Distributed Lock Manager with owner validation and lease expiration.
+- Verified automatic lease reclamation after TTL expiry using unit tests.
+
+---
+
+# ✅ Day 74 — Database Sharding & Consistent Hashing
+
+---
+
+# 📖 Deep-Dive: Horizontal Database Partitioning & Re-Sharding Optimization
+
+As dataset sizes exceed single-database hardware limits, **Database Sharding** partitions data across multiple database nodes. Traditional `hash(key) % N` causes mass data movement when nodes scale. **Consistent Hashing** maps keys and virtual nodes onto a 32-bit ring, ensuring adding/removing a shard node only re-locates \(1/N\) of the total keys.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 74 Project
+
+### 1. Consistent Hashing Stack (`Day-74/`)
+- [sharding/consistent_hash.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-74/sharding/consistent_hash.go) — `ConsistentHashRing` mapping keys to virtual node replicas using FNV-1a hashing.
+- [sharding/sharding_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-74/sharding/sharding_test.go) — Unit tests for node additions, removals, and key re-mapping.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-74/main.go) — Shard key distribution demonstration runner.
+
+---
+
+# 📘 Day 74 Interview Questions & Answers
+
+## ❓ Q1: What is Consistent Hashing and why is it used in database sharding?
+### ✅ Answer:
+A hashing technique that maps keys and nodes onto a circular 32-bit ring. When a shard node is added or removed, only \(K/N\) keys are remapped rather than re-hashing the entire dataset.
+
+## ❓ Q2: What are Virtual Nodes in Consistent Hashing?
+### ✅ Answer:
+Multiple points on the hash ring representing a single physical shard node (e.g. 100 virtual nodes per server). Virtual nodes ensure uniform key distribution across servers.
+
+## ❓ Q3: What is the difference between Range-Based and Hash-Based Sharding?
+### ✅ Answer:
+- **Range-Based**: Maps key ranges (e.g. IDs 1-1,000,000 to Shard 1). Simple but susceptible to hot spots.
+- **Hash-Based**: Applies hash functions to keys to distribute data uniformly across shards.
+
+## ❓ Q4: What are the challenges of executing JOIN queries across sharded databases?
+### ✅ Answer:
+Cross-shard JOINs require fetching data over network boundaries from multiple DB nodes, introducing latency. Production systems denormalize data or execute application-layer joins.
+
+## ❓ Q5: How do you perform a Global Secondary Index search in sharded databases?
+### ✅ Answer:
+By querying a dedicated Global Index Table or executing **Scatter-Gather** queries across all shard nodes concurrently.
+
+---
+
+# 📚 Day 74 Summary
+Today I completed **Day 74 Database Sharding & Consistent Hashing**:
+- Constructed a 32-bit Consistent Hash Ring with configurable virtual node replicas.
+- Demonstrated minimal key re-mapping upon dynamic shard node removal.
+
+---
+
+# ✅ Day 75 — Distributed ID Generation (Twitter Snowflake Algorithm)
+
+---
+
+# 📖 Deep-Dive: Generating 64-Bit k-Ordered Unique IDs at Scale
+
+Single-database auto-increment IDs fail in distributed multi-primary architectures. **Twitter Snowflake** generates 64-bit globally unique, time-ordered integers without central database locks using a bit-packed layout: `1 bit sign + 41 bits timestamp + 10 bits worker ID + 12 bits sequence`.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 75 Project
+
+### 1. Snowflake Generator Stack (`Day-75/`)
+- [snowflake/generator.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-75/snowflake/generator.go) — `SnowflakeNode` generating 64-bit k-ordered unique IDs.
+- [snowflake/generator_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-75/snowflake/generator_test.go) — Concurrent unit tests asserting ID uniqueness and monotonicity.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-75/main.go) — Snowflake ID generator demonstration entrypoint.
+
+---
+
+# 📘 Day 75 Interview Questions & Answers
+
+## ❓ Q1: What is the bit structure of a 64-bit Twitter Snowflake ID?
+### ✅ Answer:
+- **1 bit**: Unused sign bit (always 0).
+- **41 bits**: Timestamp in milliseconds since custom epoch (~69 years lifespan).
+- **10 bits**: Machine/Worker Node ID (up to 1,024 nodes).
+- **12 bits**: Sequence number (up to 4,096 IDs per millisecond per node).
+
+## ❓ Q2: Why are Snowflake IDs "k-ordered" (roughly time-sorted)?
+### ✅ Answer:
+Because the most significant 41 bits represent epoch timestamps, IDs generated later are numerically larger, making them B-tree index friendly in relational databases.
+
+## ❓ Q3: How does Snowflake handle sequence exhaustion within the same millisecond?
+### ✅ Answer:
+If 4,096 IDs are generated within 1 millisecond, the generator blocks or spins until the clock advances to the next millisecond, resetting sequence to 0.
+
+## ❓ Q4: What happens if the system clock moves backwards (Clock Drift)?
+### ✅ Answer:
+The generator detects `now < lastTimestamp` and returns an error or waits until the system clock catches up to prevent duplicate ID generation.
+
+## ❓ Q5: How does Snowflake compare to UUID v4?
+### ✅ Answer:
+- **Snowflake**: 64-bit integer (8 bytes), time-sortable, indexed efficiently.
+- **UUID v4**: 128-bit random string (16 bytes), non-sortable, fragmenting database B-Tree indexes.
+
+---
+
+# 📚 Day 75 Summary
+Today I completed **Day 75 Distributed ID Generation**:
+- Built a 64-bit Snowflake ID generator supporting 4,096 IDs/ms per worker.
+- Confirmed thread safety and zero duplicate generation across concurrent worker routines.
+
+---
+
+# ✅ Day 76 — Distributed Token Bucket Rate Limiter
+
+---
+
+# 📖 Deep-Dive: Continuous Token Refilling & Smooth Traffic Shaping
+
+The **Token Bucket Algorithm** maintains a bucket filled with tokens at a constant rate. Requests consume tokens; if tokens are available, the request is allowed immediately. This allows controlled burst capacity while maintaining long-term average throughput limits.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 76 Project
+
+### 1. Token Bucket Stack (`Day-76/`)
+- [ratelimit/token_bucket.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-76/ratelimit/token_bucket.go) — `TokenBucketLimiter` supporting dynamic continuous token refill calculations.
+- [ratelimit/token_bucket_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-76/ratelimit/token_bucket_test.go) — Unit tests for burst consumption and time-based refill.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-76/main.go) — Token bucket rate limiter demonstration.
+
+---
+
+# 📘 Day 76 Interview Questions & Answers
+
+## ❓ Q1: How does the Token Bucket rate limiting algorithm work?
+### ✅ Answer:
+Tokens accumulate in a bucket of fixed capacity at a constant refill rate. Each request requires 1 token. If tokens exist, they are decremented and the request passes; otherwise, it is rejected.
+
+## ❓ Q2: What advantage does Token Bucket offer over Leaky Bucket?
+### ✅ Answer:
+Token Bucket allows instantaneous bursts of requests up to its maximum capacity, whereas Leaky Bucket strictly enforces a fixed processing output rate.
+
+## ❓ Q3: How do you implement continuous refill without background timer goroutines?
+### ✅ Answer:
+By calculating elapsed time during `Allow()` call: `tokensToAdd = elapsedTime * refillRatePerSecond`, updating the balance lazily on request arrival.
+
+## ❓ Q4: How do you handle multi-tier API rate limits (e.g. 10 req/sec AND 1000 req/hour)?
+### ✅ Answer:
+By chaining multiple TokenBucket instances in series; a request must acquire tokens from all rate limit tiers to be approved.
+
+## ❓ Q5: How do you store Token Bucket states across distributed API Gateways?
+### ✅ Answer:
+Store `tokens` and `lastRefill` timestamps in Redis hashes, using Redis Lua scripts to perform atomic refills and token subtractions.
+
+---
+
+# 📚 Day 76 Summary
+Today I completed **Day 76 Token Bucket Rate Limiter**:
+- Implemented lazy continuous token refilling without background goroutine timer overhead.
+- Validated burst capacity limits and rate recovery using unit test assertions.
+
+---
+
+# ✅ Day 77 — Event Streaming & Log Compaction Engine
+
+---
+
+# 📖 Deep-Dive: Immutable Commit Logs & Key-Based State Compaction
+
+Event streaming engines (like Kafka) store events in immutable, append-only logs indexed by sequential offsets. **Log Compaction** purges older obsolete records for a given key while retaining the latest record state, allowing fast state recovery without reading millions of historical logs.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 77 Project
+
+### 1. Event Stream Stack (`Day-77/`)
+- [stream/event_log.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-77/stream/event_log.go) — `EventLog` commit log supporting offset reads and key log compaction.
+- [stream/stream_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-77/stream/stream_test.go) — Unit tests for offset streaming and obsolete record pruning.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-77/main.go) — Event log compaction demonstration.
+
+---
+
+# 📘 Day 77 Interview Questions & Answers
+
+## ❓ Q1: What is an Append-Only Commit Log in event streaming?
+### ✅ Answer:
+A persistent data structure where new records are sequentially appended to the end of the log and assigned a monotonically increasing offset number.
+
+## ❓ Q2: What is Log Compaction in Kafka/Event Stores?
+### ✅ Answer:
+A background cleanup mechanism that retains at least the most recent value for each key within a log topic, discarding older superseded updates.
+
+## ❓ Q3: How do consumer offsets work in message streaming?
+### ✅ Answer:
+Consumers track their position in a stream by saving their current `offset` index. If a consumer crashes, it resumes reading from its last committed offset.
+
+## ❓ Q4: What is the difference between Log Retention by Time/Size vs Log Compaction?
+### ✅ Answer:
+- **Time/Size Retention**: Deletes log segments older than *N* days or exceeding *X* gigabytes regardless of key content.
+- **Log Compaction**: Retains latest state per key indefinitely, ideal for database changelog restoration.
+
+## ❓ Q5: Why are append-only logs fast on storage media?
+### ✅ Answer:
+Sequential disk/memory writes avoid expensive random I/O seek operations, achieving high write throughput.
+
+---
+
+# 📚 Day 77 Summary
+Today I completed **Day 77 Event Streaming & Log Compaction**:
+- Built an append-only commit log engine supporting offset range queries.
+- Developed key-based log compaction pruning obsolete intermediate events.
+
+---
+
+# ✅ Day 78 — Distributed Configuration Server & Hot Reloading
+
+---
+
+# 📖 Deep-Dive: Dynamic Configuration Management & Real-Time Hot Reloads
+
+Hardcoding configurations or restarting microservices to update feature flags causes unnecessary downtime. A **Distributed Configuration Server** maintains central key-value configs and exposes pub/sub **Watch Channels** so running microservices hot-reload settings in real time.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 78 Project
+
+### 1. Config Server Stack (`Day-78/`)
+- [config/config_server.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-78/config/config_server.go) — `DynamicConfigServer` supporting thread-safe gets, sets, and pub/sub watch channels.
+- [config/config_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-78/config/config_test.go) — Unit tests for live configuration change event broadcasting.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-78/main.go) — Hot reloading configuration server demo.
+
+---
+
+# 📘 Day 78 Interview Questions & Answers
+
+## ❓ Q1: What is Hot Reloading in microservices?
+### ✅ Answer:
+The ability of a running service to update its operational parameters (e.g. database pool limits, feature flags) dynamically without requiring a process restart.
+
+## ❓ Q2: How do Watch Channels enable real-time config updates in Go?
+### ✅ Answer:
+Applications subscribe to a Go channel (`<-chan ConfigChangeEvent`). When the config server updates a key, it broadcasts the event across subscriber channels.
+
+## ❓ Q3: What security measures belong in a Distributed Config Server?
+### ✅ Answer:
+TLS encryption for transport, RBAC access control per key, and secret encryption at rest (KMS) for credentials and private tokens.
+
+## ❓ Q4: What happens if a microservice loses network connection to the Config Server?
+### ✅ Answer:
+Microservices must fall back to their last known valid cached config stored locally in memory or disk.
+
+## ❓ Q5: How do Feature Flags assist in progressive deployments?
+### ✅ Answer:
+Feature flags allow turning new features ON or OFF for specific user segments dynamically without redeploying code binaries.
+
+---
+
+# 📚 Day 78 Summary
+Today I completed **Day 78 Distributed Configuration Server**:
+- Built a dynamic configuration server with pub/sub channel watch listeners.
+- Demonstrated real-time hot reloading of system parameters without application restarts.
+
+---
+
+# ✅ Day 79 — Cache-Aside Pattern & Multi-Region Sync
+
+---
+
+# 📖 Deep-Dive: Decoupled Cache Reads & Invalidation Pipelines
+
+The **Cache-Aside Pattern** puts the application in control of reading from cache first, fetching from database on cache miss, and invalidating cache entries whenever primary database records are updated.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 79 Project
+
+### 1. Cache-Aside Stack (`Day-79/`)
+- [cache/cache_aside.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-79/cache/cache_aside.go) — `CacheAsideManager` handling cache misses, DB population, and invalidation writes.
+- [cache/cache_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-79/cache/cache_test.go) — Unit tests asserting hit/miss counts and cache invalidation on write.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-79/main.go) — Cache-aside demonstration runner.
+
+---
+
+# 📘 Day 79 Interview Questions & Answers
+
+## ❓ Q1: How does the Cache-Aside reading workflow operate?
+### ✅ Answer:
+1. Application queries cache.
+2. If hit, return cached value.
+3. If miss, query database, save fetched value to cache, and return.
+
+## ❓ Q2: Why invalidate cache keys on DB updates instead of updating cache values directly?
+### ✅ Answer:
+Invalidating prevents race conditions where concurrent writes update cache in out-of-order sequence, leaving stale data.
+
+## ❓ Q3: What is the Cache Penetration problem?
+### ✅ Answer:
+When queries for non-existent keys repeatedly miss cache and hit the database. Fixed using Bloom Filters or caching null results with short TTLs.
+
+## ❓ Q4: What is Cache Breakdown?
+### ✅ Answer:
+When a high-traffic key expires, causing thousands of concurrent requests to hit the database simultaneously. Solved using Singleflight request coalescing.
+
+## ❓ Q5: What is Multi-Region Cache Invalidation?
+### ✅ Answer:
+Broadcasting cache invalidation messages across region pub/sub channels so remote region caches invalidate stale local keys when a primary DB write occurs.
+
+---
+
+# 📚 Day 79 Summary
+Today I completed **Day 79 Cache-Aside Pattern**:
+- Built a Cache-Aside manager handling database fallback queries and cache invalidations.
+- Tracked cache hit and miss performance metrics using unit tests.
+
+---
+
+# ✅ Day 80 — High-Scale Distributed Microservices E-Commerce Platform (Capstone)
+
+---
+
+# 📖 Deep-Dive: Enterprise Distributed Architecture Synthesis
+
+Day 80 unifies **Service Discovery**, **Client Load Balancing**, **Distributed Locks**, **Consistent Hash Sharding**, **Snowflake 64-Bit IDs**, **Token Bucket Rate Limiting**, **Event Streaming**, **Dynamic Config**, and **Cache-Aside Sync** into an end-to-end Enterprise Microservices Platform.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 80 Project
+
+### 1. Platform Capstone Stack (`Day-80/`)
+- [system/platform.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-80/system/platform.go) — `MicroservicesPlatform` executing order routing across sharded nodes with Snowflake ID tracking.
+- [system/platform_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-80/system/platform_test.go) — Integration tests asserting end-to-end transaction processing and metrics.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-80/main.go) — Capstone Enterprise System entrypoint.
+
+---
+
+# 📘 Day 80 Interview Questions & Answers
+
+## ❓ Q1: How do Snowflake IDs and Consistent Hashing combine in high-scale platforms?
+### ✅ Answer:
+Snowflake IDs provide time-sortable 64-bit unique keys, while Consistent Hashing routes those IDs to designated database shards cleanly without re-hashing overhead.
+
+## ❓ Q2: What role does Distributed Locking play during high-volume flash sales?
+### ✅ Answer:
+It guarantees that only one worker node can modify limited inventory stock counts for a specific SKU at a time, avoiding double-selling bugs.
+
+## ❓ Q3: How do Dynamic Config and Rate Limiting interact during traffic surges?
+### ✅ Answer:
+Operators hot-reload rate limit parameters live via the Config Server to protect degraded services during unexpected traffic spikes.
+
+## ❓ Q4: How does Event Streaming decouple microservices in an E-Commerce platform?
+### ✅ Answer:
+The Order service appends an `OrderPlaced` event to the stream; Payment, Inventory, and Notification microservices independently consume the stream at their own pace.
+
+## ❓ Q5: What are the key performance metrics for a high-scale microservices platform?
+### ✅ Answer:
+Throughput (RPS), P99 Latency, Error Rate (HTTP 5xx %), Cache Hit Ratio %, and Active Shard Connection distribution.
+
+---
+
+# 📚 Day 80 Summary
+Today I completed **Day 80 Microservices Integration Capstone**:
+- Built an enterprise microservices platform combining all distributed systems patterns.
+- Verified transaction processing, shard routing, and telemetry across integrated services.
+
+---
+
 # ⭐ Challenge Progress
 ✅ Day 01 Completed  
 ✅ Day 02 Completed  
@@ -21286,4 +21804,14 @@ Today I completed **Day 70 Microservices Integration Capstone**:
 ✅ Day 68 Completed  
 ✅ Day 69 Completed  
 ✅ Day 70 Completed  
-🚀 Next: Day 71 - Microservices Projects & Architecture
+✅ Day 71 Completed  
+✅ Day 72 Completed  
+✅ Day 73 Completed  
+✅ Day 74 Completed  
+✅ Day 75 Completed  
+✅ Day 76 Completed  
+✅ Day 77 Completed  
+✅ Day 78 Completed  
+✅ Day 79 Completed  
+✅ Day 80 Completed  
+🚀 Next: Day 81 - System Design Fundamentals & Architecture
