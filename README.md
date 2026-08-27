@@ -28,12 +28,12 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 
 # 🎯 My Goal
 
-✅ Become a strong Backend Developer  
-✅ Master Go Lang & Microservices  
-✅ Learn Docker & Kubernetes  
-✅ Build scalable production-level APIs  
-✅ Crack product-based company interviews  
-✅ Improve problem-solving & system design skills  
+✅ Become a strong Backend Developer
+✅ Master Go Lang & Microservices
+✅ Learn Docker & Kubernetes
+✅ Build scalable production-level APIs
+✅ Crack product-based company interviews
+✅ Improve problem-solving & system design skills
 ✅ Upload code daily on GitHub consistently
 
 ---
@@ -181,10 +181,10 @@ It is designed for:
 
 # ⭐ Features of Go
 
-✅ Simple Syntax  
-✅ Fast Compilation  
-✅ Built-in Concurrency  
-✅ Garbage Collection  
+✅ Simple Syntax
+✅ Fast Compilation
+✅ Built-in Concurrency
+✅ Garbage Collection
 ✅ Cross-platform Support
 
 ---
@@ -1498,12 +1498,12 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create Student struct  
-✅ Create Product struct  
-✅ Create Employee struct  
-✅ Create nested Address struct  
-✅ Print struct fields  
-✅ Pass struct into function  
+✅ Create Student struct
+✅ Create Product struct
+✅ Create Employee struct
+✅ Create nested Address struct
+✅ Print struct fields
+✅ Pass struct into function
 ✅ Create User API model structure
 
 ---
@@ -1524,8 +1524,8 @@ Pointers are used for:
 - Database operations
 
 Pointers help us:
-✅ Improve performance  
-✅ Reduce memory usage  
+✅ Improve performance
+✅ Reduce memory usage
 ✅ Modify original values directly
 
 ---
@@ -1810,9 +1810,9 @@ func main() {
 # 📌 Why Pointers are Important?
 
 Pointers:
-✅ Avoid unnecessary copying  
-✅ Improve performance  
-✅ Reduce memory usage  
+✅ Avoid unnecessary copying
+✅ Improve performance
+✅ Reduce memory usage
 ✅ Modify original values
 
 ---
@@ -2053,12 +2053,12 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create integer pointer  
-✅ Print memory address  
-✅ Modify value using pointer  
-✅ Pass pointer to function  
-✅ Create struct pointer  
-✅ Update struct using pointer  
+✅ Create integer pointer
+✅ Print memory address
+✅ Modify value using pointer
+✅ Pass pointer to function
+✅ Create struct pointer
+✅ Update struct using pointer
 ✅ Create Employee update function
 
 ---
@@ -2181,9 +2181,9 @@ func main() {
 # 📌 Why Methods are Important?
 
 Methods help:
-✅ Organize code  
-✅ Add behavior to structs  
-✅ Improve readability  
+✅ Organize code
+✅ Add behavior to structs
+✅ Improve readability
 ✅ Build scalable backend systems
 
 ---
@@ -2295,8 +2295,8 @@ func main() {
 # 📌 Why Pointer Receivers Important?
 
 Pointer receivers:
-✅ Modify original value  
-✅ Improve performance  
+✅ Modify original value
+✅ Improve performance
 ✅ Avoid copying large structs
 
 Go developers mostly use:
@@ -2671,11 +2671,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create Student method  
-✅ Create Employee pointer receiver  
-✅ Create Payment interface  
-✅ Create Card & UPI implementations  
-✅ Use empty interface  
+✅ Create Student method
+✅ Create Employee pointer receiver
+✅ Create Payment interface
+✅ Create Card & UPI implementations
+✅ Use empty interface
 ✅ Practice type assertion
 
 ---
@@ -2722,11 +2722,11 @@ This is very important because:
 
 # 📌 Features
 
-✅ Add Student  
-✅ View Students  
-✅ Search Student  
-✅ Update Student  
-✅ Delete Student  
+✅ Add Student
+✅ View Students
+✅ Search Student
+✅ Update Student
+✅ Delete Student
 ✅ Exit Program
 
 ---
@@ -3362,11 +3362,11 @@ I also practiced:
 ---
 # 🧠 Practice Tasks
 
-✅ Add Email field  
-✅ Add Marks field  
-✅ Add Multiple Students  
-✅ Add Exit Confirmation  
-✅ Add Validation  
+✅ Add Email field
+✅ Add Marks field
+✅ Add Multiple Students
+✅ Add Exit Confirmation
+✅ Add Validation
 ✅ Prevent Duplicate IDs
 ---
 
@@ -3385,14 +3385,14 @@ Real-world Go applications are divided into:
 - Services
 
 Without packages:
-❌ Code becomes messy  
-❌ Difficult to maintain  
+❌ Code becomes messy
+❌ Difficult to maintain
 ❌ Hard to scale
 
 Using packages:
-✅ Clean architecture  
-✅ Better organization  
-✅ Reusable code  
+✅ Clean architecture
+✅ Better organization
+✅ Reusable code
 ✅ Production-ready structure
 
 ---
@@ -3633,9 +3633,9 @@ Subtraction: 20
 # 📌 Why Packages are Important?
 
 Packages help:
-✅ Organize code  
-✅ Reuse code  
-✅ Separate business logic  
+✅ Organize code
+✅ Reuse code
+✅ Separate business logic
 ✅ Build scalable backend systems
 
 ---
@@ -3871,11 +3871,11 @@ I also practiced:
 ---
 # 🧠 Practice Tasks
 
-✅ Create math package  
-✅ Create auth package  
-✅ Create user package  
-✅ Add multiple functions  
-✅ Use package alias  
+✅ Create math package
+✅ Create auth package
+✅ Create user package
+✅ Add multiple functions
+✅ Use package alias
 ✅ Create multi-package project
 ---
 
@@ -3896,11 +3896,11 @@ Real applications use file handling for:
 - Data Storage
 
 Using Go, we can:
-✅ Create Files  
-✅ Read Files  
-✅ Write Files  
-✅ Append Data  
-✅ Delete Files  
+✅ Create Files
+✅ Read Files
+✅ Write Files
+✅ Append Data
+✅ Delete Files
 ✅ Rename Files
 
 ---
@@ -4207,11 +4207,11 @@ Today I learned:
 
 # 🧠 Practice Tasks
 
-✅ Create student.txt  
-✅ Write student data  
-✅ Read student file  
-✅ Append new data  
-✅ Rename file  
+✅ Create student.txt
+✅ Write student data
+✅ Read student file
+✅ Append new data
+✅ Rename file
 ✅ Delete file
 ---
 
@@ -4230,8 +4230,8 @@ In real applications:
 - User input can be invalid
 
 Good developers:
-✅ Handle errors properly  
-✅ Prevent crashes  
+✅ Handle errors properly
+✅ Prevent crashes
 ✅ Return meaningful messages
 
 That is why:
@@ -4343,13 +4343,13 @@ Error: open student.txt: no such file or directory
 # 📌 Why Error Handling Important?
 
 Without error handling:
-❌ Program crashes  
-❌ Bad user experience  
+❌ Program crashes
+❌ Bad user experience
 ❌ Difficult debugging
 
 With error handling:
-✅ Stable applications  
-✅ Better debugging  
+✅ Stable applications
+✅ Better debugging
 ✅ Production-ready systems
 
 ---
@@ -4591,10 +4591,10 @@ func main() {
 
 # 📌 Best Practices
 
-✅ Always check errors  
-✅ Never ignore errors  
-✅ Use meaningful messages  
-✅ Return errors properly  
+✅ Always check errors
+✅ Never ignore errors
+✅ Use meaningful messages
+✅ Return errors properly
 ✅ Use panic only for critical issues
 
 ---
@@ -4757,11 +4757,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create divide function with error  
-✅ Validate age input  
-✅ Handle missing file  
-✅ Create custom errors  
-✅ Use panic & recover  
+✅ Create divide function with error
+✅ Validate age input
+✅ Handle missing file
+✅ Create custom errors
+✅ Use panic & recover
 ✅ Create log messages
 
 ---
@@ -5257,11 +5257,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create multiple goroutines  
-✅ Print numbers concurrently  
-✅ Print alphabets concurrently  
-✅ Use WaitGroup  
-✅ Create anonymous goroutine  
+✅ Create multiple goroutines
+✅ Print numbers concurrently
+✅ Print alphabets concurrently
+✅ Use WaitGroup
+✅ Create anonymous goroutine
 ✅ Simulate backend tasks
 
 ---
@@ -5328,13 +5328,13 @@ They communicate using:
 # 📌 Why Channels Important?
 
 Without channels:
-❌ Difficult synchronization  
-❌ Unsafe data sharing  
+❌ Difficult synchronization
+❌ Unsafe data sharing
 ❌ Race conditions
 
 With channels:
-✅ Safe communication  
-✅ Better concurrency  
+✅ Safe communication
+✅ Better concurrency
 ✅ Cleaner code
 
 ---
@@ -5687,8 +5687,8 @@ func send(channel chan<- int)
 # 📌 Why Channel Directions Important?
 
 Improves:
-✅ Safety  
-✅ Readability  
+✅ Safety
+✅ Readability
 ✅ Better architecture
 
 ---
@@ -5847,11 +5847,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create integer channel  
-✅ Send & receive messages  
-✅ Create buffered channel  
-✅ Use range with channel  
-✅ Close channel properly  
+✅ Create integer channel
+✅ Send & receive messages
+✅ Create buffered channel
+✅ Use range with channel
+✅ Close channel properly
 ✅ Build producer-consumer example
 
 ---
@@ -5978,7 +5978,7 @@ func main() {
 # 📌 Output
 
 ```json
-{ 
+{
 	"Name":"Dnyaneshwar",
 	"Age":24,
 	"City":"Nashik"
@@ -6484,11 +6484,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create Student JSON  
-✅ Convert struct → JSON  
-✅ Convert JSON → struct  
-✅ Use struct tags  
-✅ Create nested JSON  
+✅ Create Student JSON
+✅ Convert struct → JSON
+✅ Convert JSON → struct
+✅ Use struct tags
+✅ Create nested JSON
 ✅ Create JSON array
 
 ---
@@ -6509,8 +6509,8 @@ The HTTP package is used to:
 - Handle HTTP requests
 
 This is the foundation for:
-✅ REST APIs  
-✅ Backend applications  
+✅ REST APIs
+✅ Backend applications
 ✅ Microservices
 
 ---
@@ -7060,11 +7060,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create home route  
-✅ Create about route  
-✅ Create JSON API  
-✅ Handle query parameters  
-✅ Handle POST request  
+✅ Create home route
+✅ Create about route
+✅ Create JSON API
+✅ Handle query parameters
+✅ Handle POST request
 ✅ Send status codes
 ---
 
@@ -7222,7 +7222,7 @@ Currently:
 ❌ No database
 
 Later:
-✅ PostgreSQL  
+✅ PostgreSQL
 ✅ GORM
 
 ---
@@ -7518,19 +7518,19 @@ Currently:
 ❌ Data stored in memory
 
 After Day 20:
-✅ PostgreSQL database  
+✅ PostgreSQL database
 ✅ Permanent storage
 
 ---
 
 # 💻 Backend Skills You Learned Today
 
-✅ API development  
-✅ JSON APIs  
-✅ GET requests  
-✅ POST requests  
-✅ Request body handling  
-✅ HTTP status codes  
+✅ API development
+✅ JSON APIs
+✅ GET requests
+✅ POST requests
+✅ Request body handling
+✅ HTTP status codes
 ✅ Route handling
 
 ---
@@ -7612,11 +7612,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create Product API  
-✅ Create User API  
-✅ Add GET route  
-✅ Add POST route  
-✅ Send JSON response  
+✅ Create Product API
+✅ Create User API
+✅ Add GET route
+✅ Add POST route
+✅ Send JSON response
 ✅ Decode request body
 
 ---
@@ -7685,10 +7685,10 @@ Today we build:
 # 🚀 Student CRUD REST API
 
 Features:
-✅ Get All Students  
-✅ Get Student By ID  
-✅ Add Student  
-✅ Update Student  
+✅ Get All Students
+✅ Get Student By ID
+✅ Add Student
+✅ Update Student
 ✅ Delete Student
 
 ---
@@ -8309,11 +8309,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create Product CRUD API  
-✅ Create Employee CRUD API  
-✅ Add validation  
-✅ Add custom error messages  
-✅ Add status codes  
+✅ Create Product CRUD API
+✅ Create Employee CRUD API
+✅ Add validation
+✅ Add custom error messages
+✅ Add status codes
 ✅ Test APIs in Postman
 
 ---
@@ -8427,7 +8427,7 @@ Go standard `net/http` does NOT support dynamic routing directly.
 So today we manually handled routes.
 
 Later:
-✅ Gin Framework  
+✅ Gin Framework
 ✅ Professional routing
 
 ---
@@ -8732,8 +8732,8 @@ Professional API structure.
 # 📌 Why RESTful Routing Important?
 
 Improves:
-✅ Clean architecture  
-✅ API readability  
+✅ Clean architecture
+✅ API readability
 ✅ Professional backend structure
 
 ---
@@ -8882,11 +8882,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create Product API with URL parameter  
-✅ Create User API with URL parameter  
-✅ Add route validation  
-✅ Send JSON response  
-✅ Handle invalid routes  
+✅ Create Product API with URL parameter
+✅ Create User API with URL parameter
+✅ Add route validation
+✅ Send JSON response
+✅ Handle invalid routes
 ✅ Create RESTful routes
 
 ---
@@ -8959,10 +8959,10 @@ net/http
 # 📌 Why Gin Popular?
 
 Because it is:
-✅ Fast  
-✅ Minimal  
-✅ Clean  
-✅ Easy for APIs  
+✅ Fast
+✅ Minimal
+✅ Clean
+✅ Easy for APIs
 ✅ Production-ready
 
 ---
@@ -9402,8 +9402,8 @@ c.JSON(http.StatusOK, gin.H{})
 # 📌 Why Gin Important?
 
 Gin makes:
-✅ APIs cleaner  
-✅ Development faster  
+✅ APIs cleaner
+✅ Development faster
 ✅ Backend architecture better
 
 ---
@@ -9583,11 +9583,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create Product API  
-✅ Create User API  
-✅ Add GET route  
-✅ Add POST route  
-✅ Use path parameters  
+✅ Create Product API
+✅ Create User API
+✅ Add GET route
+✅ Add POST route
+✅ Use path parameters
 ✅ Use query parameters
 
 ---
@@ -9660,10 +9660,10 @@ Used in:
 # 📌 Why PostgreSQL Popular?
 
 Because it is:
-✅ Fast  
-✅ Open-source  
-✅ Secure  
-✅ ACID compliant  
+✅ Fast
+✅ Open-source
+✅ Secure
+✅ ACID compliant
 ✅ Production-ready
 
 ---
@@ -10345,11 +10345,11 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create Product Table  
-✅ Insert Product Data  
-✅ Fetch Product Data  
-✅ Create User Table  
-✅ Build API with PostgreSQL  
+✅ Create Product Table
+✅ Insert Product Data
+✅ Fetch Product Data
+✅ Create User Table
+✅ Build API with PostgreSQL
 ✅ Practice SQL Queries
 
 ---
@@ -10450,11 +10450,11 @@ Much cleaner ✅
 # 📌 Why GORM Popular?
 
 Because it provides:
-✅ Cleaner code  
-✅ Faster development  
-✅ Less SQL writing  
-✅ Easy CRUD  
-✅ Auto migration  
+✅ Cleaner code
+✅ Faster development
+✅ Less SQL writing
+✅ Easy CRUD
+✅ Auto migration
 ✅ Production-ready architecture
 
 ---
@@ -10583,8 +10583,8 @@ type Student struct {
 # 📌 What is AutoMigrate?
 
 Automatically creates:
-✅ Tables  
-✅ Columns  
+✅ Tables
+✅ Columns
 ✅ Schema changes
 
 ---
@@ -11044,30 +11044,30 @@ I also practiced:
 
 # 🧠 Practice Tasks
 
-✅ Create Product CRUD API  
-✅ Create Employee Model  
-✅ Practice AutoMigrate  
-✅ Build CRUD APIs with GORM  
+✅ Create Product CRUD API
+✅ Create Employee Model
+✅ Practice AutoMigrate
+✅ Build CRUD APIs with GORM
 ✅ Test APIs in Postman
 
 ---
 
 # 🔥 My Learning Rules
 
-✅ Code Daily  
-✅ Push Daily on GitHub  
-✅ Learn by Building Projects  
-✅ Practice Interview Questions  
-✅ Focus on Backend Engineering  
+✅ Code Daily
+✅ Push Daily on GitHub
+✅ Learn by Building Projects
+✅ Practice Interview Questions
+✅ Focus on Backend Engineering
 ✅ Build Production-Level Projects
 
 ---
 
 # 📫 Connect With Me
 
-📧 Email: dnyaneshwarkokatevip@gmail.com  
-💻 GitHub: https://github.com/Dnyanesh0902  
-🌐 Portfolio: https://dnyanesh.miracledevelopers.in  
+📧 Email: dnyaneshwarkokatevip@gmail.com
+💻 GitHub: https://github.com/Dnyanesh0902
+🌐 Portfolio: https://dnyanesh.miracledevelopers.in
 🔗 LinkedIn: https://www.linkedin.com/in/dnyaneshwar-kokate-04a12b258/
 
 ---
@@ -11524,29 +11524,29 @@ Today I learned:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
 🚀 Next: Role-Based Authorization in Go
 
 ---
@@ -11758,30 +11758,30 @@ Today I learned:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
 🚀 Next: Environment Variables in Go
 
 ---
@@ -12039,31 +12039,31 @@ Today I learned:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
 🚀 Next: Clean Architecture in Go
 
 ---
@@ -12252,32 +12252,32 @@ Today I learned:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
 🚀 Next: Repository Pattern in Go
 
 ---
@@ -12538,33 +12538,33 @@ Today I learned:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
 🚀 Next: Dependency Injection in Go
 
 ---
@@ -13041,34 +13041,34 @@ Today I learned:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
 🚀 Next: Logging System in Go
 
 ---
@@ -13207,398 +13207,16 @@ func NewContainer(cfg Config) *Container { ... }
 
 # 🛠️ Implementation Walkthrough — Day 28 Project
 
-### 1. Domain Interfaces (`domain/order.go`)
-
-```go
-package domain
-
-import (
-	"errors"
-	"time"
-)
-
-var (
-	ErrOrderNotFound      = errors.New("order not found")
-	ErrInvalidOrderAmount = errors.New("order amount must be greater than zero")
-	ErrEmptyCustomerEmail = errors.New("customer email cannot be empty")
-)
-
-type Order struct {
-	ID            string    `json:"id"`
-	CustomerEmail string    `json:"customer_email"`
-	Amount        float64   `json:"amount"`
-	Status        string    `json:"status"`
-	CreatedAt     time.Time `json:"created_at"`
-}
-
-type CreateOrderInput struct {
-	CustomerEmail string  `json:"customer_email" binding:"required,email"`
-	Amount        float64 `json:"amount" binding:"required,gt=0"`
-}
-
-type Logger interface {
-	Info(msg string, args ...interface{})
-	Error(msg string, args ...interface{})
-}
-
-type NotificationService interface {
-	SendOrderConfirmation(order *Order) error
-}
-
-type OrderRepository interface {
-	Save(order *Order) error
-	FindByID(id string) (*Order, error)
-	FindAll() ([]*Order, error)
-}
-```
-
----
-
-### 2. Concrete Logger Implementation (`logger/logger.go`)
-
-```go
-package logger
-
-import (
-	"fmt"
-	"log"
-	"sync"
-
-	"day-28/domain"
-)
-
-type ConsoleLogger struct {
-	prefix string
-}
-
-func NewConsoleLogger(prefix string) domain.Logger {
-	return &ConsoleLogger{prefix: prefix}
-}
-
-func (l *ConsoleLogger) Info(msg string, args ...interface{}) {
-	log.Printf("[INFO] [%s] %s", l.prefix, fmt.Sprintf(msg, args...))
-}
-
-func (l *ConsoleLogger) Error(msg string, args ...interface{}) {
-	log.Printf("[ERROR] [%s] %s", l.prefix, fmt.Sprintf(msg, args...))
-}
-
-type MockLogger struct {
-	mu   sync.Mutex
-	Logs []string
-}
-
-func NewMockLogger() *MockLogger {
-	return &MockLogger{Logs: make([]string, 0)}
-}
-
-func (m *MockLogger) Info(msg string, args ...interface{}) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.Logs = append(m.Logs, fmt.Sprintf("[INFO] "+msg, args...))
-}
-
-func (m *MockLogger) Error(msg string, args ...interface{}) {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	m.Logs = append(m.Logs, fmt.Sprintf("[ERROR] "+msg, args...))
-}
-```
-
----
-
-### 3. Notification Service Implementation (`notification/email_service.go`)
-
-```go
-package notification
-
-import (
-	"fmt"
-	"sync"
-
-	"day-28/domain"
-)
-
-type EmailNotificationService struct {
-	logger domain.Logger
-}
-
-func NewEmailNotificationService(logger domain.Logger) domain.NotificationService {
-	return &EmailNotificationService{logger: logger}
-}
-
-func (s *EmailNotificationService) SendOrderConfirmation(order *domain.Order) error {
-	s.logger.Info("📧 Sending email confirmation for Order ID %s to %s ($%.2f)",
-		order.ID, order.CustomerEmail, order.Amount)
-	return nil
-}
-
-type MockNotificationService struct {
-	mu         sync.Mutex
-	SentOrders []*domain.Order
-	ShouldFail bool
-}
-
-func NewMockNotificationService() *MockNotificationService {
-	return &MockNotificationService{SentOrders: make([]*domain.Order, 0)}
-}
-
-func (m *MockNotificationService) SendOrderConfirmation(order *domain.Order) error {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-
-	if m.ShouldFail {
-		return fmt.Errorf("simulated notification failure")
-	}
-	m.SentOrders = append(m.SentOrders, order)
-	return nil
-}
-```
-
----
-
-### 4. Repository Implementation (`repository/order_repository.go`)
-
-```go
-package repository
-
-import (
-	"sync"
-
-	"day-28/domain"
-)
-
-type memoryOrderRepository struct {
-	mu     sync.RWMutex
-	orders map[string]*domain.Order
-}
-
-func NewMemoryOrderRepository() domain.OrderRepository {
-	return &memoryOrderRepository{
-		orders: make(map[string]*domain.Order),
-	}
-}
-
-func (r *memoryOrderRepository) Save(order *domain.Order) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	r.orders[order.ID] = order
-	return nil
-}
-
-func (r *memoryOrderRepository) FindByID(id string) (*domain.Order, error) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-	order, exists := r.orders[id]
-	if !exists {
-		return nil, domain.ErrOrderNotFound
-	}
-	return order, nil
-}
-
-func (r *memoryOrderRepository) FindAll() ([]*domain.Order, error) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-	result := make([]*domain.Order, 0, len(r.orders))
-	for _, order := range r.orders {
-		result = append(result, order)
-	}
-	return result, nil
-}
-```
-
----
-
-### 5. Business Use Case with DI (`usecase/order_usecase.go`)
-
-```go
-package usecase
-
-import (
-	"fmt"
-	"time"
-
-	"day-28/domain"
-)
-
-type OrderUseCase struct {
-	repo     domain.OrderRepository
-	notifier domain.NotificationService
-	logger   domain.Logger
-}
-
-type Option func(*OrderUseCase)
-
-func WithLogger(logger domain.Logger) Option {
-	return func(u *OrderUseCase) {
-		if logger != nil {
-			u.logger = logger
-		}
-	}
-}
-
-func NewOrderUseCase(
-	repo domain.OrderRepository,
-	notifier domain.NotificationService,
-	logger domain.Logger,
-	opts ...Option,
-) *OrderUseCase {
-	uc := &OrderUseCase{
-		repo:     repo,
-		notifier: notifier,
-		logger:   logger,
-	}
-	for _, opt := range opts {
-		opt(uc)
-	}
-	return uc
-}
-
-func (u *OrderUseCase) CreateOrder(input domain.CreateOrderInput) (*domain.Order, error) {
-	if input.Amount <= 0 {
-		u.logger.Error("Validation failed: order amount must be positive (received %.2f)", input.Amount)
-		return nil, domain.ErrInvalidOrderAmount
-	}
-	if input.CustomerEmail == "" {
-		u.logger.Error("Validation failed: customer email is empty")
-		return nil, domain.ErrEmptyCustomerEmail
-	}
-
-	order := &domain.Order{
-		ID:            fmt.Sprintf("ORD-%d", time.Now().UnixNano()),
-		CustomerEmail: input.CustomerEmail,
-		Amount:        input.Amount,
-		Status:        "COMPLETED",
-		CreatedAt:     time.Now(),
-	}
-
-	if err := u.repo.Save(order); err != nil {
-		u.logger.Error("Failed to save order %s: %v", order.ID, err)
-		return nil, fmt.Errorf("repository save error: %w", err)
-	}
-
-	u.logger.Info("Order %s saved successfully", order.ID)
-
-	if u.notifier != nil {
-		if err := u.notifier.SendOrderConfirmation(order); err != nil {
-			u.logger.Error("Failed to send order confirmation for %s: %v", order.ID, err)
-		}
-	}
-
-	return order, nil
-}
-```
-
----
-
-### 6. Application Container (`di/container.go`)
-
-```go
-package di
-
-import (
-	"day-28/domain"
-	"day-28/handler"
-	"day-28/logger"
-	"day-28/notification"
-	"day-28/repository"
-	"day-28/usecase"
-
-	"github.com/gin-gonic/gin"
-)
-
-type Container struct {
-	Logger       domain.Logger
-	OrderRepo    domain.OrderRepository
-	Notification domain.NotificationService
-	OrderUseCase *usecase.OrderUseCase
-	OrderHandler *handler.OrderHandler
-}
-
-type Config struct {
-	Env string
-}
-
-func NewContainer(cfg Config) *Container {
-	var appLogger domain.Logger
-	var notifier domain.NotificationService
-
-	if cfg.Env == "test" {
-		appLogger = logger.NewMockLogger()
-		notifier = notification.NewMockNotificationService()
-	} else {
-		appLogger = logger.NewConsoleLogger("APP")
-		notifier = notification.NewEmailNotificationService(appLogger)
-	}
-
-	orderRepo := repository.NewMemoryOrderRepository()
-	orderUseCase := usecase.NewOrderUseCase(orderRepo, notifier, appLogger)
-	orderHandler := handler.NewOrderHandler(orderUseCase, appLogger)
-
-	return &Container{
-		Logger:       appLogger,
-		OrderRepo:    orderRepo,
-		Notification: notifier,
-		OrderUseCase: orderUseCase,
-		OrderHandler: orderHandler,
-	}
-}
-
-func (c *Container) SetupRoutes(router *gin.Engine) {
-	api := router.Group("/api/v1")
-	{
-		api.POST("/orders", c.OrderHandler.CreateOrder)
-		api.GET("/orders", c.OrderHandler.ListOrders)
-		api.GET("/orders/:id", c.OrderHandler.GetOrder)
-	}
-}
-```
-
----
-
-### 7. Unit Testing with Mock Injection (`usecase/order_usecase_test.go`)
-
-```go
-package usecase_test
-
-import (
-	"testing"
-
-	"day-28/domain"
-	"day-28/logger"
-	"day-28/notification"
-	"day-28/repository"
-	"day-28/usecase"
-)
-
-func TestCreateOrder_Success(t *testing.T) {
-	mockRepo := repository.NewMemoryOrderRepository()
-	mockNotifier := notification.NewMockNotificationService()
-	mockLogger := logger.NewMockLogger()
-
-	orderUC := usecase.NewOrderUseCase(mockRepo, mockNotifier, mockLogger)
-
-	input := domain.CreateOrderInput{
-		CustomerEmail: "alice@example.com",
-		Amount:        150.75,
-	}
-
-	order, err := orderUC.CreateOrder(input)
-	if err != nil {
-		t.Fatalf("expected no error, got %v", err)
-	}
-
-	if order.ID == "" {
-		t.Errorf("expected generated Order ID, got empty string")
-	}
-
-	if len(mockNotifier.SentOrders) != 1 {
-		t.Errorf("expected 1 sent notification, got %d", len(mockNotifier.SentOrders))
-	}
-}
-```
-
----
+### Project Structure & Components (`Day-28/`)
+- [domain/order.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-28/domain/order.go) — Domain Interfaces.
+- [logger/logger.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-28/logger/logger.go) — Concrete Logger Implementation.
+- [notification/email_service.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-28/notification/email_service.go) — Notification Service Implementation.
+- [repository/order_repository.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-28/repository/order_repository.go) — Repository Implementation.
+- [usecase/order_usecase.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-28/usecase/order_usecase.go) — Business Use Case with DI.
+- [di/container.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-28/di/container.go) — Application Container.
+- [usecase/order_usecase_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-28/usecase/order_usecase_test.go) — Unit Testing with Mock Injection.
+
+Full runnable source code, test suites, and configurations are available in [`Day-28/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-28/).
 
 # 📘 Day 28 Interview Questions & Answers
 
@@ -13656,35 +13274,35 @@ Today I learned:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
-✅ Day 29 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
+✅ Day 29 Completed
 🚀 Next: Student Management REST API Project in Go
 
 ---
@@ -13790,591 +13408,16 @@ Common **Log Levels**:
 
 # 🛠️ Implementation Walkthrough — Day 29 Project
 
-### 1. Module Definition (`go.mod`)
-
-```go
-module day-29
-
-go 1.22.0
-
-require (
-	github.com/gin-gonic/gin v1.9.1
-	github.com/google/uuid v1.6.0
-	go.uber.org/zap v1.27.0
-)
-```
-
----
-
-### 2. Domain Models & Logger Interface (`domain/user.go`)
-
-```go
-package domain
-
-import (
-	"context"
-	"errors"
-	"time"
-)
-
-type contextKey string
-
-const (
-	RequestIDKey contextKey = "X-Request-ID"
-)
-
-var (
-	ErrUserNotFound       = errors.New("user not found")
-	ErrEmailAlreadyExists = errors.New("user with this email already exists")
-	ErrInvalidEmail       = errors.New("invalid email address format")
-	ErrEmptyName          = errors.New("user name cannot be empty")
-)
-
-type User struct {
-	ID        string    `json:"id"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Role      string    `json:"role"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-type CreateUserInput struct {
-	Name  string `json:"name" binding:"required"`
-	Email string `json:"email" binding:"required,email"`
-	Role  string `json:"role"`
-}
-
-type UserRepository interface {
-	Save(ctx context.Context, user *User) error
-	FindByID(ctx context.Context, id string) (*User, error)
-	FindByEmail(ctx context.Context, email string) (*User, error)
-	FindAll(ctx context.Context) ([]*User, error)
-}
-
-type Logger interface {
-	Info(ctx context.Context, msg string, keysAndValues ...interface{})
-	Warn(ctx context.Context, msg string, keysAndValues ...interface{})
-	Error(ctx context.Context, msg string, keysAndValues ...interface{})
-	Debug(ctx context.Context, msg string, keysAndValues ...interface{})
-}
-```
-
----
-
-### 3. Zap & Slog Structured Logger Implementation (`logger/logger.go`)
-
-```go
-package logger
-
-import (
-	"context"
-	"log/slog"
-	"os"
-
-	"day-29/domain"
-
-	"go.uber.org/zap"
-	"go.uber.org/zap/zapcore"
-)
-
-type ZapLogger struct {
-	logger *zap.Logger
-}
-
-func NewZapLogger(env string, logFilePath string) (*ZapLogger, error) {
-	var encoderConfig zapcore.EncoderConfig
-
-	if env == "production" {
-		encoderConfig = zap.NewProductionEncoderConfig()
-		encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-		encoderConfig.EncodeLevel = zapcore.CapitalLevelEncoder
-	} else {
-		encoderConfig = zap.NewDevelopmentEncoderConfig()
-		encoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
-		encoderConfig.EncodeLevel = zapcore.CapitalColorLevelEncoder
-	}
-
-	var core zapcore.Core
-
-	consoleEncoder := zapcore.NewConsoleEncoder(encoderConfig)
-	if env == "production" {
-		consoleEncoder = zapcore.NewJSONEncoder(encoderConfig)
-	}
-
-	consoleSyncer := zapcore.AddSync(os.Stdout)
-
-	var syncers []zapcore.WriteSyncer
-	syncers = append(syncers, consoleSyncer)
-
-	if logFilePath != "" {
-		file, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
-		if err == nil {
-			jsonEncoder := zapcore.NewJSONEncoder(zap.NewProductionEncoderConfig())
-			fileSyncer := zapcore.AddSync(file)
-			fileCore := zapcore.NewCore(jsonEncoder, fileSyncer, zap.InfoLevel)
-
-			consoleCore := zapcore.NewCore(consoleEncoder, consoleSyncer, zap.DebugLevel)
-			core = zapcore.NewTee(consoleCore, fileCore)
-		} else {
-			core = zapcore.NewCore(consoleEncoder, consoleSyncer, zap.DebugLevel)
-		}
-	} else {
-		core = zapcore.NewCore(consoleEncoder, consoleSyncer, zap.DebugLevel)
-	}
-
-	zapLog := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
-
-	return &ZapLogger{logger: zapLog}, nil
-}
-
-func (z *ZapLogger) extractFields(ctx context.Context, keysAndValues ...interface{}) []zap.Field {
-	fields := make([]zap.Field, 0, len(keysAndValues)/2+1)
-
-	if reqID, ok := ctx.Value(domain.RequestIDKey).(string); ok && reqID != "" {
-		fields = append(fields, zap.String("request_id", reqID))
-	}
-
-	for i := 0; i < len(keysAndValues); i += 2 {
-		if i+1 < len(keysAndValues) {
-			key, ok := keysAndValues[i].(string)
-			if !ok {
-				key = "invalid_key"
-			}
-			fields = append(fields, zap.Any(key, keysAndValues[i+1]))
-		}
-	}
-
-	return fields
-}
-
-func (z *ZapLogger) Info(ctx context.Context, msg string, keysAndValues ...interface{}) {
-	fields := z.extractFields(ctx, keysAndValues...)
-	z.logger.Info(msg, fields...)
-}
-
-func (z *ZapLogger) Warn(ctx context.Context, msg string, keysAndValues ...interface{}) {
-	fields := z.extractFields(ctx, keysAndValues...)
-	z.logger.Warn(msg, fields...)
-}
-
-func (z *ZapLogger) Error(ctx context.Context, msg string, keysAndValues ...interface{}) {
-	fields := z.extractFields(ctx, keysAndValues...)
-	z.logger.Error(msg, fields...)
-}
-
-func (z *ZapLogger) Debug(ctx context.Context, msg string, keysAndValues ...interface{}) {
-	fields := z.extractFields(ctx, keysAndValues...)
-	z.logger.Debug(msg, fields...)
-}
-
-func (z *ZapLogger) Sync() error {
-	return z.logger.Sync()
-}
-
-type SlogLogger struct {
-	logger *slog.Logger
-}
-
-func NewSlogLogger(env string) *SlogLogger {
-	var handler slog.Handler
-	opts := &slog.HandlerOptions{Level: slog.LevelDebug}
-
-	if env == "production" {
-		handler = slog.NewJSONHandler(os.Stdout, opts)
-	} else {
-		handler = slog.NewTextHandler(os.Stdout, opts)
-	}
-
-	return &SlogLogger{logger: slog.New(handler)}
-}
-
-func (s *SlogLogger) extractAttrs(ctx context.Context, keysAndValues ...interface{}) []interface{} {
-	attrs := make([]interface{}, 0, len(keysAndValues)+2)
-	if reqID, ok := ctx.Value(domain.RequestIDKey).(string); ok && reqID != "" {
-		attrs = append(attrs, "request_id", reqID)
-	}
-	attrs = append(attrs, keysAndValues...)
-	return attrs
-}
-
-func (s *SlogLogger) Info(ctx context.Context, msg string, keysAndValues ...interface{}) {
-	s.logger.InfoContext(ctx, msg, s.extractAttrs(ctx, keysAndValues...)...)
-}
-
-func (s *SlogLogger) Warn(ctx context.Context, msg string, keysAndValues ...interface{}) {
-	s.logger.WarnContext(ctx, msg, s.extractAttrs(ctx, keysAndValues...)...)
-}
-
-func (s *SlogLogger) Error(ctx context.Context, msg string, keysAndValues ...interface{}) {
-	s.logger.ErrorContext(ctx, msg, s.extractAttrs(ctx, keysAndValues...)...)
-}
-
-func (s *SlogLogger) Debug(ctx context.Context, msg string, keysAndValues ...interface{}) {
-	s.logger.DebugContext(ctx, msg, s.extractAttrs(ctx, keysAndValues...)...)
-}
-```
-
----
-
-### 4. Gin Request ID & HTTP Access Middleware (`middleware/logger_middleware.go`)
-
-```go
-package middleware
-
-import (
-	"context"
-	"time"
-
-	"day-29/domain"
-
-	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
-)
-
-func RequestIDMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		reqID := c.GetHeader("X-Request-ID")
-		if reqID == "" {
-			reqID = uuid.New().String()
-		}
-
-		c.Header("X-Request-ID", reqID)
-
-		ctx := context.WithValue(c.Request.Context(), domain.RequestIDKey, reqID)
-		c.Request = c.Request.WithContext(ctx)
-		c.Set(string(domain.RequestIDKey), reqID)
-
-		c.Next()
-	}
-}
-
-func StructuredLoggerMiddleware(log domain.Logger) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		start := time.Now()
-		path := c.Request.URL.Path
-		rawQuery := c.Request.URL.RawQuery
-
-		c.Next()
-
-		latency := time.Since(start)
-		clientIP := c.ClientIP()
-		method := c.Request.Method
-		statusCode := c.Writer.Status()
-		errorMessage := c.Errors.ByType(gin.ErrorTypePrivate).String()
-
-		fullPath := path
-		if rawQuery != "" {
-			fullPath = path + "?" + rawQuery
-		}
-
-		keysAndValues := []interface{}{
-			"status", statusCode,
-			"method", method,
-			"path", fullPath,
-			"ip", clientIP,
-			"latency_ms", latency.Milliseconds(),
-			"latency_human", latency.String(),
-			"user_agent", c.Request.UserAgent(),
-		}
-
-		if errorMessage != "" {
-			keysAndValues = append(keysAndValues, "error", errorMessage)
-		}
-
-		ctx := c.Request.Context()
-
-		if statusCode >= 500 {
-			log.Error(ctx, "HTTP Request Failed (Server Error)", keysAndValues...)
-		} else if statusCode >= 400 {
-			log.Warn(ctx, "HTTP Request Warning (Client Error)", keysAndValues...)
-		} else {
-			log.Info(ctx, "HTTP Request Completed", keysAndValues...)
-		}
-	}
-}
-```
-
----
-
-### 5. Repository Layer with Logging (`repository/user_repository.go`)
-
-```go
-package repository
-
-import (
-	"context"
-	"sync"
-	"time"
-
-	"day-29/domain"
-)
-
-type memoryUserRepository struct {
-	mu     sync.RWMutex
-	users  map[string]*domain.User
-	emails map[string]string
-	logger domain.Logger
-}
-
-func NewMemoryUserRepository(logger domain.Logger) domain.UserRepository {
-	return &memoryUserRepository{
-		users:  make(map[string]*domain.User),
-		emails: make(map[string]string),
-		logger: logger,
-	}
-}
-
-func (r *memoryUserRepository) Save(ctx context.Context, user *domain.User) error {
-	start := time.Now()
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	r.logger.Debug(ctx, "Executing DB query: Save User", "user_id", user.ID, "email", user.Email)
-
-	if existingID, exists := r.emails[user.Email]; exists && existingID != user.ID {
-		r.logger.Warn(ctx, "DB Conflict: Email already exists", "email", user.Email, "existing_user_id", existingID)
-		return domain.ErrEmailAlreadyExists
-	}
-
-	r.users[user.ID] = user
-	r.emails[user.Email] = user.ID
-
-	r.logger.Info(ctx, "DB Write successful", "user_id", user.ID, "duration_ms", time.Since(start).Milliseconds())
-	return nil
-}
-
-func (r *memoryUserRepository) FindByID(ctx context.Context, id string) (*domain.User, error) {
-	start := time.Now()
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-
-	r.logger.Debug(ctx, "Executing DB query: FindByID", "user_id", id)
-
-	user, exists := r.users[id]
-	if !exists {
-		r.logger.Warn(ctx, "DB Record not found", "user_id", id, "duration_ms", time.Since(start).Milliseconds())
-		return nil, domain.ErrUserNotFound
-	}
-
-	r.logger.Debug(ctx, "DB Record retrieved", "user_id", id, "duration_ms", time.Since(start).Milliseconds())
-	return user, nil
-}
-
-func (r *memoryUserRepository) FindByEmail(ctx context.Context, email string) (*domain.User, error) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-
-	r.logger.Debug(ctx, "Executing DB query: FindByEmail", "email", email)
-
-	id, exists := r.emails[email]
-	if !exists {
-		return nil, domain.ErrUserNotFound
-	}
-
-	return r.users[id], nil
-}
-
-func (r *memoryUserRepository) FindAll(ctx context.Context) ([]*domain.User, error) {
-	start := time.Now()
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-
-	r.logger.Debug(ctx, "Executing DB query: FindAll")
-
-	result := make([]*domain.User, 0, len(r.users))
-	for _, user := range r.users {
-		result = append(result, user)
-	}
-
-	r.logger.Info(ctx, "DB Records fetched", "count", len(result), "duration_ms", time.Since(start).Milliseconds())
-	return result, nil
-}
-```
-
----
-
-### 6. Business UseCase Layer (`usecase/user_usecase.go`)
-
-```go
-package usecase
-
-import (
-	"context"
-	"fmt"
-	"strings"
-	"time"
-
-	"day-29/domain"
-
-	"github.com/google/uuid"
-)
-
-type UserUseCase struct {
-	repo   domain.UserRepository
-	logger domain.Logger
-}
-
-func NewUserUseCase(repo domain.UserRepository, logger domain.Logger) *UserUseCase {
-	return &UserUseCase{
-		repo:   repo,
-		logger: logger,
-	}
-}
-
-func (u *UserUseCase) RegisterUser(ctx context.Context, input domain.CreateUserInput) (*domain.User, error) {
-	u.logger.Info(ctx, "Processing user registration request", "name", input.Name, "email", input.Email)
-
-	if strings.TrimSpace(input.Name) == "" {
-		u.logger.Warn(ctx, "Validation failed: Empty user name")
-		return nil, domain.ErrEmptyName
-	}
-
-	if !strings.Contains(input.Email, "@") {
-		u.logger.Warn(ctx, "Validation failed: Invalid email format", "email", input.Email)
-		return nil, domain.ErrInvalidEmail
-	}
-
-	existingUser, err := u.repo.FindByEmail(ctx, input.Email)
-	if err == nil && existingUser != nil {
-		u.logger.Warn(ctx, "User registration rejected: Email already registered", "email", input.Email)
-		return nil, domain.ErrEmailAlreadyExists
-	}
-
-	role := input.Role
-	if role == "" {
-		role = "USER"
-	}
-
-	now := time.Now()
-	user := &domain.User{
-		ID:        fmt.Sprintf("usr_%s", uuid.New().String()[:8]),
-		Name:      strings.TrimSpace(input.Name),
-		Email:     strings.ToLower(strings.TrimSpace(input.Email)),
-		Role:      strings.ToUpper(role),
-		CreatedAt: now,
-		UpdatedAt: now,
-	}
-
-	if err := u.repo.Save(ctx, user); err != nil {
-		u.logger.Error(ctx, "Failed to persist new user to repository", "user_id", user.ID, "error", err.Error())
-		return nil, err
-	}
-
-	u.logger.Info(ctx, "User successfully registered", "user_id", user.ID, "email", user.Email, "role", user.Role)
-	return user, nil
-}
-
-func (u *UserUseCase) GetUserByID(ctx context.Context, id string) (*domain.User, error) {
-	u.logger.Debug(ctx, "Fetching user profile by ID", "user_id", id)
-
-	user, err := u.repo.FindByID(ctx, id)
-	if err != nil {
-		if err == domain.ErrUserNotFound {
-			u.logger.Warn(ctx, "User profile requested but not found", "user_id", id)
-		} else {
-			u.logger.Error(ctx, "Unexpected error retrieving user", "user_id", id, "error", err.Error())
-		}
-		return nil, err
-	}
-
-	return user, nil
-}
-
-func (u *UserUseCase) ListUsers(ctx context.Context) ([]*domain.User, error) {
-	u.logger.Info(ctx, "Listing all active users")
-	return u.repo.FindAll(ctx)
-}
-```
-
----
-
-### 7. Main Application Entry Point (`main.go`)
-
-```go
-package main
-
-import (
-	"bytes"
-	"context"
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"net/http/httptest"
-	"os"
-
-	"day-29/domain"
-	"day-29/handler"
-	"day-29/logger"
-	"day-29/middleware"
-	"day-29/repository"
-	"day-29/usecase"
-
-	"github.com/gin-gonic/gin"
-)
-
-func main() {
-	fmt.Println("==================================================")
-	fmt.Println("🚀 Day 29: Production-Grade Logging System in Go")
-	fmt.Println("==================================================")
-
-	logFilePath := "app.log"
-	zapLog, err := logger.NewZapLogger("development", logFilePath)
-	if err != nil {
-		fmt.Printf("Failed to initialize Zap Logger: %v\n", err)
-		os.Exit(1)
-	}
-	defer zapLog.Sync()
-
-	ctx := context.Background()
-	zapLog.Info(ctx, "Logger initialized successfully", "log_file", logFilePath, "environment", "development")
-
-	userRepo := repository.NewMemoryUserRepository(zapLog)
-	userUC := usecase.NewUserUseCase(userRepo, zapLog)
-	userHandler := handler.NewUserHandler(userUC, zapLog)
-
-	gin.SetMode(gin.ReleaseMode)
-	router := gin.New()
-
-	router.Use(gin.Recovery())
-	router.Use(middleware.RequestIDMiddleware())
-	router.Use(middleware.StructuredLoggerMiddleware(zapLog))
-
-	api := router.Group("/api/v1")
-	{
-		api.POST("/users", userHandler.RegisterUser)
-		api.GET("/users", userHandler.ListUsers)
-		api.GET("/users/:id", userHandler.GetUserByID)
-	}
-
-	createUser(router, "Dnyaneshwar Kokate", "dnyaneshwar@example.com", "ADMIN", "req-trace-101")
-	createUser(router, "Duplicate User", "dnyaneshwar@example.com", "USER", "req-trace-103")
-	listUsers(router, "req-trace-104")
-}
-
-func createUser(router *gin.Engine, name, email, role, requestID string) {
-	payload := domain.CreateUserInput{Name: name, Email: email, Role: role}
-	body, _ := json.Marshal(payload)
-	req, _ := http.NewRequest("POST", "/api/v1/users", bytes.NewBuffer(body))
-	req.Header.Set("Content-Type", "application/json")
-	if requestID != "" {
-		req.Header.Set("X-Request-ID", requestID)
-	}
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-}
-
-func listUsers(router *gin.Engine, requestID string) {
-	req, _ := http.NewRequest("GET", "/api/v1/users", nil)
-	if requestID != "" {
-		req.Header.Set("X-Request-ID", requestID)
-	}
-	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
-}
-```
-
----
+### Project Structure & Components (`Day-29/`)
+- [go.mod](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-29/go.mod) — Module Definition.
+- [domain/user.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-29/domain/user.go) — Domain Models & Logger Interface.
+- [logger/logger.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-29/logger/logger.go) — Zap & Slog Structured Logger Implementation.
+- [middleware/logger_middleware.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-29/middleware/logger_middleware.go) — Gin Request ID & HTTP Access Middleware.
+- [repository/user_repository.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-29/repository/user_repository.go) — Repository Layer with Logging.
+- [usecase/user_usecase.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-29/usecase/user_usecase.go) — Business UseCase Layer.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-29/main.go) — Main Application Entry Point.
+
+Full runnable source code, test suites, and configurations are available in [`Day-29/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-29/).
 
 # 📘 Day 29 Interview Questions & Answers
 
@@ -14429,36 +13472,36 @@ Today I learned:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
-✅ Day 29 Completed  
-✅ Day 30 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
+✅ Day 29 Completed
+✅ Day 30 Completed
 🚀 Next: Advanced CRUD APIs in Go
 
 ---
@@ -14551,473 +13594,14 @@ Day 30 marks the **First Major Milestone REST API Project** in the 90-day Go Cha
 
 # 🛠️ Implementation Walkthrough — Day 30 Project
 
-### 1. Configuration Loader (`config/config.go`)
-
-```go
-package config
-
-import (
-	"os"
-	"time"
-)
-
-type Config struct {
-	Port         string
-	Environment  string
-	JWTSecret    string
-	JWTExpiresIn time.Duration
-	LogFilePath  string
-}
-
-func LoadConfig() Config {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-	env := os.Getenv("ENV")
-	if env == "" {
-		env = "development"
-	}
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "super-secret-student-mgmt-key-90-days-challenge"
-	}
-	logPath := os.Getenv("LOG_FILE_PATH")
-	if logPath == "" {
-		logPath = "student_app.log"
-	}
-
-	return Config{
-		Port:         port,
-		Environment:  env,
-		JWTSecret:    secret,
-		JWTExpiresIn: 24 * time.Hour,
-		LogFilePath:  logPath,
-	}
-}
-```
-
----
-
-### 2. Domain Entities & Interfaces (`domain/student.go`)
-
-```go
-package domain
-
-import (
-	"context"
-	"errors"
-	"time"
-)
-
-type ContextKey string
-
-const (
-	RequestIDKey ContextKey = "X-Request-ID"
-	UserIDKey    ContextKey = "user_id"
-	UserRoleKey  ContextKey = "user_role"
-	UserEmailKey ContextKey = "user_email"
-)
-
-const (
-	RoleAdmin   = "ADMIN"
-	RoleTeacher = "TEACHER"
-	RoleStudent = "STUDENT"
-)
-
-var (
-	ErrUserNotFound       = errors.New("user not found")
-	ErrStudentNotFound    = errors.New("student record not found")
-	ErrEmailExists        = errors.New("email address is already registered")
-	ErrInvalidCredentials = errors.New("invalid email or password")
-	ErrUnauthorized       = errors.New("authentication token is missing or invalid")
-	ErrForbidden          = errors.New("access forbidden: insufficient permissions")
-	ErrInvalidInput       = errors.New("invalid request payload")
-)
-
-type User struct {
-	ID        string    `json:"id"`
-	Email     string    `json:"email"`
-	Password  string    `json:"-"`
-	Role      string    `json:"role"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
-type Student struct {
-	ID         string    `json:"id"`
-	UserID     string    `json:"user_id"`
-	FullName   string    `json:"full_name"`
-	Email      string    `json:"email"`
-	Department string    `json:"department"`
-	GPA        float64   `json:"gpa"`
-	Status     string    `json:"status"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
-}
-
-type RegisterInput struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=6"`
-	Role     string `json:"role"`
-}
-
-type LoginInput struct {
-	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
-}
-
-type TokenResponse struct {
-	Token     string    `json:"token"`
-	ExpiresAt time.Time `json:"expires_at"`
-	User      *User     `json:"user"`
-}
-
-type CreateStudentInput struct {
-	FullName   string  `json:"full_name" binding:"required"`
-	Email      string  `json:"email" binding:"required,email"`
-	Department string  `json:"department" binding:"required"`
-	GPA        float64 `json:"gpa" binding:"min=0,max=4"`
-}
-
-type UpdateStudentInput struct {
-	FullName   string  `json:"full_name"`
-	Department string  `json:"department"`
-	GPA        float64 `json:"gpa" binding:"min=0,max=4"`
-	Status     string  `json:"status"`
-}
-
-type Logger interface {
-	Info(ctx context.Context, msg string, keysAndValues ...interface{})
-	Warn(ctx context.Context, msg string, keysAndValues ...interface{})
-	Error(ctx context.Context, msg string, keysAndValues ...interface{})
-	Debug(ctx context.Context, msg string, keysAndValues ...interface{})
-}
-
-type UserRepository interface {
-	SaveUser(ctx context.Context, user *User) error
-	FindUserByEmail(ctx context.Context, email string) (*User, error)
-	FindUserByID(ctx context.Context, id string) (*User, error)
-}
-
-type StudentRepository interface {
-	Save(ctx context.Context, student *Student) error
-	FindByID(ctx context.Context, id string) (*Student, error)
-	FindByEmail(ctx context.Context, email string) (*Student, error)
-	FindAll(ctx context.Context, department string, status string) ([]*Student, error)
-	Update(ctx context.Context, student *Student) error
-	Delete(ctx context.Context, id string) error
-}
-```
-
----
-
-### 3. JWT Authentication & Role Middlewares (`middleware/auth_middleware.go`)
-
-```go
-package middleware
-
-import (
-	"context"
-	"fmt"
-	"net/http"
-	"strings"
-
-	"day-30/domain"
-
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
-)
-
-func JWTAuthMiddleware(jwtSecret string, logger domain.Logger) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			logger.Warn(c.Request.Context(), "Authentication failed: missing Authorization header")
-			c.JSON(http.StatusUnauthorized, gin.H{"error": domain.ErrUnauthorized.Error()})
-			c.Abort()
-			return
-		}
-
-		parts := strings.Split(authHeader, " ")
-		if len(parts) != 2 || parts[0] != "Bearer" {
-			logger.Warn(c.Request.Context(), "Authentication failed: malformed Authorization header")
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header must be Bearer token"})
-			c.Abort()
-			return
-		}
-
-		tokenString := parts[1]
-		token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
-			}
-			return []byte(jwtSecret), nil
-		})
-
-		if err != nil || !token.Valid {
-			logger.Warn(c.Request.Context(), "Authentication failed: invalid or expired token", "error", err)
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired authentication token"})
-			c.Abort()
-			return
-		}
-
-		claims, ok := token.Claims.(jwt.MapClaims)
-		if !ok {
-			logger.Warn(c.Request.Context(), "Authentication failed: invalid token claims payload")
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
-			c.Abort()
-			return
-		}
-
-		userID, _ := claims["sub"].(string)
-		role, _ := claims["role"].(string)
-		email, _ := claims["email"].(string)
-
-		ctx := c.Request.Context()
-		ctx = context.WithValue(ctx, domain.UserIDKey, userID)
-		ctx = context.WithValue(ctx, domain.UserRoleKey, role)
-		ctx = context.WithValue(ctx, domain.UserEmailKey, email)
-
-		c.Request = c.Request.WithContext(ctx)
-
-		c.Set(string(domain.UserIDKey), userID)
-		c.Set(string(domain.UserRoleKey), role)
-
-		c.Next()
-	}
-}
-
-func RequireRoleMiddleware(logger domain.Logger, allowedRoles ...string) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		roleVal, exists := c.Get(string(domain.UserRoleKey))
-		if !exists {
-			logger.Warn(c.Request.Context(), "Authorization rejected: Role missing from context")
-			c.JSON(http.StatusForbidden, gin.H{"error": domain.ErrForbidden.Error()})
-			c.Abort()
-			return
-		}
-
-		userRole, _ := roleVal.(string)
-		roleAllowed := false
-		for _, allowed := range allowedRoles {
-			if strings.EqualFold(userRole, allowed) {
-				roleAllowed = true
-				break
-			}
-		}
-
-		if !roleAllowed {
-			logger.Warn(c.Request.Context(), "Authorization rejected: Access denied for role", "user_role", userRole, "required_roles", allowedRoles)
-			c.JSON(http.StatusForbidden, gin.H{"error": fmt.Sprintf("Role '%s' is not authorized to perform this operation", userRole)})
-			c.Abort()
-			return
-		}
-
-		c.Next()
-	}
-}
-```
-
----
-
-### 4. Dependency Injection Container (`di/container.go`)
-
-```go
-package di
-
-import (
-	"day-30/config"
-	"day-30/domain"
-	"day-30/handler"
-	"day-30/logger"
-	"day-30/middleware"
-	"day-30/repository"
-	"day-30/usecase"
-
-	"github.com/gin-gonic/gin"
-)
-
-type Container struct {
-	Config         config.Config
-	Logger         domain.Logger
-	UserRepo       domain.UserRepository
-	StudentRepo    domain.StudentRepository
-	AuthUseCase    *usecase.AuthUseCase
-	StudentUseCase *usecase.StudentUseCase
-	AuthHandler    *handler.AuthHandler
-	StudentHandler *handler.StudentHandler
-}
-
-func NewContainer(cfg config.Config) (*Container, error) {
-	appLogger, err := logger.NewZapLogger(cfg.Environment, cfg.LogFilePath)
-	if err != nil {
-		return nil, err
-	}
-
-	userRepo := repository.NewMemoryUserRepository(appLogger)
-	studentRepo := repository.NewMemoryStudentRepository(appLogger)
-
-	authUseCase := usecase.NewAuthUseCase(userRepo, cfg, appLogger)
-	studentUseCase := usecase.NewStudentUseCase(studentRepo, appLogger)
-
-	authHandler := handler.NewAuthHandler(authUseCase, appLogger)
-	studentHandler := handler.NewStudentHandler(studentUseCase, appLogger)
-
-	return &Container{
-		Config:         cfg,
-		Logger:         appLogger,
-		UserRepo:       userRepo,
-		StudentRepo:    studentRepo,
-		AuthUseCase:    authUseCase,
-		StudentUseCase: studentUseCase,
-		AuthHandler:    authHandler,
-		StudentHandler: studentHandler,
-	}, nil
-}
-
-func (c *Container) SetupRouter() *gin.Engine {
-	if c.Config.Environment == "production" {
-		gin.SetMode(gin.ReleaseMode)
-	} else {
-		gin.SetMode(gin.DebugMode)
-	}
-
-	router := gin.New()
-	router.Use(gin.Recovery())
-	router.Use(middleware.RequestIDMiddleware())
-	router.Use(middleware.StructuredLoggerMiddleware(c.Logger))
-
-	v1 := router.Group("/api/v1")
-	{
-		authGroup := v1.Group("/auth")
-		{
-			authGroup.POST("/register", c.AuthHandler.Register)
-			authGroup.POST("/login", c.AuthHandler.Login)
-		}
-
-		studentGroup := v1.Group("/students")
-		studentGroup.Use(middleware.JWTAuthMiddleware(c.Config.JWTSecret, c.Logger))
-		{
-			studentGroup.GET("", middleware.RequireRoleMiddleware(c.Logger, domain.RoleAdmin, domain.RoleTeacher, domain.RoleStudent), c.StudentHandler.ListStudents)
-			studentGroup.GET("/:id", middleware.RequireRoleMiddleware(c.Logger, domain.RoleAdmin, domain.RoleTeacher, domain.RoleStudent), c.StudentHandler.GetStudentByID)
-			studentGroup.POST("", middleware.RequireRoleMiddleware(c.Logger, domain.RoleAdmin, domain.RoleTeacher), c.StudentHandler.CreateStudent)
-			studentGroup.PUT("/:id", middleware.RequireRoleMiddleware(c.Logger, domain.RoleAdmin, domain.RoleTeacher), c.StudentHandler.UpdateStudent)
-			studentGroup.DELETE("/:id", middleware.RequireRoleMiddleware(c.Logger, domain.RoleAdmin), c.StudentHandler.DeleteStudent)
-		}
-	}
-
-	return router
-}
-```
-
----
-
-### 5. Automated Integration Test Suite (`tests/student_api_test.go`)
-
-```go
-package tests
-
-import (
-	"bytes"
-	"encoding/json"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-
-	"day-30/config"
-	"day-30/di"
-	"day-30/domain"
-)
-
-func setupTestApp() (*di.Container, http.Handler) {
-	cfg := config.LoadConfig()
-	cfg.Environment = "test"
-
-	container, _ := di.NewContainer(cfg)
-	router := container.SetupRouter()
-	return container, router
-}
-
-func getAuthToken(t *testing.T, handler http.Handler, email, password, role string) string {
-	regPayload := domain.RegisterInput{Email: email, Password: password, Role: role}
-	regBody, _ := json.Marshal(regPayload)
-	req1, _ := http.NewRequest("POST", "/api/v1/auth/register", bytes.NewBuffer(regBody))
-	req1.Header.Set("Content-Type", "application/json")
-	w1 := httptest.NewRecorder()
-	handler.ServeHTTP(w1, req1)
-
-	loginPayload := domain.LoginInput{Email: email, Password: password}
-	loginBody, _ := json.Marshal(loginPayload)
-	req2, _ := http.NewRequest("POST", "/api/v1/auth/login", bytes.NewBuffer(loginBody))
-	req2.Header.Set("Content-Type", "application/json")
-	w2 := httptest.NewRecorder()
-	handler.ServeHTTP(w2, req2)
-
-	var res map[string]interface{}
-	json.Unmarshal(w2.Body.Bytes(), &res)
-	dataMap := res["data"].(map[string]interface{})
-	return dataMap["token"].(string)
-}
-
-func TestStudentAPI_FullLifecycle(t *testing.T) {
-	_, handler := setupTestApp()
-
-	adminToken := getAuthToken(t, handler, "test.admin@school.com", "AdminPassword123", "ADMIN")
-	studentToken := getAuthToken(t, handler, "test.student@school.com", "StudentPassword123", "STUDENT")
-
-	createPayload := domain.CreateStudentInput{
-		FullName:   "Alice Johnson",
-		Email:      "alice.johnson@school.com",
-		Department: "PHYSICS",
-		GPA:        3.88,
-	}
-	createBody, _ := json.Marshal(createPayload)
-
-	reqCreate, _ := http.NewRequest("POST", "/api/v1/students", bytes.NewBuffer(createBody))
-	reqCreate.Header.Set("Content-Type", "application/json")
-	reqCreate.Header.Set("Authorization", "Bearer "+adminToken)
-	wCreate := httptest.NewRecorder()
-	handler.ServeHTTP(wCreate, reqCreate)
-
-	if wCreate.Code != http.StatusCreated {
-		t.Fatalf("expected status 201 Created, got %d. Body: %s", wCreate.Code, wCreate.Body.String())
-	}
-
-	var createRes map[string]interface{}
-	json.Unmarshal(wCreate.Body.Bytes(), &createRes)
-	studentData := createRes["data"].(map[string]interface{})
-	studentID := studentData["id"].(string)
-
-	reqGet, _ := http.NewRequest("GET", "/api/v1/students/"+studentID, nil)
-	reqGet.Header.Set("Authorization", "Bearer "+studentToken)
-	wGet := httptest.NewRecorder()
-	handler.ServeHTTP(wGet, reqGet)
-
-	if wGet.Code != http.StatusOK {
-		t.Fatalf("expected status 200 OK, got %d", wGet.Code)
-	}
-
-	reqForbiddenDelete, _ := http.NewRequest("DELETE", "/api/v1/students/"+studentID, nil)
-	reqForbiddenDelete.Header.Set("Authorization", "Bearer "+studentToken)
-	wForbiddenDelete := httptest.NewRecorder()
-	handler.ServeHTTP(wForbiddenDelete, reqForbiddenDelete)
-
-	if wForbiddenDelete.Code != http.StatusForbidden {
-		t.Errorf("expected status 403 Forbidden for STUDENT role deletion, got %d", wForbiddenDelete.Code)
-	}
-
-	reqDelete, _ := http.NewRequest("DELETE", "/api/v1/students/"+studentID, nil)
-	reqDelete.Header.Set("Authorization", "Bearer "+adminToken)
-	wDelete := httptest.NewRecorder()
-	handler.ServeHTTP(wDelete, reqDelete)
-
-	if wDelete.Code != http.StatusOK {
-		t.Fatalf("expected status 200 OK for ADMIN role deletion, got %d", wDelete.Code)
-	}
-}
-```
-
----
+### Project Structure & Components (`Day-30/`)
+- [config/config.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-30/config/config.go) — Configuration Loader.
+- [domain/student.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-30/domain/student.go) — Domain Entities & Interfaces.
+- [middleware/auth_middleware.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-30/middleware/auth_middleware.go) — JWT Authentication & Role Middlewares.
+- [di/container.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-30/di/container.go) — Dependency Injection Container.
+- [tests/student_api_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-30/tests/student_api_test.go) — Automated Integration Test Suite.
+
+Full runnable source code, test suites, and configurations are available in [`Day-30/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-30/).
 
 # 📘 Day 30 Interview Questions & Answers
 
@@ -15077,37 +13661,37 @@ Today I completed the **Day 30 Student Management REST API Milestone Project**:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
-✅ Day 29 Completed  
-✅ Day 30 Completed  
-✅ Day 31 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
+✅ Day 29 Completed
+✅ Day 30 Completed
+✅ Day 31 Completed
 🚀 Next: Pagination & Filtering in Go
 
 ---
@@ -15191,397 +13775,14 @@ In production backend engineering, basic CRUD operations (`CREATE`, `READ`, `UPD
 
 # 🛠️ Implementation Walkthrough — Day 31 Project
 
-### 1. Domain Entities & Concurrency Errors (`domain/product.go`)
-
-```go
-package domain
-
-import (
-	"context"
-	"errors"
-	"time"
-)
-
-type ContextKey string
-
-const (
-	RequestIDKey ContextKey = "X-Request-ID"
-)
-
-var (
-	ErrProductNotFound     = errors.New("product record not found")
-	ErrSKUExists           = errors.New("product SKU already exists")
-	ErrAlreadyDeleted      = errors.New("product is already soft deleted")
-	ErrNotDeleted          = errors.New("product is not deleted")
-	ErrConcurrencyConflict = errors.New("concurrency conflict: record was modified by another request")
-	ErrInvalidInput        = errors.New("invalid request input parameters")
-	ErrEmptyBulkRequest    = errors.New("bulk payload cannot be empty")
-)
-
-type Product struct {
-	ID        string     `json:"id"`
-	SKU       string     `json:"sku"`
-	Name      string     `json:"name"`
-	Category  string     `json:"category"`
-	Price     float64    `json:"price"`
-	Stock     int        `json:"stock"`
-	Version   int        `json:"version"` // Optimistic Concurrency Control counter
-	IsDeleted bool       `json:"is_deleted"`
-	DeletedAt *time.Time `json:"deleted_at,omitempty"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
-}
-
-type CreateProductInput struct {
-	SKU      string  `json:"sku" binding:"required"`
-	Name     string  `json:"name" binding:"required"`
-	Category string  `json:"category" binding:"required"`
-	Price    float64 `json:"price" binding:"required,gt=0"`
-	Stock    int     `json:"stock" binding:"gte=0"`
-}
-
-type BulkCreateInput struct {
-	Items []CreateProductInput `json:"items" binding:"required,dive"`
-}
-
-type PatchProductInput struct {
-	Name            *string  `json:"name,omitempty"`
-	Category        *string  `json:"category,omitempty"`
-	Price           *float64 `json:"price,omitempty"`
-	Stock           *int     `json:"stock,omitempty"`
-	ExpectedVersion *int     `json:"expected_version,omitempty"`
-}
-
-type BulkDeleteInput struct {
-	IDs []string `json:"ids" binding:"required"`
-}
-
-type Logger interface {
-	Info(ctx context.Context, msg string, keysAndValues ...interface{})
-	Warn(ctx context.Context, msg string, keysAndValues ...interface{})
-	Error(ctx context.Context, msg string, keysAndValues ...interface{})
-	Debug(ctx context.Context, msg string, keysAndValues ...interface{})
-}
-
-type ProductRepository interface {
-	Save(ctx context.Context, product *Product) error
-	BulkSave(ctx context.Context, products []*Product) ([]*Product, error)
-	FindByID(ctx context.Context, id string, includeDeleted bool) (*Product, error)
-	FindBySKU(ctx context.Context, sku string) (*Product, error)
-	FindAll(ctx context.Context, includeDeleted bool) ([]*Product, error)
-	PatchUpdate(ctx context.Context, id string, input PatchProductInput) (*Product, error)
-	SoftDelete(ctx context.Context, id string) error
-	Restore(ctx context.Context, id string) (*Product, error)
-	BulkSoftDelete(ctx context.Context, ids []string) (int, error)
-}
-```
-
----
-
-### 2. Repository with Optimistic Concurrency & Soft Delete (`repository/product_repository.go`)
-
-```go
-package repository
-
-import (
-	"context"
-	"strings"
-	"sync"
-	"time"
-
-	"day-31/domain"
-)
-
-type memoryProductRepository struct {
-	mu       sync.RWMutex
-	products map[string]*domain.Product
-	skus     map[string]string
-	logger   domain.Logger
-}
-
-func NewMemoryProductRepository(logger domain.Logger) domain.ProductRepository {
-	return &memoryProductRepository{
-		products: make(map[string]*domain.Product),
-		skus:     make(map[string]string),
-		logger:   logger,
-	}
-}
-
-func (r *memoryProductRepository) PatchUpdate(ctx context.Context, id string, input domain.PatchProductInput) (*domain.Product, error) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	product, exists := r.products[id]
-	if !exists || product.IsDeleted {
-		return nil, domain.ErrProductNotFound
-	}
-
-	if input.ExpectedVersion != nil {
-		if product.Version != *input.ExpectedVersion {
-			r.logger.Warn(ctx, "DB Concurrency Conflict detected", "product_id", id, "current_version", product.Version, "expected_version", *input.ExpectedVersion)
-			return nil, domain.ErrConcurrencyConflict
-		}
-	}
-
-	if input.Name != nil && strings.TrimSpace(*input.Name) != "" {
-		product.Name = strings.TrimSpace(*input.Name)
-	}
-	if input.Category != nil && strings.TrimSpace(*input.Category) != "" {
-		product.Category = strings.ToUpper(strings.TrimSpace(*input.Category))
-	}
-	if input.Price != nil && *input.Price > 0 {
-		product.Price = *input.Price
-	}
-	if input.Stock != nil && *input.Stock >= 0 {
-		product.Stock = *input.Stock
-	}
-
-	product.Version++
-	product.UpdatedAt = time.Now()
-
-	r.products[id] = product
-	r.logger.Info(ctx, "DB Product patched & version incremented", "product_id", id, "new_version", product.Version)
-	return product, nil
-}
-
-func (r *memoryProductRepository) SoftDelete(ctx context.Context, id string) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	product, exists := r.products[id]
-	if !exists {
-		return domain.ErrProductNotFound
-	}
-	if product.IsDeleted {
-		return domain.ErrAlreadyDeleted
-	}
-
-	now := time.Now()
-	product.IsDeleted = true
-	product.DeletedAt = &now
-	product.UpdatedAt = now
-
-	r.products[id] = product
-	return nil
-}
-
-func (r *memoryProductRepository) Restore(ctx context.Context, id string) (*domain.Product, error) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-
-	product, exists := r.products[id]
-	if !exists {
-		return nil, domain.ErrProductNotFound
-	}
-	if !product.IsDeleted {
-		return nil, domain.ErrNotDeleted
-	}
-
-	product.IsDeleted = false
-	product.DeletedAt = nil
-	product.UpdatedAt = time.Now()
-
-	r.products[id] = product
-	return product, nil
-}
-```
-
----
-
-### 3. Business Use Case Layer (`usecase/product_usecase.go`)
-
-```go
-package usecase
-
-import (
-	"context"
-	"fmt"
-	"strings"
-	"time"
-
-	"day-31/domain"
-
-	"github.com/google/uuid"
-)
-
-type ProductUseCase struct {
-	repo   domain.ProductRepository
-	logger domain.Logger
-}
-
-func NewProductUseCase(repo domain.ProductRepository, logger domain.Logger) *ProductUseCase {
-	return &ProductUseCase{repo: repo, logger: logger}
-}
-
-func (u *ProductUseCase) CreateProduct(ctx context.Context, input domain.CreateProductInput) (*domain.Product, error) {
-	sku := strings.ToUpper(strings.TrimSpace(input.SKU))
-	existing, err := u.repo.FindBySKU(ctx, sku)
-	if err == nil && existing != nil {
-		return nil, domain.ErrSKUExists
-	}
-
-	now := time.Now()
-	product := &domain.Product{
-		ID:        fmt.Sprintf("prd_%s", uuid.New().String()[:8]),
-		SKU:       sku,
-		Name:      strings.TrimSpace(input.Name),
-		Category:  strings.ToUpper(strings.TrimSpace(input.Category)),
-		Price:     input.Price,
-		Stock:     input.Stock,
-		Version:   1,
-		IsDeleted: false,
-		CreatedAt: now,
-		UpdatedAt: now,
-	}
-
-	if err := u.repo.Save(ctx, product); err != nil {
-		return nil, err
-	}
-	return product, nil
-}
-
-func (u *ProductUseCase) PatchUpdateProduct(ctx context.Context, id string, input domain.PatchProductInput) (*domain.Product, error) {
-	return u.repo.PatchUpdate(ctx, id, input)
-}
-```
-
----
-
-### 4. Gin HTTP Handler (`handler/product_handler.go`)
-
-```go
-package handler
-
-import (
-	"net/http"
-	"strconv"
-
-	"day-31/domain"
-	"day-31/usecase"
-
-	"github.com/gin-gonic/gin"
-)
-
-type ProductHandler struct {
-	productUseCase *usecase.ProductUseCase
-	logger         domain.Logger
-}
-
-func NewProductHandler(productUseCase *usecase.ProductUseCase, logger domain.Logger) *ProductHandler {
-	return &ProductHandler{productUseCase: productUseCase, logger: logger}
-}
-
-func (h *ProductHandler) PatchUpdateProduct(c *gin.Context) {
-	id := c.Param("id")
-	var input domain.PatchProductInput
-
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request payload", "details": err.Error()})
-		return
-	}
-
-	if ifMatch := c.GetHeader("If-Match"); ifMatch != "" {
-		if ver, err := strconv.Atoi(ifMatch); err == nil {
-			input.ExpectedVersion = &ver
-		}
-	}
-
-	product, err := h.productUseCase.PatchUpdateProduct(c.Request.Context(), id, input)
-	if err != nil {
-		switch err {
-		case domain.ErrConcurrencyConflict:
-			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
-		case domain.ErrProductNotFound:
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		default:
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-		}
-		return
-	}
-
-	c.Header("ETag", strconv.Itoa(product.Version))
-	c.JSON(http.StatusOK, gin.H{"message": "Product patched successfully", "data": product})
-}
-```
-
----
-
-### 5. Integration Test Suite (`handler/product_handler_test.go`)
-
-```go
-package handler_test
-
-import (
-	"bytes"
-	"encoding/json"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-
-	"day-31/domain"
-	"day-31/handler"
-	"day-31/logger"
-	"day-31/middleware"
-	"day-31/repository"
-	"day-31/usecase"
-
-	"github.com/gin-gonic/gin"
-)
-
-func TestAdvancedCRUD_Lifecycle(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	zapLog, _ := logger.NewZapLogger("test", "")
-	productRepo := repository.NewMemoryProductRepository(zapLog)
-	productUC := usecase.NewProductUseCase(productRepo, zapLog)
-	productHandler := handler.NewProductHandler(productUC, zapLog)
-
-	router := gin.New()
-	router.Use(middleware.RequestIDMiddleware())
-	router.Use(middleware.StructuredLoggerMiddleware(zapLog))
-
-	v1 := router.Group("/api/v1/products")
-	{
-		v1.POST("", productHandler.CreateProduct)
-		v1.PATCH("/:id", productHandler.PatchUpdateProduct)
-		v1.DELETE("/:id", productHandler.SoftDeleteProduct)
-		v1.POST("/:id/restore", productHandler.RestoreProduct)
-	}
-
-	createInput := domain.CreateProductInput{
-		SKU:      "TEST-SKU-01",
-		Name:     "Test Keyboard",
-		Category: "PERIPHERALS",
-		Price:    89.99,
-		Stock:    20,
-	}
-	body, _ := json.Marshal(createInput)
-	req1, _ := http.NewRequest("POST", "/api/v1/products", bytes.NewBuffer(body))
-	req1.Header.Set("Content-Type", "application/json")
-	w1 := httptest.NewRecorder()
-	router.ServeHTTP(w1, req1)
-
-	var res1 map[string]interface{}
-	json.Unmarshal(w1.Body.Bytes(), &res1)
-	productData := res1["data"].(map[string]interface{})
-	productID := productData["id"].(string)
-
-	// Test Optimistic Concurrency Conflict (Stale Version)
-	staleVersion := 0
-	newPrice := 79.99
-	patchInputStale := domain.PatchProductInput{Price: &newPrice, ExpectedVersion: &staleVersion}
-	staleBody, _ := json.Marshal(patchInputStale)
-	req3, _ := http.NewRequest("PATCH", "/api/v1/products/"+productID, bytes.NewBuffer(staleBody))
-	req3.Header.Set("Content-Type", "application/json")
-	w3 := httptest.NewRecorder()
-	router.ServeHTTP(w3, req3)
-
-	if w3.Code != http.StatusConflict {
-		t.Errorf("expected status 403 Conflict on stale version, got %d", w3.Code)
-	}
-}
-```
-
----
+### Project Structure & Components (`Day-31/`)
+- [domain/product.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-31/domain/product.go) — Domain Entities & Concurrency Errors.
+- [repository/product_repository.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-31/repository/product_repository.go) — Repository with Optimistic Concurrency & Soft Delete.
+- [usecase/product_usecase.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-31/usecase/product_usecase.go) — Business Use Case Layer.
+- [handler/product_handler.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-31/handler/product_handler.go) — Gin HTTP Handler.
+- [handler/product_handler_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-31/handler/product_handler_test.go) — Integration Test Suite.
+
+Full runnable source code, test suites, and configurations are available in [`Day-31/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-31/).
 
 # 📘 Day 31 Interview Questions & Answers
 
@@ -15642,38 +13843,38 @@ Today I completed **Day 31 Advanced CRUD APIs in Go**:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
-✅ Day 29 Completed  
-✅ Day 30 Completed  
-✅ Day 31 Completed  
-✅ Day 32 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
+✅ Day 29 Completed
+✅ Day 30 Completed
+✅ Day 31 Completed
+✅ Day 32 Completed
 🚀 Next: File Upload API in Go
 
 ---
@@ -15741,526 +13942,14 @@ To solve this, APIs employ **Pagination**, **Filtering**, and **Sorting**.
 
 # 🛠️ Implementation Walkthrough — Day 32 Project
 
-### 1. Domain Models & Query Structs (`domain/article.go`)
-
-```go
-package domain
-
-import (
-	"context"
-	"errors"
-	"time"
-)
-
-type ContextKey string
-
-const (
-	RequestIDKey ContextKey = "X-Request-ID"
-)
-
-var (
-	ErrInvalidInput = errors.New("invalid request input parameters")
-)
-
-type Article struct {
-	ID          string    `json:"id"`
-	Title       string    `json:"title"`
-	Category    string    `json:"category"`
-	Author      string    `json:"author"`
-	Views       int       `json:"views"`
-	PublishedAt time.Time `json:"published_at"`
-	CreatedAt   time.Time `json:"created_at"`
-}
-
-type FilterParams struct {
-	Category string `form:"category"`
-	MinViews int    `form:"min_views"`
-	Search   string `form:"search"`
-}
-
-type PaginationQuery struct {
-	Page   int    `form:"page,default=1"`
-	Limit  int    `form:"limit,default=10"`
-	SortBy string `form:"sort_by,default=created_at"`
-	Order  string `form:"order,default=desc"`
-}
-
-type CursorQuery struct {
-	Cursor string `form:"cursor"`
-	Limit  int    `form:"limit,default=10"`
-}
-
-type PaginationMeta struct {
-	Page         int  `json:"page"`
-	Limit        int  `json:"limit"`
-	TotalRecords int  `json:"total_records"`
-	TotalPages   int  `json:"total_pages"`
-	HasNext      bool `json:"has_next"`
-	HasPrev      bool `json:"has_prev"`
-}
-
-type CursorMeta struct {
-	NextCursor string `json:"next_cursor"`
-	HasNext    bool   `json:"has_next"`
-	Limit      int    `json:"limit"`
-}
-
-type PaginatedResponse struct {
-	Data []*Article     `json:"data"`
-	Meta PaginationMeta `json:"meta"`
-}
-
-type CursorPaginatedResponse struct {
-	Data []*Article `json:"data"`
-	Meta CursorMeta `json:"meta"`
-}
-
-type Logger interface {
-	Info(ctx context.Context, msg string, keysAndValues ...interface{})
-	Warn(ctx context.Context, msg string, keysAndValues ...interface{})
-	Error(ctx context.Context, msg string, keysAndValues ...interface{})
-	Debug(ctx context.Context, msg string, keysAndValues ...interface{})
-}
-
-type ArticleRepository interface {
-	Save(ctx context.Context, article *Article) error
-	BulkSave(ctx context.Context, articles []*Article) error
-	FindWithOffset(ctx context.Context, filters FilterParams, pag PaginationQuery) ([]*Article, int, error)
-	FindWithCursor(ctx context.Context, filters FilterParams, limit int, cursorID string, cursorTime *time.Time) ([]*Article, bool, error)
-}
-```
-
----
-
-### 2. Repository with Offset & Keyset Cursor Logic (`repository/article_repository.go`)
-
-```go
-package repository
-
-import (
-	"context"
-	"sort"
-	"strings"
-	"sync"
-	"time"
-
-	"day-32/domain"
-)
-
-type memoryArticleRepository struct {
-	mu       sync.RWMutex
-	articles map[string]*domain.Article
-	logger   domain.Logger
-}
-
-func NewMemoryArticleRepository(logger domain.Logger) domain.ArticleRepository {
-	return &memoryArticleRepository{
-		articles: make(map[string]*domain.Article),
-		logger:   logger,
-	}
-}
-
-func (r *memoryArticleRepository) Save(ctx context.Context, article *domain.Article) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	r.articles[article.ID] = article
-	return nil
-}
-
-func (r *memoryArticleRepository) BulkSave(ctx context.Context, articles []*domain.Article) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	for _, a := range articles {
-		r.articles[a.ID] = a
-	}
-	r.logger.Info(ctx, "DB BulkSave articles completed", "count", len(articles))
-	return nil
-}
-
-func (r *memoryArticleRepository) filterArticles(filters domain.FilterParams) []*domain.Article {
-	filtered := make([]*domain.Article, 0)
-	for _, a := range r.articles {
-		if filters.Category != "" && !strings.EqualFold(a.Category, filters.Category) {
-			continue
-		}
-		if filters.MinViews > 0 && a.Views < filters.MinViews {
-			continue
-		}
-		if filters.Search != "" {
-			term := strings.ToLower(filters.Search)
-			if !strings.Contains(strings.ToLower(a.Title), term) && !strings.Contains(strings.ToLower(a.Author), term) {
-				continue
-			}
-		}
-		filtered = append(filtered, a)
-	}
-	return filtered
-}
-
-func (r *memoryArticleRepository) sortArticles(articles []*domain.Article, sortBy string, order string) {
-	desc := strings.ToLower(order) == "desc"
-	sort.Slice(articles, func(i, j int) bool {
-		switch strings.ToLower(sortBy) {
-		case "views":
-			if desc {
-				return articles[i].Views > articles[j].Views
-			}
-			return articles[i].Views < articles[j].Views
-		case "published_at":
-			if desc {
-				return articles[i].PublishedAt.After(articles[j].PublishedAt)
-			}
-			return articles[i].PublishedAt.Before(articles[j].PublishedAt)
-		case "title":
-			if desc {
-				return articles[i].Title > articles[j].Title
-			}
-			return articles[i].Title < articles[j].Title
-		default:
-			if desc {
-				return articles[i].CreatedAt.After(articles[j].CreatedAt)
-			}
-			return articles[i].CreatedAt.Before(articles[j].CreatedAt)
-		}
-	})
-}
-
-func (r *memoryArticleRepository) FindWithOffset(ctx context.Context, filters domain.FilterParams, pag domain.PaginationQuery) ([]*domain.Article, int, error) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-
-	filtered := r.filterArticles(filters)
-	totalCount := len(filtered)
-
-	r.sortArticles(filtered, pag.SortBy, pag.Order)
-
-	offset := (pag.Page - 1) * pag.Limit
-	if offset >= totalCount {
-		return []*domain.Article{}, totalCount, nil
-	}
-
-	end := offset + pag.Limit
-	if end > totalCount {
-		end = totalCount
-	}
-
-	return filtered[offset:end], totalCount, nil
-}
-
-func (r *memoryArticleRepository) FindWithCursor(ctx context.Context, filters domain.FilterParams, limit int, cursorID string, cursorTime *time.Time) ([]*domain.Article, bool, error) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-
-	filtered := r.filterArticles(filters)
-
-	sort.Slice(filtered, func(i, j int) bool {
-		if filtered[i].PublishedAt.Equal(filtered[j].PublishedAt) {
-			return filtered[i].ID > filtered[j].ID
-		}
-		return filtered[i].PublishedAt.After(filtered[j].PublishedAt)
-	})
-
-	startIndex := 0
-	if cursorTime != nil && cursorID != "" {
-		for i, a := range filtered {
-			if a.PublishedAt.Before(*cursorTime) || (a.PublishedAt.Equal(*cursorTime) && a.ID < cursorID) {
-				startIndex = i
-				break
-			}
-			if i == len(filtered)-1 {
-				startIndex = len(filtered)
-			}
-		}
-	}
-
-	if startIndex >= len(filtered) {
-		return []*domain.Article{}, false, nil
-	}
-
-	end := startIndex + limit + 1
-	hasNext := false
-
-	if end > len(filtered) {
-		end = len(filtered)
-	} else {
-		hasNext = true
-	}
-
-	slice := filtered[startIndex:end]
-	if hasNext && len(slice) > limit {
-		slice = slice[:limit]
-	}
-
-	return slice, hasNext, nil
-}
-```
-
----
-
-### 3. Business UseCase Layer (`usecase/article_usecase.go`)
-
-```go
-package usecase
-
-import (
-	"context"
-	"encoding/base64"
-	"fmt"
-	"math"
-	"math/rand"
-	"strconv"
-	"strings"
-	"time"
-
-	"day-32/domain"
-
-	"github.com/google/uuid"
-)
-
-type ArticleUseCase struct {
-	repo   domain.ArticleRepository
-	logger domain.Logger
-}
-
-func NewArticleUseCase(repo domain.ArticleRepository, logger domain.Logger) *ArticleUseCase {
-	return &ArticleUseCase{repo: repo, logger: logger}
-}
-
-func (u *ArticleUseCase) GetArticlesWithOffset(ctx context.Context, filters domain.FilterParams, pag domain.PaginationQuery) (*domain.PaginatedResponse, error) {
-	if pag.Page < 1 {
-		pag.Page = 1
-	}
-	if pag.Limit < 1 {
-		pag.Limit = 10
-	}
-	if pag.Limit > 100 {
-		pag.Limit = 100
-	}
-
-	articles, totalRecords, err := u.repo.FindWithOffset(ctx, filters, pag)
-	if err != nil {
-		return nil, err
-	}
-
-	totalPages := int(math.Ceil(float64(totalRecords) / float64(pag.Limit)))
-	if totalPages == 0 {
-		totalPages = 1
-	}
-
-	meta := domain.PaginationMeta{
-		Page:         pag.Page,
-		Limit:        pag.Limit,
-		TotalRecords: totalRecords,
-		TotalPages:   totalPages,
-		HasNext:      pag.Page < totalPages,
-		HasPrev:      pag.Page > 1,
-	}
-
-	return &domain.PaginatedResponse{Data: articles, Meta: meta}, nil
-}
-
-func (u *ArticleUseCase) encodeCursor(publishedAt time.Time, id string) string {
-	raw := fmt.Sprintf("%d:%s", publishedAt.UnixNano(), id)
-	return base64.StdEncoding.EncodeToString([]byte(raw))
-}
-
-func (u *ArticleUseCase) decodeCursor(cursorStr string) (string, *time.Time, error) {
-	if cursorStr == "" {
-		return "", nil, nil
-	}
-
-	decodedBytes, err := base64.StdEncoding.DecodeString(cursorStr)
-	if err != nil {
-		return "", nil, fmt.Errorf("invalid cursor base64 string: %w", err)
-	}
-
-	parts := strings.Split(string(decodedBytes), ":")
-	if len(parts) != 2 {
-		return "", nil, fmt.Errorf("invalid cursor format")
-	}
-
-	nanoUnix, err := strconv.ParseInt(parts[0], 10, 64)
-	if err != nil {
-		return "", nil, fmt.Errorf("invalid cursor timestamp")
-	}
-
-	pubTime := time.Unix(0, nanoUnix)
-	return parts[1], &pubTime, nil
-}
-
-func (u *ArticleUseCase) GetArticlesWithCursor(ctx context.Context, filters domain.FilterParams, cursorQuery domain.CursorQuery) (*domain.CursorPaginatedResponse, error) {
-	limit := cursorQuery.Limit
-	if limit < 1 {
-		limit = 10
-	}
-	if limit > 100 {
-		limit = 100
-	}
-
-	cursorID, cursorTime, err := u.decodeCursor(cursorQuery.Cursor)
-	if err != nil {
-		return nil, domain.ErrInvalidInput
-	}
-
-	articles, hasNext, err := u.repo.FindWithCursor(ctx, filters, limit, cursorID, cursorTime)
-	if err != nil {
-		return nil, err
-	}
-
-	var nextCursor string
-	if hasNext && len(articles) > 0 {
-		lastItem := articles[len(articles)-1]
-		nextCursor = u.encodeCursor(lastItem.PublishedAt, lastItem.ID)
-	}
-
-	meta := domain.CursorMeta{
-		NextCursor: nextCursor,
-		HasNext:    hasNext,
-		Limit:      limit,
-	}
-
-	return &domain.CursorPaginatedResponse{Data: articles, Meta: meta}, nil
-}
-```
-
----
-
-### 4. Gin HTTP Handler (`handler/article_handler.go`)
-
-```go
-package handler
-
-import (
-	"net/http"
-
-	"day-32/domain"
-	"day-32/usecase"
-
-	"github.com/gin-gonic/gin"
-)
-
-type ArticleHandler struct {
-	articleUseCase *usecase.ArticleUseCase
-	logger          domain.Logger
-}
-
-func NewArticleHandler(articleUseCase *usecase.ArticleUseCase, logger domain.Logger) *ArticleHandler {
-	return &ArticleHandler{articleUseCase: articleUseCase, logger: logger}
-}
-
-func (h *ArticleHandler) GetArticlesOffset(c *gin.Context) {
-	var filters domain.FilterParams
-	c.ShouldBindQuery(&filters)
-
-	var pag domain.PaginationQuery
-	c.ShouldBindQuery(&pag)
-
-	res, err := h.articleUseCase.GetArticlesWithOffset(c.Request.Context(), filters, pag)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-		return
-	}
-
-	c.JSON(http.StatusOK, res)
-}
-
-func (h *ArticleHandler) GetArticlesCursor(c *gin.Context) {
-	var filters domain.FilterParams
-	c.ShouldBindQuery(&filters)
-
-	var cursorQuery domain.CursorQuery
-	c.ShouldBindQuery(&cursorQuery)
-
-	res, err := h.articleUseCase.GetArticlesWithCursor(c.Request.Context(), filters, cursorQuery)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid pagination request or cursor string"})
-		return
-	}
-
-	c.JSON(http.StatusOK, res)
-}
-```
-
----
-
-### 5. Automated Test Suite (`handler/article_handler_test.go`)
-
-```go
-package handler_test
-
-import (
-	"encoding/json"
-	"fmt"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-
-	"day-32/handler"
-	"day-32/logger"
-	"day-32/middleware"
-	"day-32/repository"
-	"day-32/usecase"
-
-	"github.com/gin-gonic/gin"
-)
-
-func setupTestRouter() *gin.Engine {
-	gin.SetMode(gin.TestMode)
-	zapLog, _ := logger.NewZapLogger("test", "")
-	articleRepo := repository.NewMemoryArticleRepository(zapLog)
-	articleUC := usecase.NewArticleUseCase(articleRepo, zapLog)
-	articleHandler := handler.NewArticleHandler(articleUC, zapLog)
-
-	router := gin.New()
-	router.Use(middleware.RequestIDMiddleware())
-	router.Use(middleware.StructuredLoggerMiddleware(zapLog))
-
-	v1 := router.Group("/api/v1/articles")
-	{
-		v1.POST("/seed", articleHandler.SeedArticles)
-		v1.GET("/offset", articleHandler.GetArticlesOffset)
-		v1.GET("/cursor", articleHandler.GetArticlesCursor)
-	}
-
-	return router
-}
-
-func TestPagination_OffsetAndCursor(t *testing.T) {
-	router := setupTestRouter()
-
-	reqSeed, _ := http.NewRequest("POST", "/api/v1/articles/seed?count=20", nil)
-	wSeed := httptest.NewRecorder()
-	router.ServeHTTP(wSeed, reqSeed)
-
-	reqP1, _ := http.NewRequest("GET", "/api/v1/articles/offset?page=1&limit=5", nil)
-	wP1 := httptest.NewRecorder()
-	router.ServeHTTP(wP1, reqP1)
-
-	if wP1.Code != http.StatusOK {
-		t.Fatalf("expected status 200 OK, got %d", wP1.Code)
-	}
-
-	reqC1, _ := http.NewRequest("GET", "/api/v1/articles/cursor?limit=5", nil)
-	wC1 := httptest.NewRecorder()
-	router.ServeHTTP(wC1, reqC1)
-
-	var resC1 map[string]interface{}
-	json.Unmarshal(wC1.Body.Bytes(), &resC1)
-	meta1 := resC1["meta"].(map[string]interface{})
-	nextCursor := meta1["next_cursor"].(string)
-
-	urlP2 := fmt.Sprintf("/api/v1/articles/cursor?limit=5&cursor=%s", nextCursor)
-	reqC2, _ := http.NewRequest("GET", urlP2, nil)
-	wC2 := httptest.NewRecorder()
-	router.ServeHTTP(wC2, reqC2)
-
-	if wC2.Code != http.StatusOK {
-		t.Fatalf("expected 200 OK for cursor page 2, got %d", wC2.Code)
-	}
-}
-```
-
----
+### Project Structure & Components (`Day-32/`)
+- [domain/article.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-32/domain/article.go) — Domain Models & Query Structs.
+- [repository/article_repository.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-32/repository/article_repository.go) — Repository with Offset & Keyset Cursor Logic.
+- [usecase/article_usecase.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-32/usecase/article_usecase.go) — Business UseCase Layer.
+- [handler/article_handler.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-32/handler/article_handler.go) — Gin HTTP Handler.
+- [handler/article_handler_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-32/handler/article_handler_test.go) — Automated Test Suite.
+
+Full runnable source code, test suites, and configurations are available in [`Day-32/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-32/).
 
 # 📘 Day 32 Interview Questions & Answers
 
@@ -16319,49 +14008,49 @@ Today I completed **Day 32 Pagination & Filtering in Go**:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
-✅ Day 29 Completed  
-✅ Day 30 Completed  
-✅ Day 31 Completed  
-✅ Day 32 Completed  
-✅ Day 33 Completed  
-✅ Day 34 Completed  
-✅ Day 35 Completed  
-✅ Day 36 Completed  
-✅ Day 37 Completed  
-✅ Day 38 Completed  
-✅ Day 39 Completed  
-✅ Day 40 Completed  
-✅ Day 41 Completed  
-✅ Day 42 Completed  
-✅ Day 43 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
+✅ Day 29 Completed
+✅ Day 30 Completed
+✅ Day 31 Completed
+✅ Day 32 Completed
+✅ Day 33 Completed
+✅ Day 34 Completed
+✅ Day 35 Completed
+✅ Day 36 Completed
+✅ Day 37 Completed
+✅ Day 38 Completed
+✅ Day 39 Completed
+✅ Day 40 Completed
+✅ Day 41 Completed
+✅ Day 42 Completed
+✅ Day 43 Completed
 🚀 Next: Docker Basics in Go
 
 ---
@@ -16412,149 +14101,11 @@ Handling file uploads (`multipart/form-data`) is a fundamental feature of web ba
 
 # 🛠️ Implementation Walkthrough — Day 33 Project
 
-### 1. Domain Entities & Validation Errors (`domain/file.go`)
+### Project Structure & Components (`Day-33/`)
+- [domain/file.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-33/domain/file.go) — Domain Entities & Validation Errors.
+- [service/file_service.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-33/service/file_service.go) — File Validation & Disk Storage Service.
 
-```go
-package domain
-
-import (
-	"context"
-	"errors"
-	"time"
-)
-
-type ContextKey string
-
-const (
-	RequestIDKey ContextKey = "X-Request-ID"
-)
-
-var (
-	ErrFileTooLarge    = errors.New("file size exceeds maximum allowed limit (5MB)")
-	ErrInvalidFileType = errors.New("invalid file extension or MIME type (allowed: .png, .jpg, .jpeg, .pdf)")
-	ErrNoFileProvided  = errors.New("no file was provided in form data")
-)
-
-type FileMeta struct {
-	ID           string    `json:"id"`
-	OriginalName string    `json:"original_name"`
-	StoredName   string    `json:"stored_name"`
-	ContentType  string    `json:"content_type"`
-	SizeBytes    int64     `json:"size_bytes"`
-	URL          string    `json:"url"`
-	UploadedAt   time.Time `json:"uploaded_at"`
-}
-
-type Logger interface {
-	Info(ctx context.Context, msg string, keysAndValues ...interface{})
-	Warn(ctx context.Context, msg string, keysAndValues ...interface{})
-	Error(ctx context.Context, msg string, keysAndValues ...interface{})
-	Debug(ctx context.Context, msg string, keysAndValues ...interface{})
-}
-```
-
----
-
-### 2. File Validation & Disk Storage Service (`service/file_service.go`)
-
-```go
-package service
-
-import (
-	"context"
-	"fmt"
-	"io"
-	"mime/multipart"
-	"os"
-	"path/filepath"
-	"strings"
-	"time"
-
-	"day-33/domain"
-
-	"github.com/google/uuid"
-)
-
-type FileService struct {
-	uploadDir string
-	maxSize   int64
-	logger    domain.Logger
-}
-
-func NewFileService(uploadDir string, maxSize int64, logger domain.Logger) (*FileService, error) {
-	if err := os.MkdirAll(uploadDir, 0755); err != nil {
-		return nil, fmt.Errorf("failed to create upload directory: %w", err)
-	}
-	return &FileService{
-		uploadDir: uploadDir,
-		maxSize:   maxSize,
-		logger:    logger,
-	}, nil
-}
-
-func (s *FileService) ValidateFile(fileHeader *multipart.FileHeader) error {
-	if fileHeader.Size > s.maxSize {
-		return domain.ErrFileTooLarge
-	}
-
-	ext := strings.ToLower(filepath.Ext(fileHeader.Filename))
-	allowedExts := map[string]bool{
-		".png":  true,
-		".jpg":  true,
-		".jpeg": true,
-		".pdf":  true,
-		".txt":  true,
-	}
-
-	if !allowedExts[ext] {
-		return domain.ErrInvalidFileType
-	}
-	return nil
-}
-
-func (s *FileService) SaveUploadedFile(ctx context.Context, fileHeader *multipart.FileHeader) (*domain.FileMeta, error) {
-	if err := s.ValidateFile(fileHeader); err != nil {
-		s.logger.Warn(ctx, "File validation failed", "filename", fileHeader.Filename, "error", err)
-		return nil, err
-	}
-
-	file, err := fileHeader.Open()
-	if err != nil {
-		return nil, fmt.Errorf("failed to open uploaded file: %w", err)
-	}
-	defer file.Close()
-
-	ext := filepath.Ext(fileHeader.Filename)
-	uniqueFilename := fmt.Sprintf("%s_%s%s", time.Now().Format("20060102_150405"), uuid.New().String()[:8], ext)
-	dstPath := filepath.Join(s.uploadDir, uniqueFilename)
-
-	dstFile, err := os.Create(dstPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create destination file: %w", err)
-	}
-	defer dstFile.Close()
-
-	writtenBytes, err := io.Copy(dstFile, file)
-	if err != nil {
-		return nil, fmt.Errorf("failed to write file to disk: %w", err)
-	}
-
-	fileMeta := &domain.FileMeta{
-		ID:           uuid.New().String(),
-		OriginalName: fileHeader.Filename,
-		StoredName:   uniqueFilename,
-		ContentType:  fileHeader.Header.Get("Content-Type"),
-		SizeBytes:    writtenBytes,
-		URL:          fmt.Sprintf("/api/v1/files/download/%s", uniqueFilename),
-		UploadedAt:   time.Now(),
-	}
-
-	s.logger.Info(ctx, "File uploaded successfully", "stored_name", uniqueFilename, "bytes", writtenBytes)
-	return fileMeta, nil
-}
-```
-
----
+Full runnable source code, test suites, and configurations are available in [`Day-33/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-33/).
 
 # 📘 Day 33 Interview Questions & Answers
 
@@ -16648,112 +14199,10 @@ Transactional emails (welcome emails, password reset tokens, order receipts) are
 
 # 🛠️ Implementation Walkthrough — Day 34 Project
 
-### 1. HTML Template Rendering & Background Queue Service (`service/email_service.go`)
+### Project Structure & Components (`Day-34/`)
+- [service/email_service.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-34/service/email_service.go) — HTML Template Rendering & Background Queue Service.
 
-```go
-package service
-
-import (
-	"bytes"
-	"context"
-	"fmt"
-	"html/template"
-	"net/smtp"
-	"strings"
-	"sync"
-	"time"
-
-	"day-34/domain"
-
-	"github.com/google/uuid"
-)
-
-type EmailService struct {
-	smtpHost  string
-	smtpPort  string
-	sender    string
-	password  string
-	isMock    bool
-	queueChan chan domain.EmailMessage
-	logger    domain.Logger
-	wg        sync.WaitGroup
-}
-
-func NewEmailService(host, port, sender, password string, isMock bool, logger domain.Logger) *EmailService {
-	svc := &EmailService{
-		smtpHost:  host,
-		smtpPort:  port,
-		sender:    sender,
-		password:  password,
-		isMock:    isMock,
-		queueChan: make(chan domain.EmailMessage, 100),
-		logger:    logger,
-	}
-
-	svc.wg.Add(1)
-	go svc.startWorker()
-
-	return svc
-}
-
-func (s *EmailService) RenderTemplate(tplName string, name string) (string, error) {
-	htmlTpl := `
-	<!DOCTYPE html>
-	<html>
-	<body>
-		<h2>Hello {{.Name}},</h2>
-		<p>Welcome to the <strong>90 Days Go Challenge</strong>!</p>
-		<p>Action: <em>{{.Action}}</em></p>
-	</body>
-	</html>`
-
-	action := "Account Setup"
-	if tplName == "PASSWORD_RESET" {
-		action = "Password Reset Requested"
-	}
-
-	t, err := template.New("email").Parse(htmlTpl)
-	if err != nil {
-		return "", err
-	}
-
-	buf := &bytes.Buffer{}
-	if err := t.Execute(buf, map[string]string{"Name": name, "Action": action}); err != nil {
-		return "", err
-	}
-	return buf.String(), nil
-}
-
-func (s *EmailService) SendEmail(ctx context.Context, msg domain.EmailMessage) error {
-	if s.isMock {
-		s.logger.Info(ctx, "MOCK SMTP: Email delivered successfully", "id", msg.ID, "to", msg.To)
-		return nil
-	}
-
-	auth := smtp.PlainAuth("", s.sender, s.password, s.smtpHost)
-	mime := "MIME-version: 1.0;\nContent-Type: text/html; charset=\"UTF-8\";\n\n"
-	body := []byte(fmt.Sprintf("To: %s\r\nSubject: %s\r\n%s\r\n%s", strings.Join(msg.To, ","), msg.Subject, mime, msg.BodyHTML))
-
-	return smtp.SendMail(fmt.Sprintf("%s:%s", s.smtpHost, s.smtpPort), auth, s.sender, msg.To, body)
-}
-
-func (s *EmailService) EnqueueEmail(ctx context.Context, msg domain.EmailMessage) {
-	msg.ID = uuid.New().String()
-	msg.Status = "QUEUED"
-	msg.SentAt = time.Now()
-	s.queueChan <- msg
-}
-
-func (s *EmailService) startWorker() {
-	defer s.wg.Done()
-	ctx := context.Background()
-	for msg := range s.queueChan {
-		_ = s.SendEmail(ctx, msg)
-	}
-}
-```
-
----
+Full runnable source code, test suites, and configurations are available in [`Day-34/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-34/).
 
 # 📘 Day 34 Interview Questions & Answers
 
@@ -16847,103 +14296,10 @@ A production-grade REST Client in Go requires:
 
 # 🛠️ Implementation Walkthrough — Day 35 Project
 
-### 1. Resilient HTTP Client with Exponential Backoff (`client/http_client.go`)
+### Project Structure & Components (`Day-35/`)
+- [client/http_client.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-35/client/http_client.go) — Resilient HTTP Client with Exponential Backoff.
 
-```go
-package client
-
-import (
-	"context"
-	"encoding/json"
-	"fmt"
-	"net"
-	"net/http"
-	"time"
-
-	"day-35/domain"
-)
-
-type ResilientHTTPClient struct {
-	client *http.Client
-	config domain.ClientConfig
-	logger domain.Logger
-}
-
-func NewResilientHTTPClient(cfg domain.ClientConfig, logger domain.Logger) *ResilientHTTPClient {
-	transport := &http.Transport{
-		Proxy: http.ProxyFromEnvironment,
-		DialContext: (&net.Dialer{
-			Timeout:   5 * time.Second,
-			KeepAlive: 30 * time.Second,
-		}).DialContext,
-		MaxIdleConns:        100,
-		MaxIdleConnsPerHost: 10,
-		IdleConnTimeout:     90 * time.Second,
-		TLSHandshakeTimeout: 10 * time.Second,
-	}
-
-	return &ResilientHTTPClient{
-		client: &http.Client{Transport: transport, Timeout: cfg.Timeout},
-		config: cfg,
-		logger: logger,
-	}
-}
-
-func (c *ResilientHTTPClient) GetUser(ctx context.Context, userID int) (*domain.ExternalUser, error) {
-	url := fmt.Sprintf("%s/users/%d", c.config.BaseURL, userID)
-	var lastErr error
-	backoff := c.config.InitialBackoff
-
-	for attempt := 1; attempt <= c.config.MaxRetries; attempt++ {
-		c.logger.Info(ctx, "HTTP GET request attempt", "url", url, "attempt", attempt)
-
-		reqCtx, cancel := context.WithTimeout(ctx, c.config.Timeout)
-		req, err := http.NewRequestWithContext(reqCtx, "GET", url, nil)
-		if err != nil {
-			cancel()
-			return nil, err
-		}
-
-		if reqID, ok := ctx.Value(domain.RequestIDKey).(string); ok && reqID != "" {
-			req.Header.Set("X-Correlation-ID", reqID)
-		}
-
-		resp, err := c.client.Do(req)
-		if err != nil {
-			cancel()
-			c.logger.Warn(ctx, "HTTP request error, retrying...", "attempt", attempt, "error", err)
-			lastErr = err
-			time.Sleep(backoff)
-			backoff *= 2
-			continue
-		}
-
-		if resp.StatusCode == http.StatusOK {
-			defer resp.Body.Close()
-			var user domain.ExternalUser
-			json.NewDecoder(resp.Body).Decode(&user)
-			cancel()
-			return &user, nil
-		}
-
-		resp.Body.Close()
-		cancel()
-
-		if resp.StatusCode >= 500 {
-			lastErr = fmt.Errorf("HTTP error status: %d", resp.StatusCode)
-			time.Sleep(backoff)
-			backoff *= 2
-			continue
-		}
-
-		return nil, fmt.Errorf("non-retriable status code: %d", resp.StatusCode)
-	}
-
-	return nil, fmt.Errorf("%w: %v", domain.ErrMaxRetriesExceeded, lastErr)
-}
-```
-
----
+Full runnable source code, test suites, and configurations are available in [`Day-35/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-35/).
 
 # 📘 Day 35 Interview Questions & Answers
 
@@ -17334,7 +14690,6 @@ Today I completed **Day 37 Redis Caching Pattern**:
 
 ---
 
-
 # ✅ Day 38 — WebSockets in Go
 
 ---
@@ -17374,106 +14729,10 @@ Key Components:
 
 # 🛠️ Implementation Walkthrough — Day 38 Project
 
-### 1. Connection Pump Management (`ws/connection.go`)
+### Project Structure & Components (`Day-38/`)
+- [ws/connection.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-38/ws/connection.go) — Connection Pump Management.
 
-```go
-package ws
-
-import (
-	"context"
-	"encoding/json"
-	"net/http"
-	"sync"
-	"time"
-
-	"day-38/domain"
-
-	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
-)
-
-var Upgrader = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-	CheckOrigin:     func(r *http.Request) bool { return true },
-}
-
-type ClientConnection struct {
-	ID     string
-	Conn   *websocket.Conn
-	Send   chan domain.WSMessage
-	logger domain.Logger
-	mu     sync.Mutex
-}
-
-func NewClientConnection(conn *websocket.Conn, logger domain.Logger) *ClientConnection {
-	return &ClientConnection{
-		ID:     uuid.New().String()[:8],
-		Conn:   conn,
-		Send:   make(chan domain.WSMessage, 256),
-		logger: logger,
-	}
-}
-
-func (c *ClientConnection) ReadLoop(ctx context.Context, onMessage func(msg domain.WSMessage)) {
-	defer func() {
-		c.Conn.Close()
-		c.logger.Info(ctx, "WebSocket client connection closed", "client_id", c.ID)
-	}()
-
-	c.Conn.SetReadDeadline(time.Now().Add(60 * time.Second))
-	c.Conn.SetPongHandler(func(string) error {
-		c.Conn.SetReadDeadline(time.Now().Add(60 * time.Second))
-		return nil
-	})
-
-	for {
-		_, messageBytes, err := c.Conn.ReadMessage()
-		if err != nil {
-			break
-		}
-
-		var msg domain.WSMessage
-		if err := json.Unmarshal(messageBytes, &msg); err != nil {
-			msg = domain.WSMessage{Type: "ECHO", Sender: c.ID, Content: string(messageBytes), Timestamp: time.Now()}
-		}
-
-		onMessage(msg)
-	}
-}
-
-func (c *ClientConnection) WriteLoop(ctx context.Context) {
-	ticker := time.NewTicker(30 * time.Second)
-	defer func() {
-		ticker.Stop()
-		c.Conn.Close()
-	}()
-
-	for {
-		select {
-		case msg, ok := <-c.Send:
-			c.Conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-			if !ok {
-				c.Conn.WriteMessage(websocket.CloseMessage, []byte{})
-				return
-			}
-			w, err := c.Conn.NextWriter(websocket.TextMessage)
-			if err != nil {
-				return
-			}
-			json.NewEncoder(w).Encode(msg)
-			w.Close()
-		case <-ticker.C:
-			c.Conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-			if err := c.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				return
-			}
-		}
-	}
-}
-```
-
----
+Full runnable source code, test suites, and configurations are available in [`Day-38/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-38/).
 
 # 📘 Day 38 Interview Questions & Answers
 
@@ -17557,123 +14816,10 @@ Building a real-time chat backend requires scaling WebSockets into a **Multi-Roo
 
 # 🛠️ Implementation Walkthrough — Day 39 Project
 
-### 1. Multi-Room Chat Hub (`hub/chat_hub.go`)
+### Project Structure & Components (`Day-39/`)
+- [hub/chat_hub.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-39/hub/chat_hub.go) — Multi-Room Chat Hub.
 
-```go
-package hub
-
-import (
-	"context"
-	"fmt"
-	"net/http"
-	"sync"
-	"time"
-
-	"day-39/domain"
-
-	"github.com/google/uuid"
-	"github.com/gorilla/websocket"
-)
-
-var Upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool { return true },
-}
-
-type Client struct {
-	ID       string
-	RoomID   string
-	Username string
-	Conn     *websocket.Conn
-	Send     chan domain.ChatEvent
-	Hub      *ChatHub
-}
-
-type ChatHub struct {
-	rooms      map[string]map[*Client]bool
-	register   chan *Client
-	unregister chan *Client
-	broadcast  chan domain.ChatEvent
-	mu         sync.RWMutex
-	logger     domain.Logger
-}
-
-func NewChatHub(logger domain.Logger) *ChatHub {
-	h := &ChatHub{
-		rooms:      make(map[string]map[*Client]bool),
-		register:   make(chan *Client),
-		unregister: make(chan *Client),
-		broadcast:  make(chan domain.ChatEvent, 256),
-		logger:     logger,
-	}
-	go h.run()
-	return h
-}
-
-func (h *ChatHub) run() {
-	ctx := context.Background()
-	for {
-		select {
-		case client := <-h.register:
-			h.mu.Lock()
-			if _, ok := h.rooms[client.RoomID]; !ok {
-				h.rooms[client.RoomID] = make(map[*Client]bool)
-			}
-			h.rooms[client.RoomID][client] = true
-			h.mu.Unlock()
-
-			h.broadcastToRoom(client.RoomID, domain.ChatEvent{
-				Type:      "JOIN",
-				RoomID:    client.RoomID,
-				Sender:    "SYSTEM",
-				Content:   fmt.Sprintf("%s joined the room", client.Username),
-				Timestamp: time.Now(),
-			})
-
-		case client := <-h.unregister:
-			h.mu.Lock()
-			if clients, ok := h.rooms[client.RoomID]; ok {
-				if _, exists := clients[client]; exists {
-					delete(clients, client)
-					close(client.Send)
-					if len(clients) == 0 {
-						delete(h.rooms, client.RoomID)
-					}
-				}
-			}
-			h.mu.Unlock()
-
-			h.broadcastToRoom(client.RoomID, domain.ChatEvent{
-				Type:      "LEAVE",
-				RoomID:    client.RoomID,
-				Sender:    "SYSTEM",
-				Content:   fmt.Sprintf("%s left the room", client.Username),
-				Timestamp: time.Now(),
-			})
-
-		case event := <-h.broadcast:
-			h.broadcastToRoom(event.RoomID, event)
-		}
-	}
-}
-
-func (h *ChatHub) broadcastToRoom(roomID string, event domain.ChatEvent) {
-	h.mu.RLock()
-	defer h.mu.RUnlock()
-
-	if clients, ok := h.rooms[roomID]; ok {
-		for client := range clients {
-			select {
-			case client.Send <- event:
-			default:
-				close(client.Send)
-				delete(clients, client)
-			}
-		}
-	}
-}
-```
-
----
+Full runnable source code, test suites, and configurations are available in [`Day-39/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-39/).
 
 # 📘 Day 39 Interview Questions & Answers
 
@@ -18133,111 +15279,11 @@ Writing high-quality unit tests ensures code reliability and refactoring safety.
 
 # 🛠️ Implementation Walkthrough — Day 42 Project
 
-### 1. Table-Driven Calculator Test (`calculator/calculator_test.go`)
+### Project Structure & Components (`Day-42/`)
+- [calculator/calculator_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-42/calculator/calculator_test.go) — Table-Driven Calculator Test.
+- [usecase/order_usecase_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-42/usecase/order_usecase_test.go) — Interface Mocking with Testify Mock.
 
-```go
-package calculator_test
-
-import (
-	"testing"
-
-	"day-42/calculator"
-
-	"github.com/stretchr/testify/assert"
-)
-
-func assertCloseFloat(t *testing.T, expected, actual float64) {
-	t.Helper()
-	assert.InDelta(t, expected, actual, 0.01)
-}
-
-func TestCalculateDiscount_TableDriven(t *testing.T) {
-	tests := []struct {
-		name         string
-		subtotal     float64
-		promoCode    string
-		expectedDisc float64
-		expectedErr  bool
-		errType      error
-	}{
-		{
-			name:         "Valid 10% Discount",
-			subtotal:     100.0,
-			promoCode:    "SAVE10",
-			expectedDisc: 10.0,
-			expectedErr:  false,
-		},
-		{
-			name:         "Valid 20% Discount",
-			subtotal:     250.0,
-			promoCode:    "SAVE20",
-			expectedDisc: 50.0,
-			expectedErr:  false,
-		},
-		{
-			name:        "Invalid Promo Code",
-			subtotal:    100.0,
-			promoCode:   "INVALID_CODE",
-			expectedErr: true,
-			errType:     calculator.ErrInvalidDiscountCode,
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			discount, err := calculator.CalculateDiscount(tt.subtotal, tt.promoCode)
-			if tt.expectedErr {
-				assert.Error(t, err)
-				if tt.errType != nil {
-					assert.Equal(t, tt.errType, err)
-				}
-			} else {
-				assert.NoError(t, err)
-				assertCloseFloat(t, tt.expectedDisc, discount)
-			}
-		})
-	}
-}
-```
-
----
-
-### 2. Interface Mocking with Testify Mock (`usecase/order_usecase_test.go`)
-
-```go
-package usecase_test
-
-import (
-	"context"
-	"testing"
-
-	"day-42/domain"
-	"day-42/mocks"
-	"day-42/usecase"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-)
-
-func TestPlaceOrder_SuccessWithMock(t *testing.T) {
-	mockRepo := new(mocks.MockOrderRepository)
-	mockRepo.On("Save", mock.Anything, mock.AnythingOfType("*domain.Order")).Return(nil)
-
-	orderUC := usecase.NewOrderUseCase(mockRepo)
-	order, err := orderUC.PlaceOrder(context.Background(), "Dnyaneshwar", 200.0, "SAVE10")
-
-	assert.NoError(t, err)
-	assert.NotNil(t, order)
-	assert.Equal(t, "Dnyaneshwar", order.Customer)
-	assert.Equal(t, 20.0, order.Discount)
-	assert.Equal(t, 212.4, order.Total)
-
-	mockRepo.AssertExpectations(t)
-}
-```
-
----
+Full runnable source code, test suites, and configurations are available in [`Day-42/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-42/).
 
 # 📘 Day 42 Interview Questions & Answers
 
@@ -18685,52 +15731,51 @@ Today I completed **Day 44 Docker Basics in Go**:
 
 ---
 
-
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
-✅ Day 29 Completed  
-✅ Day 30 Completed  
-✅ Day 31 Completed  
-✅ Day 32 Completed  
-✅ Day 33 Completed  
-✅ Day 34 Completed  
-✅ Day 35 Completed  
-✅ Day 36 Completed  
-✅ Day 37 Completed  
-✅ Day 38 Completed  
-✅ Day 39 Completed  
-✅ Day 40 Completed  
-✅ Day 41 Completed  
-✅ Day 42 Completed  
-✅ Day 43 Completed  
-✅ Day 44 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
+✅ Day 29 Completed
+✅ Day 30 Completed
+✅ Day 31 Completed
+✅ Day 32 Completed
+✅ Day 33 Completed
+✅ Day 34 Completed
+✅ Day 35 Completed
+✅ Day 36 Completed
+✅ Day 37 Completed
+✅ Day 38 Completed
+✅ Day 39 Completed
+✅ Day 40 Completed
+✅ Day 41 Completed
+✅ Day 42 Completed
+✅ Day 43 Completed
+✅ Day 44 Completed
 🚀 Next: Docker Compose
 
 ---
@@ -18789,138 +15834,15 @@ When Docker stops a container (`docker stop`), it sends a `SIGTERM` signal to pr
 
 # 🛠️ Implementation Walkthrough — Day 45 Project
 
-### 1. Centralized Environment Config (`Day-45/config/config.go`)
-Environment variables drive configuration without rebuilding container images:
-```go
-package config
+### Project Structure & Components (`Day-45/`)
+- [Day-45/config/config.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-45/Day-45/config/config.go) — Centralized Environment Config.
+- [Day-45/main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-45/Day-45/main.go) — Graceful Shutdown Engine.
+- [Day-45/Dockerfile](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-45/Day-45/Dockerfile) — Production Alpine Dockerfile.
+- [Day-45/Dockerfile.scratch](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-45/Day-45/Dockerfile.scratch) — Zero-Dependency Scratch Dockerfile.
+- Executing Unit Tests
+- Comprehensive Container Management Commands Cheat Sheet
 
-import "os"
-
-type Config struct {
-	Port       string
-	AppEnv     string
-	AppVersion string
-	DBHost     string
-}
-
-func LoadConfig() *Config {
-	return &Config{
-		Port:       getEnv("PORT", "8080"),
-		AppEnv:     getEnv("APP_ENV", "development"),
-		AppVersion: getEnv("APP_VERSION", "1.0.0"),
-		DBHost:     getEnv("DB_HOST", "localhost"),
-	}
-}
-```
-
-### 2. Graceful Shutdown Engine (`Day-45/main.go`)
-Handles container termination signals (`SIGTERM`, `SIGINT`) with context timeouts:
-```go
-sig := make(chan os.Signal, 1)
-signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
-
-go func() {
-	<-sig
-	log.Println("Received termination signal. Shutting down container gracefully...")
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-
-	if err := server.Shutdown(shutdownCtx); err != nil {
-		log.Fatalf("Server forced to shutdown: %v", err)
-	}
-}()
-```
-
-### 3. Production Alpine Dockerfile (`Day-45/Dockerfile`)
-```dockerfile
-FROM golang:1.24-alpine AS builder
-RUN apk add --no-cache ca-certificates git
-WORKDIR /app
-COPY go.mod ./
-RUN go mod download
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /app/api-server main.go
-
-FROM alpine:3.20 AS runner
-RUN apk add --no-cache ca-certificates tzdata wget
-RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-WORKDIR /app
-COPY --from=builder /app/api-server /app/api-server
-RUN chown -R appuser:appgroup /app
-USER appuser
-ENV PORT=8080 APP_ENV=production APP_VERSION=1.0.0 DB_HOST=postgres-service
-EXPOSE 8080
-HEALTHCHECK --interval=15s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:8080/healthz || exit 1
-ENTRYPOINT ["/app/api-server"]
-```
-
-### 4. Zero-Dependency Scratch Dockerfile (`Day-45/Dockerfile.scratch`)
-```dockerfile
-FROM golang:1.24-alpine AS builder
-RUN apk add --no-cache ca-certificates
-WORKDIR /app
-COPY go.mod ./
-RUN go mod download
-COPY . .
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-w -s" -o /app/api-server main.go
-
-FROM scratch
-COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
-COPY --from=builder /app/api-server /api-server
-ENV PORT=8080 APP_ENV=production APP_VERSION=1.0.0-scratch
-EXPOSE 8080
-ENTRYPOINT ["/api-server"]
-```
-
----
-
-# 🧪 Verification & Output Demonstration
-
-### 1. Executing Unit Tests
-Run standard HTTP handler unit tests using `net/http/httptest`:
-
-```bash
-cd Day-45
-go test -v ./...
-```
-
-**Execution Output:**
-```text
-=== RUN   TestHealthzEndpoint
---- PASS: TestHealthzEndpoint (0.00s)
-=== RUN   TestReadyEndpoint
---- PASS: TestReadyEndpoint (0.00s)
-=== RUN   TestInfoEndpoint
---- PASS: TestInfoEndpoint (0.00s)
-=== RUN   TestGetUsers
---- PASS: TestGetUsers (0.00s)
-=== RUN   TestGetUserByID_Found
---- PASS: TestGetUserByID_Found (0.00s)
-=== RUN   TestGetUserByID_NotFound
---- PASS: TestGetUserByID_NotFound (0.00s)
-=== RUN   TestCreateUser_Success
---- PASS: TestCreateUser_Success (0.00s)
-=== RUN   TestCreateUser_Duplicate
---- PASS: TestCreateUser_Duplicate (0.00s)
-PASS
-ok  	github.com/dnyaneshwarkokate/go-90-days-challenge/Day-45/handler	1.323s
-```
-
-### 2. Comprehensive Container Management Commands Cheat Sheet
-
-| Action | Command | Purpose |
-| :--- | :--- | :--- |
-| **Build Alpine Image** | `docker build -t go-docker-api:v1 .` | Build multi-stage image with Alpine runtime |
-| **Build Scratch Image** | `docker build -f Dockerfile.scratch -t go-docker-api:scratch .` | Build zero-dependency ultra-small image |
-| **Run Container** | `docker run -d -p 8080:8080 -e APP_ENV=staging --name my-api go-docker-api:v1` | Run with runtime environment injection |
-| **Check Health Status** | `docker ps --format "{{.Names}}: {{.Status}}"` | Verify container status & `(healthy)` condition |
-| **Stream Logs** | `docker logs -f my-api` | View realtime application logs |
-| **Inspect Env & IP** | `docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' my-api` | Verify runtime injected configurations |
-| **Graceful Stop** | `docker stop my-api` | Send `SIGTERM` and verify clean shutdown logs |
-| **Cleanup Container** | `docker rm my-api` | Remove stopped container instance |
-
----
+Full runnable source code, test suites, and configurations are available in [`Day-45/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-45/).
 
 # 📘 Day 45 Interview Questions & Answers
 
@@ -18983,51 +15905,51 @@ Today I completed **Day 45 Dockerizing Go API**:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
-✅ Day 29 Completed  
-✅ Day 30 Completed  
-✅ Day 31 Completed  
-✅ Day 32 Completed  
-✅ Day 33 Completed  
-✅ Day 34 Completed  
-✅ Day 35 Completed  
-✅ Day 36 Completed  
-✅ Day 37 Completed  
-✅ Day 38 Completed  
-✅ Day 39 Completed  
-✅ Day 40 Completed  
-✅ Day 41 Completed  
-✅ Day 42 Completed  
-✅ Day 43 Completed  
-✅ Day 44 Completed  
-✅ Day 45 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
+✅ Day 29 Completed
+✅ Day 30 Completed
+✅ Day 31 Completed
+✅ Day 32 Completed
+✅ Day 33 Completed
+✅ Day 34 Completed
+✅ Day 35 Completed
+✅ Day 36 Completed
+✅ Day 37 Completed
+✅ Day 38 Completed
+✅ Day 39 Completed
+✅ Day 40 Completed
+✅ Day 41 Completed
+✅ Day 42 Completed
+✅ Day 43 Completed
+✅ Day 44 Completed
+✅ Day 45 Completed
 # ✅ Day 46 — Docker Compose
 
 ---
@@ -19089,197 +16011,14 @@ Even with health checks, microservices should implement exponential backoff retr
 
 # 🛠️ Implementation Walkthrough — Day 46 Project
 
-### 1. Multi-Service Docker Compose Spec (`Day-46/docker-compose.yml`)
-```yaml
-version: '3.8'
+### Project Structure & Components (`Day-46/`)
+- [Day-46/docker-compose.yml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-46/Day-46/docker-compose.yml) — Multi-Service Docker Compose Spec.
+- [Day-46/db/db.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-46/Day-46/db/db.go) — Startup Database Connection Retry Engine.
+- [Day-46/repository/user_repository.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-46/Day-46/repository/user_repository.go) — PostgreSQL & Redis Dual-Layer Repository.
+- Executing Unit Tests
+- Comprehensive Docker Compose Commands Cheat Sheet
 
-services:
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: go-api-service
-    restart: unless-stopped
-    ports:
-      - "${PORT:-8080}:8080"
-    environment:
-      PORT: 8080
-      APP_ENV: ${APP_ENV:-production}
-      APP_VERSION: 1.0.0
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_USER: ${DB_USER:-postgres}
-      DB_PASSWORD: ${DB_PASSWORD:-postgrespass}
-      DB_NAME: ${DB_NAME:-go_compose_db}
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    networks:
-      - app-network
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: go-postgres-db
-    restart: always
-    environment:
-      POSTGRES_USER: ${DB_USER:-postgres}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgrespass}
-      POSTGRES_DB: ${DB_NAME:-go_compose_db}
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-go_compose_db}"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
-    networks:
-      - app-network
-
-  redis:
-    image: redis:7-alpine
-    container_name: go-redis-cache
-    restart: always
-    ports:
-      - "6379:6379"
-    volumes:
-      - redisdata:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-      start_period: 3s
-    networks:
-      - app-network
-
-volumes:
-  pgdata:
-    driver: local
-  redisdata:
-    driver: local
-
-networks:
-  app-network:
-    driver: bridge
-```
-
-### 2. Startup Database Connection Retry Engine (`Day-46/db/db.go`)
-```go
-func InitPostgres(cfg *config.Config) (*sql.DB, error) {
-	dsn := cfg.GetDSN()
-	var db *sql.DB
-	var err error
-
-	maxRetries := 10
-	for i := 1; i <= maxRetries; i++ {
-		db, err = sql.Open("postgres", dsn)
-		if err == nil {
-			if err = db.Ping(); err == nil {
-				log.Printf("Connected to PostgreSQL at %s:%s (attempt %d/%d)", cfg.DBHost, cfg.DBPort, i, maxRetries)
-				return db, nil
-			}
-		}
-		log.Printf("PostgreSQL not ready (attempt %d/%d): %v. Retrying...", i, maxRetries, err)
-		time.Sleep(2 * time.Second)
-	}
-	return nil, err
-}
-```
-
-### 3. PostgreSQL & Redis Dual-Layer Repository (`Day-46/repository/user_repository.go`)
-```go
-func (r *PostgresRedisRepo) GetByID(ctx context.Context, id int) (*User, bool, error) {
-	cacheKey := fmt.Sprintf("user:%d", id)
-
-	// Read from Redis cache
-	if r.rdb != nil {
-		val, err := r.rdb.Get(ctx, cacheKey).Result()
-		if err == nil && val != "" {
-			var u User
-			if json.Unmarshal([]byte(val), &u) == nil {
-				atomic.AddInt64(&r.hits, 1)
-				return &u, true, nil
-			}
-		}
-	}
-
-	atomic.AddInt64(&r.misses, 1)
-
-	// Fetch from PostgreSQL DB
-	var u User
-	err := r.db.QueryRowContext(ctx, "SELECT id, name, email, role, created_at FROM users WHERE id = $1", id).
-		Scan(&u.ID, &u.Name, &u.Email, &u.Role, &u.CreatedAt)
-	if err != nil {
-		return nil, false, err
-	}
-
-	// Write cache back to Redis
-	if r.rdb != nil {
-		data, _ := json.Marshal(u)
-		_ = r.rdb.Set(ctx, cacheKey, data, 60*time.Second).Err()
-	}
-
-	return &u, false, nil
-}
-```
-
----
-
-# 🧪 Verification & Output Demonstration
-
-### 1. Executing Unit Tests
-Execute HTTP handler unit tests using `httptest`:
-
-```bash
-cd Day-46
-go test -v ./...
-```
-
-**Execution Output:**
-```text
-=== RUN   TestHealthzEndpoint
---- PASS: TestHealthzEndpoint (0.00s)
-=== RUN   TestReadyEndpoint_NotReady
---- PASS: TestReadyEndpoint_NotReady (0.00s)
-=== RUN   TestHandleUsers_Get
---- PASS: TestHandleUsers_Get (0.00s)
-=== RUN   TestHandleUsers_PostSuccess
---- PASS: TestHandleUsers_PostSuccess (0.00s)
-=== RUN   TestHandleUsers_MethodNotAllowed
---- PASS: TestHandleUsers_MethodNotAllowed (0.00s)
-=== RUN   TestHandleUserByID_Found
---- PASS: TestHandleUserByID_Found (0.00s)
-=== RUN   TestHandleUserByID_NotFound
---- PASS: TestHandleUserByID_NotFound (0.00s)
-=== RUN   TestStatsEndpoint
---- PASS: TestStatsEndpoint (0.00s)
-PASS
-ok  	github.com/dnyaneshwarkokate/go-90-days-challenge/Day-46/handler	0.766s
-```
-
-### 2. Comprehensive Docker Compose Commands Cheat Sheet
-
-| Action | Command | Purpose |
-| :--- | :--- | :--- |
-| **Start Stack** | `docker compose up -d` | Build & launch containers in background |
-| **Rebuild Images** | `docker compose up -d --build` | Force rebuild of modified Dockerfiles |
-| **Check Status** | `docker compose ps` | View container health, status, and exposed ports |
-| **Stream Logs** | `docker compose logs -f api` | Stream real-time logs from Go API service |
-| **Execute CLI** | `docker compose exec postgres psql -U postgres -d go_compose_db` | Interactive shell into PostgreSQL database |
-| **Redis Check** | `docker compose exec redis redis-cli ping` | Verify Redis response (`PONG`) |
-| **Stop Stack** | `docker compose down` | Stop containers without removing persistent volumes |
-| **Purge Everything** | `docker compose down -v` | Stop containers and delete all attached named volumes |
-
----
+Full runnable source code, test suites, and configurations are available in [`Day-46/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-46/).
 
 # 📘 Day 46 Interview Questions & Answers
 
@@ -19342,52 +16081,52 @@ Today I completed **Day 46 Docker Compose**:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
-✅ Day 29 Completed  
-✅ Day 30 Completed  
-✅ Day 31 Completed  
-✅ Day 32 Completed  
-✅ Day 33 Completed  
-✅ Day 34 Completed  
-✅ Day 35 Completed  
-✅ Day 36 Completed  
-✅ Day 37 Completed  
-✅ Day 38 Completed  
-✅ Day 39 Completed  
-✅ Day 40 Completed  
-✅ Day 41 Completed  
-✅ Day 42 Completed  
-✅ Day 43 Completed  
-✅ Day 44 Completed  
-✅ Day 45 Completed  
-✅ Day 46 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
+✅ Day 29 Completed
+✅ Day 30 Completed
+✅ Day 31 Completed
+✅ Day 32 Completed
+✅ Day 33 Completed
+✅ Day 34 Completed
+✅ Day 35 Completed
+✅ Day 36 Completed
+✅ Day 37 Completed
+✅ Day 38 Completed
+✅ Day 39 Completed
+✅ Day 40 Completed
+✅ Day 41 Completed
+✅ Day 42 Completed
+✅ Day 43 Completed
+✅ Day 44 Completed
+✅ Day 45 Completed
+✅ Day 46 Completed
 # ✅ Day 47 — Kubernetes Basics
 
 ---
@@ -19465,151 +16204,15 @@ Kubernetes enforces resource management per container:
 
 # 🛠️ Implementation Walkthrough — Day 47 Project
 
-### 1. ConfigMap Manifest (`Day-47/k8s/01-configmap.yaml`)
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: go-api-config
-  namespace: default
-data:
-  PORT: "8080"
-  APP_ENV: "production"
-  LOG_LEVEL: "info"
-  APP_VERSION: "1.0.0"
-```
+### Project Structure & Components (`Day-47/`)
+- [Day-47/k8s/01-configmap.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-47/Day-47/k8s/01-configmap.yaml) — ConfigMap Manifest.
+- [Day-47/k8s/02-secret.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-47/Day-47/k8s/02-secret.yaml) — Secret Manifest.
+- [Day-47/k8s/03-deployment.yaml](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-47/Day-47/k8s/03-deployment.yaml) — Production Deployment Spec.
+- [Day-47/main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-47/Day-47/main.go) — Zero-Downtime K8s Signal Engine.
+- Executing Unit Tests
+- [kubectl](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-47/kubectl) — Comprehensive  CLI Commands Cheat Sheet.
 
-### 2. Secret Manifest (`Day-47/k8s/02-secret.yaml`)
-```yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: go-api-secret
-  namespace: default
-type: Opaque
-stringData:
-  API_KEY: "k8s-prod-secret-token-9988"
-  DB_PASSWORD: "supersecretpassword123"
-```
-
-### 3. Production Deployment Spec (`Day-47/k8s/03-deployment.yaml`)
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: go-api-deployment
-  namespace: default
-spec:
-  replicas: 3
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-  selector:
-    matchLabels:
-      app: go-api
-  template:
-    metadata:
-      labels:
-        app: go-api
-    spec:
-      containers:
-        - name: go-api-container
-          image: go-api-service:v1
-          ports:
-            - containerPort: 8080
-          envFrom:
-            - configMapRef:
-                name: go-api-config
-            - secretRef:
-                name: go-api-secret
-          env:
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8080
-            initialDelaySeconds: 3
-            periodSeconds: 5
-          resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              cpu: 500m
-              memory: 256Mi
-```
-
-### 4. Zero-Downtime K8s Signal Engine (`Day-47/main.go`)
-```go
-sigChan := make(chan os.Signal, 1)
-signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-
-<-sigChan
-log.Println("Received SIGTERM from Kubelet. Initiating zero-downtime shutdown...")
-
-// Mark readiness probe unready so Kube-Proxy updates endpoints
-apiHandler.SetNotReady()
-time.Sleep(5 * time.Second)
-
-shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-defer cancel()
-server.Shutdown(shutdownCtx)
-```
-
----
-
-# 🧪 Verification & Output Demonstration
-
-### 1. Executing Unit Tests
-Execute HTTP API unit tests using `httptest`:
-
-```bash
-cd Day-47
-go test -v ./...
-```
-
-**Execution Output:**
-```text
-=== RUN   TestHealthz
---- PASS: TestHealthz (0.00s)
-=== RUN   TestReady
---- PASS: TestReady (0.00s)
-=== RUN   TestInfo
---- PASS: TestInfo (0.00s)
-=== RUN   TestData_Unauthorized
---- PASS: TestData_Unauthorized (0.00s)
-=== RUN   TestData_Success
---- PASS: TestData_Success (0.00s)
-PASS
-ok  	github.com/dnyaneshwarkokate/go-90-days-challenge/Day-47/handler	0.687s
-```
-
-### 2. Comprehensive `kubectl` CLI Commands Cheat Sheet
-
-| Action | Command | Purpose |
-| :--- | :--- | :--- |
-| **Apply Manifests** | `kubectl apply -f k8s/` | Declaratively deploy ConfigMap, Secret, Deployment, Service, HPA |
-| **Get Pods** | `kubectl get pods -o wide` | List pod status, IPs, restart count, and assigned worker nodes |
-| **Stream Pod Logs** | `kubectl logs -f deployment/go-api-deployment` | Stream logs from all deployment container replicas |
-| **Check Endpoints** | `kubectl get endpoints go-api-clusterip` | Verify active Pod IP endpoints attached to Service |
-| **Describe Deployment** | `kubectl describe deployment go-api-deployment` | Inspect rollout status, events, and health probes |
-| **Exec Into Pod** | `kubectl exec -it <pod-name> -- sh` | Open interactive shell inside running container pod |
-| **Rollout Status** | `kubectl rollout status deployment/go-api-deployment` | Monitor status of rolling update deployment |
-| **Rollback Deploy** | `kubectl rollout undo deployment/go-api-deployment` | Instantly undo deployment to previous revision |
-| **Purge Stack** | `kubectl delete -f k8s/` | Delete all resources defined in manifests |
-
----
+Full runnable source code, test suites, and configurations are available in [`Day-47/`](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-47/).
 
 # 📘 Day 47 Interview Questions & Answers
 
@@ -19683,54 +16286,54 @@ Today I completed **Day 47 Kubernetes Basics**:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
-✅ Day 29 Completed  
-✅ Day 30 Completed  
-✅ Day 31 Completed  
-✅ Day 32 Completed  
-✅ Day 33 Completed  
-✅ Day 34 Completed  
-✅ Day 35 Completed  
-✅ Day 36 Completed  
-✅ Day 37 Completed  
-✅ Day 38 Completed  
-✅ Day 39 Completed  
-✅ Day 40 Completed  
-✅ Day 41 Completed  
-✅ Day 42 Completed  
-✅ Day 43 Completed  
-✅ Day 44 Completed  
-✅ Day 45 Completed  
-✅ Day 46 Completed  
-✅ Day 47 Completed  
-✅ Day 48 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
+✅ Day 29 Completed
+✅ Day 30 Completed
+✅ Day 31 Completed
+✅ Day 32 Completed
+✅ Day 33 Completed
+✅ Day 34 Completed
+✅ Day 35 Completed
+✅ Day 36 Completed
+✅ Day 37 Completed
+✅ Day 38 Completed
+✅ Day 39 Completed
+✅ Day 40 Completed
+✅ Day 41 Completed
+✅ Day 42 Completed
+✅ Day 43 Completed
+✅ Day 44 Completed
+✅ Day 45 Completed
+✅ Day 46 Completed
+✅ Day 47 Completed
+✅ Day 48 Completed
 🚀 Next: CI/CD Basics
 
 ---
@@ -19904,7 +16507,7 @@ Today I completed **Day 48 Deploy Go App on Kubernetes**:
 
 ---
 
-# ✅ Day 48 Completed  
+# ✅ Day 48 Completed
 
 ---
 
@@ -22255,95 +18858,95 @@ Today I completed **Day 90 Final Capstone Platform**:
 ---
 
 # ⭐ Challenge Progress
-✅ Day 01 Completed  
-✅ Day 02 Completed  
-✅ Day 03 Completed  
-✅ Day 04 Completed  
-✅ Day 05 Completed  
-✅ Day 06 Completed  
-✅ Day 07 Completed  
-✅ Day 08 Completed  
-✅ Day 09 Completed   
-✅ Day 10 Completed  
-✅ Day 11 Completed  
-✅ Day 12 Completed  
-✅ Day 13 Completed  
-✅ Day 14 Completed   
-✅ Day 15 Completed  
-✅ Day 16 Completed  
-✅ Day 17 Completed  
-✅ Day 18 Completed  
-✅ Day 19 Completed  
-✅ Day 20 Completed  
-✅ Day 21 Completed  
-✅ Day 22 Completed  
-✅ Day 23 Completed  
-✅ Day 24 Completed  
-✅ Day 25 Completed  
-✅ Day 26 Completed  
-✅ Day 27 Completed  
-✅ Day 28 Completed  
-✅ Day 29 Completed  
-✅ Day 30 Completed  
-✅ Day 31 Completed  
-✅ Day 32 Completed  
-✅ Day 33 Completed  
-✅ Day 34 Completed  
-✅ Day 35 Completed  
-✅ Day 36 Completed  
-✅ Day 37 Completed  
-✅ Day 38 Completed  
-✅ Day 39 Completed  
-✅ Day 40 Completed  
-✅ Day 41 Completed  
-✅ Day 42 Completed  
-✅ Day 43 Completed  
-✅ Day 44 Completed  
-✅ Day 45 Completed  
-✅ Day 46 Completed  
-✅ Day 47 Completed  
-✅ Day 48 Completed  
-✅ Day 49 Completed  
-✅ Day 50 Completed  
-✅ Day 51 Completed  
-✅ Day 52 Completed  
-✅ Day 53 Completed  
-✅ Day 54 Completed  
-✅ Day 55 Completed  
-✅ Day 56 Completed  
-✅ Day 57 Completed  
-✅ Day 58 Completed  
-✅ Day 59 Completed  
-✅ Day 60 Completed  
-✅ Day 61 Completed  
-✅ Day 62 Completed  
-✅ Day 63 Completed  
-✅ Day 64 Completed  
-✅ Day 65 Completed  
-✅ Day 66 Completed  
-✅ Day 67 Completed  
-✅ Day 68 Completed  
-✅ Day 69 Completed  
-✅ Day 70 Completed  
-✅ Day 71 Completed  
-✅ Day 72 Completed  
-✅ Day 73 Completed  
-✅ Day 74 Completed  
-✅ Day 75 Completed  
-✅ Day 76 Completed  
-✅ Day 77 Completed  
-✅ Day 78 Completed  
-✅ Day 79 Completed  
-✅ Day 80 Completed  
-✅ Day 81 Completed  
-✅ Day 82 Completed  
-✅ Day 83 Completed  
-✅ Day 84 Completed  
-✅ Day 85 Completed  
-✅ Day 86 Completed  
-✅ Day 87 Completed  
-✅ Day 88 Completed  
-✅ Day 89 Completed  
-✅ Day 90 Completed  
+✅ Day 01 Completed
+✅ Day 02 Completed
+✅ Day 03 Completed
+✅ Day 04 Completed
+✅ Day 05 Completed
+✅ Day 06 Completed
+✅ Day 07 Completed
+✅ Day 08 Completed
+✅ Day 09 Completed
+✅ Day 10 Completed
+✅ Day 11 Completed
+✅ Day 12 Completed
+✅ Day 13 Completed
+✅ Day 14 Completed
+✅ Day 15 Completed
+✅ Day 16 Completed
+✅ Day 17 Completed
+✅ Day 18 Completed
+✅ Day 19 Completed
+✅ Day 20 Completed
+✅ Day 21 Completed
+✅ Day 22 Completed
+✅ Day 23 Completed
+✅ Day 24 Completed
+✅ Day 25 Completed
+✅ Day 26 Completed
+✅ Day 27 Completed
+✅ Day 28 Completed
+✅ Day 29 Completed
+✅ Day 30 Completed
+✅ Day 31 Completed
+✅ Day 32 Completed
+✅ Day 33 Completed
+✅ Day 34 Completed
+✅ Day 35 Completed
+✅ Day 36 Completed
+✅ Day 37 Completed
+✅ Day 38 Completed
+✅ Day 39 Completed
+✅ Day 40 Completed
+✅ Day 41 Completed
+✅ Day 42 Completed
+✅ Day 43 Completed
+✅ Day 44 Completed
+✅ Day 45 Completed
+✅ Day 46 Completed
+✅ Day 47 Completed
+✅ Day 48 Completed
+✅ Day 49 Completed
+✅ Day 50 Completed
+✅ Day 51 Completed
+✅ Day 52 Completed
+✅ Day 53 Completed
+✅ Day 54 Completed
+✅ Day 55 Completed
+✅ Day 56 Completed
+✅ Day 57 Completed
+✅ Day 58 Completed
+✅ Day 59 Completed
+✅ Day 60 Completed
+✅ Day 61 Completed
+✅ Day 62 Completed
+✅ Day 63 Completed
+✅ Day 64 Completed
+✅ Day 65 Completed
+✅ Day 66 Completed
+✅ Day 67 Completed
+✅ Day 68 Completed
+✅ Day 69 Completed
+✅ Day 70 Completed
+✅ Day 71 Completed
+✅ Day 72 Completed
+✅ Day 73 Completed
+✅ Day 74 Completed
+✅ Day 75 Completed
+✅ Day 76 Completed
+✅ Day 77 Completed
+✅ Day 78 Completed
+✅ Day 79 Completed
+✅ Day 80 Completed
+✅ Day 81 Completed
+✅ Day 82 Completed
+✅ Day 83 Completed
+✅ Day 84 Completed
+✅ Day 85 Completed
+✅ Day 86 Completed
+✅ Day 87 Completed
+✅ Day 88 Completed
+✅ Day 89 Completed
+✅ Day 90 Completed
 
 🏆 **GO 90 DAYS CHALLENGE 100% COMPLETED! ALL 90 DAYS PASSED!** 🏆
