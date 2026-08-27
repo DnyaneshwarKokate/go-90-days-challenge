@@ -126,7 +126,11 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 59 | Monitoring & Prometheus Metrics | ✅ |
 | Day 60 | Production API Project | ✅ |
 | Day 61 | Distributed Caching & Singleflight | ✅ |
-| Day 62–70 | Advanced Backend Projects | ⏳ |
+| Day 62 | Saga Pattern & Distributed Transactions | ✅ |
+| Day 63 | Transactional Outbox Pattern | ✅ |
+| Day 64 | CQRS Pattern | ✅ |
+| Day 65 | Bulkhead Pattern & Isolation | ✅ |
+| Day 66–70 | Advanced Backend Projects | ⏳ |
 | Day 71–80 | Microservices Projects | ⏳ |
 | Day 81–85 | System Design Basics | ⏳ |
 | Day 86–88 | Interview Preparation | ⏳ |
@@ -20748,6 +20752,208 @@ Today I completed **Day 61 Distributed Caching & Singleflight**:
 
 ---
 
+# ✅ Day 62 — Saga Pattern & Distributed Transactions
+
+---
+
+# 📖 Deep-Dive: Distributed Saga Orchestration & Rollback Pipelines
+
+In microservices architectures, traditional 2-Phase Commit (2PC) transactions fail to scale due to blocking network locks. The **Saga Pattern** breaks a distributed transaction into a sequence of local transactions. If any step fails, the Saga Orchestrator executes **compensating transactions** in reverse LIFO order to restore data consistency across microservices.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 62 Project
+
+### 1. Saga Orchestration Stack (`Day-62/`)
+- [saga/saga_orchestrator.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-62/saga/saga_orchestrator.go) — `SagaOrchestrator` managing sequential step execution and automated reverse rollback pipeline.
+- [saga/saga_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-62/saga/saga_test.go) — Unit test suite verifying happy-path step completion and failure compensation logic.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-62/main.go) — Order placement saga orchestrator demonstration.
+
+---
+
+# 📘 Day 62 Interview Questions & Answers
+
+## ❓ Q1: What is the Saga Pattern in microservices?
+### ✅ Answer:
+A pattern for managing distributed transactions across microservices as a sequence of local transactions. Each step updates a local database and triggers the next step or a compensating rollback if a failure occurs.
+
+## ❓ Q2: What is the difference between Saga Orchestration and Choreography?
+### ✅ Answer:
+- **Orchestration**: A centralized controller explicitly instructs each microservice which local transaction to execute.
+- **Choreography**: Microservices reactively listen to domain events published by other services without a central coordinator.
+
+## ❓ Q3: What is a Compensating Transaction?
+### ✅ Answer:
+An explicit undo operation designed to reverse the side effects of a previously committed local transaction when a downstream step in the Saga fails.
+
+## ❓ Q4: Why is Two-Phase Commit (2PC) anti-pattern in high-scale microservices?
+### ✅ Answer:
+2PC requires distributed locks across network nodes, causing high latency, vulnerability to network partitioning, and single points of failure.
+
+## ❓ Q5: How do you handle failures during a compensating transaction?
+### ✅ Answer:
+Compensating transactions must be **idempotent** and retried continuously, or flagged to a Dead Letter Queue (DLQ) / operator dashboard for manual intervention.
+
+---
+
+# 📚 Day 62 Summary
+Today I completed **Day 62 Saga Pattern & Distributed Transactions**:
+- Built an in-memory Saga Orchestrator executing forward transactions and reverse compensating rollbacks.
+- Verified state consistency during partial pipeline failure using unit test assertions.
+
+---
+
+# ✅ Day 63 — Transactional Outbox Pattern & Reliable Messaging
+
+---
+
+# 📖 Deep-Dive: Atomicity in Event-Driven Architecture & Dual-Write Prevention
+
+Updating a database and publishing a message to a broker in separate network calls is vulnerable to dual-write failures (e.g. database commits but broker disconnects). The **Transactional Outbox Pattern** saves domain events into an `outbox` table in the *same* database transaction as business entities. A separate poller process reliably reads and dispatches outbox records to the message broker.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 63 Project
+
+### 1. Transactional Outbox Stack (`Day-63/`)
+- [outbox/transactional_outbox.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-63/outbox/transactional_outbox.go) — `DatabaseSimulator` providing atomic entity + outbox insertion, and `OutboxProcessor` polling worker.
+- [outbox/outbox_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-63/outbox/outbox_test.go) — Unit tests confirming zero message loss and status updates to PROCESSED.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-63/main.go) — Transactional outbox execution demo.
+
+---
+
+# 📘 Day 63 Interview Questions & Answers
+
+## ❓ Q1: What is the Dual-Write Problem in microservices?
+### ✅ Answer:
+When an application attempts to modify a database and publish an event to a message broker sequentially, a crash between operations leaves the system in an inconsistent state.
+
+## ❓ Q2: How does the Transactional Outbox pattern guarantee at-least-once delivery?
+### ✅ Answer:
+By saving events in an `outbox` table within the local DB transaction scope. The event is guaranteed to persist whenever the business entity persists, and a poller re-tries publishing until acknowledged.
+
+## ❓ Q3: What is Change Data Capture (CDC) in relation to Outbox?
+### ✅ Answer:
+CDC tools (like Debezium) stream outbox table inserts directly from database transaction logs (WAL/binlog) into Kafka/RabbitMQ without application polling overhead.
+
+## ❓ Q4: How should event consumers handle at-least-once delivery duplicates?
+### ✅ Answer:
+Consumers must be **idempotent**, tracking processed event IDs in their storage or using deduplication keys before executing actions.
+
+## ❓ Q5: Why mark outbox events as PROCESSED instead of deleting immediately?
+### ✅ Answer:
+Retaining processed outbox events provides audit trailing, debugging history, and batch cleanup flexibility.
+
+---
+
+# 📚 Day 63 Summary
+Today I completed **Day 63 Transactional Outbox Pattern**:
+- Created an atomic database store writing entity records and outbox events in a single transaction.
+- Developed an Outbox Processor polling worker reliably publishing events to message queues.
+
+---
+
+# ✅ Day 64 — CQRS (Command Query Responsibility Segregation)
+
+---
+
+# 📖 Deep-Dive: Decoupling Read and Write Models for High Scale
+
+**CQRS** separates data mutation operations (**Commands**) from data fetch operations (**Queries**). The Write Model is optimized for domain validation and ACID transactions, while the Read Model is an event-projected view optimized for ultra-fast, lock-free queries.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 64 Project
+
+### 1. CQRS Stack (`Day-64/`)
+- [cqrs/cqrs.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-64/cqrs/cqrs.go) — Command Handler (WriteStore), Query Handler (ReadStore), and event projection synchronizer.
+- [cqrs/cqrs_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-64/cqrs/cqrs_test.go) — Unit tests asserting write command processing and read view projections.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-64/main.go) — CQRS demonstration entrypoint.
+
+---
+
+# 📘 Day 64 Interview Questions & Answers
+
+## ❓ Q1: What is CQRS and why is it used?
+### ✅ Answer:
+CQRS segregates the Write/Command path from the Read/Query path, allowing read and write stores to scale independently using data structures optimized for their specific access patterns.
+
+## ❓ Q2: How are Read Views updated in CQRS?
+### ✅ Answer:
+Write Command handlers emit domain events whenever state changes. Projection workers consume these events and project updated read views into read-optimized databases (Elasticsearch, Redis, Postgres views).
+
+## ❓ Q3: What is Event Sourcing and how does it relate to CQRS?
+### ✅ Answer:
+Event Sourcing stores all domain state changes as an immutable append-only log of events. CQRS is frequently paired with Event Sourcing to build read views from the event log.
+
+## ❓ Q4: What is Eventually Consistent Data in CQRS?
+### ✅ Answer:
+Because read views are updated asynchronously via events, there can be a slight millisecond latency before read models reflect the latest write command changes.
+
+## ❓ Q5: When should you avoid using CQRS?
+### ✅ Answer:
+Avoid CQRS for simple CRUD applications with basic domain logic where separating write and read paths adds unnecessary architectural complexity.
+
+---
+
+# 📚 Day 64 Summary
+Today I completed **Day 64 CQRS Pattern**:
+- Built separate Write and Read store models linked via automated event projections.
+- Demonstrated lock-free, pre-aggregated query responses for complex domain commands.
+
+---
+
+# ✅ Day 65 — Bulkhead Pattern & Service Resilience Isolation
+
+---
+
+# 📖 Deep-Dive: Resource Partitioning & Cascade Failure Prevention
+
+Named after the watertight compartments of a ship, the **Bulkhead Pattern** isolates service resources (thread pools, concurrency semaphores) per dependency. If one external service degrades or hangs, its dedicated bulkhead fills up and fails fast, preventing resource exhaustion across the rest of the application.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 65 Project
+
+### 1. Bulkhead Stack (`Day-65/`)
+- [bulkhead/bulkhead.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-65/bulkhead/bulkhead.go) — `Bulkhead` using buffered channel semaphores for fast rejection under high concurrency.
+- [bulkhead/bulkhead_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-65/bulkhead/bulkhead_test.go) — Concurrency unit tests proving capacity limiting and `ErrBulkheadFull` rejections.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-65/main.go) — Concurrent multi-service bulkhead simulation demo.
+
+---
+
+# 📘 Day 65 Interview Questions & Answers
+
+## ❓ Q1: What is the Bulkhead Pattern in software resilience?
+### ✅ Answer:
+A design pattern that isolates resources (concurrency pools, thread limits) into independent compartments to prevent a failure in one service from starving resources across the entire system.
+
+## ❓ Q2: How does Bulkhead differ from Circuit Breaker?
+### ✅ Answer:
+- **Bulkhead**: Limits the number of concurrent in-flight requests to a service to protect system resources.
+- **Circuit Breaker**: Detects high error rates and completely blocks calls for a cooldown period to allow a failing service to recover.
+
+## ❓ Q3: How do you implement a Bulkhead in Go?
+### ✅ Answer:
+Using a buffered channel as a semaphore (`chan struct{}` with length `N`) or `golang.org/x/sync/semaphore` to gate concurrent executions.
+
+## ❓ Q4: What is Fast-Fail rejection in Bulkheads?
+### ✅ Answer:
+When bulkhead capacity is exhausted, incoming requests are rejected immediately with an HTTP 429 / 503 error without blocking or consuming memory queues.
+
+## ❓ Q5: Where should Bulkheads be placed in microservices?
+### ✅ Answer:
+Around external API client calls, database connection pools, third-party HTTP integrations, and heavy CPU worker threads.
+
+---
+
+# 📚 Day 65 Summary
+Today I completed **Day 65 Bulkhead Pattern**:
+- Implemented semaphore-based bulkhead resource isolation in Go.
+- Validated fast-fail rejections under artificial service concurrency overload.
+
+---
+
 # ⭐ Challenge Progress
 ✅ Day 01 Completed  
 ✅ Day 02 Completed  
@@ -20810,4 +21016,8 @@ Today I completed **Day 61 Distributed Caching & Singleflight**:
 ✅ Day 59 Completed  
 ✅ Day 60 Completed  
 ✅ Day 61 Completed  
-🚀 Next: Day 62 - Advanced Microservices Patterns
+✅ Day 62 Completed  
+✅ Day 63 Completed  
+✅ Day 64 Completed  
+✅ Day 65 Completed  
+🚀 Next: Day 66 - Advanced Backend & Resilience Patterns
