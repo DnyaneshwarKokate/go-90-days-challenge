@@ -130,7 +130,11 @@ Currently, I am learning **Go (Golang)** from beginner to advanced level to beco
 | Day 63 | Transactional Outbox Pattern | ✅ |
 | Day 64 | CQRS Pattern | ✅ |
 | Day 65 | Bulkhead Pattern & Isolation | ✅ |
-| Day 66–70 | Advanced Backend Projects | ⏳ |
+| Day 66 | Service Mesh & Sidecar Proxy | ✅ |
+| Day 67 | Distributed Tracing & OpenTelemetry | ✅ |
+| Day 68 | Distributed Rate Limiting | ✅ |
+| Day 69 | Dead Letter Queue (DLQ) & Poison Message | ✅ |
+| Day 70 | Microservices System Capstone | ✅ |
 | Day 71–80 | Microservices Projects | ⏳ |
 | Day 81–85 | System Design Basics | ⏳ |
 | Day 86–88 | Interview Preparation | ⏳ |
@@ -20954,6 +20958,263 @@ Today I completed **Day 65 Bulkhead Pattern**:
 
 ---
 
+# ✅ Day 66 — Service Mesh & Sidecar Proxy Pattern
+
+---
+
+# 📖 Deep-Dive: Decoupling Microservice Networking Concerns
+
+A **Sidecar Proxy** runs alongside a primary application process, intercepting incoming and outgoing HTTP/gRPC traffic to handle cross-cutting concerns (mTLS security enforcement, dynamic retry policies, telemetry logging, and header context injection) transparently without altering core application code.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 66 Project
+
+### 1. Sidecar Proxy Stack (`Day-66/`)
+- [sidecar/proxy.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-66/sidecar/proxy.go) — `SidecarProxy` decorator enforcing mTLS header security, trace header injection, and retry policies.
+- [sidecar/proxy_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-66/sidecar/proxy_test.go) — Unit tests for mTLS rejection and automatic 5xx retry handling.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-66/main.go) — Sidecar proxy demonstration server.
+
+---
+
+# 📘 Day 66 Interview Questions & Answers
+
+## ❓ Q1: What is a Sidecar Proxy in a Service Mesh architecture?
+### ✅ Answer:
+A dedicated helper process deployed alongside a microservice container that handles networking, security (mTLS), observability, and traffic routing on behalf of the microservice.
+
+## ❓ Q2: What are the benefits of offloading mTLS to a Sidecar Proxy?
+### ✅ Answer:
+It centralizes certificate management, rotation, and encryption policies at the mesh layer, eliminating the need to write custom TLS handshake code inside individual application codebases.
+
+## ❓ Q3: How does a Sidecar Proxy handle transient network retries safely?
+### ✅ Answer:
+By buffering request bodies in memory before forwarding, allowing the proxy to re-send identical HTTP payloads to upstream instances if an initial request fails with a 5xx status code.
+
+## ❓ Q4: What is the difference between Control Plane and Data Plane in a Service Mesh?
+### ✅ Answer:
+- **Data Plane**: The sidecar proxies (e.g. Envoy) that directly process and route network packets.
+- **Control Plane**: The management system (e.g. Istio) that configures proxies, issues mTLS certificates, and deploys routing rules.
+
+## ❓ Q5: When should you use a Service Mesh vs an API Gateway?
+### ✅ Answer:
+- **API Gateway**: Manages East-West/North-South edge traffic from external clients into the cluster (authentication, billing, rate limits).
+- **Service Mesh**: Manages East-West internal service-to-service communication inside the cluster.
+
+---
+
+# 📚 Day 66 Summary
+Today I completed **Day 66 Service Mesh & Sidecar Proxy Pattern**:
+- Built an HTTP sidecar proxy enforcing mTLS authentication and trace header injection.
+- Validated automatic HTTP 5xx retries and telemetry collection using unit tests.
+
+---
+
+# ✅ Day 67 — Distributed Tracing & OpenTelemetry Context Propagation
+
+---
+
+# 📖 Deep-Dive: End-to-End Distributed Request Observability
+
+In complex microservices, a single user request traverses dozens of independent network calls. **Distributed Tracing** correlates these calls into a unified trace graph using standardized **W3C Trace Context** headers (`traceparent`), allowing developers to pinpoint latency bottlenecks and error origins.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 67 Project
+
+### 1. OpenTelemetry Tracer Stack (`Day-67/`)
+- [tracing/tracer.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-67/tracing/tracer.go) — W3C `traceparent` context injector/extractor and nested `Span` collector.
+- [tracing/tracer_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-67/tracing/tracer_test.go) — Unit tests asserting parent-child span nesting and cross-service HTTP header propagation.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-67/main.go) — Multi-service distributed trace telemetry runner.
+
+---
+
+# 📘 Day 67 Interview Questions & Answers
+
+## ❓ Q1: What is Distributed Tracing and why is it essential?
+### ✅ Answer:
+It tracks request lifecycles as they propagate across multiple microservices, assigning a global Trace ID to correlate logs, spans, and metrics for end-to-end performance debugging.
+
+## ❓ Q2: What is the W3C Trace Context specification (`traceparent`)?
+### ✅ Answer:
+A standardized HTTP header format: `version-trace_id-parent_id-trace_flags` (e.g. `00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01`) used to pass trace context across network boundaries.
+
+## ❓ Q3: What is the difference between a Trace and a Span?
+### ✅ Answer:
+- **Trace**: The complete execution DAG/graph representing a user request across all microservices.
+- **Span**: A single named, timed operation unit (e.g. DB Query, HTTP RPC) within a trace.
+
+## ❓ Q4: How does Go's `context.Context` assist in distributed tracing?
+### ✅ Answer:
+`context.Context` carries active `Span` references in-memory through internal function call stacks, allowing child functions to attach span tags without mutating signatures.
+
+## ❓ Q5: What overhead does Distributed Tracing introduce?
+### ✅ Answer:
+High-volume tracing can generate network and storage overhead. Production systems use **Trace Sampling** (e.g. capturing 1% or tail-based sampling for errors) to minimize impact.
+
+---
+
+# 📚 Day 67 Summary
+Today I completed **Day 67 Distributed Tracing**:
+- Implemented W3C-compliant `traceparent` HTTP context injection and extraction.
+- Constructed nested parent-child span execution graphs across simulated microservice boundaries.
+
+---
+
+# ✅ Day 68 — Distributed Rate Limiting (Sliding Window & Token Bucket)
+
+---
+
+# 📖 Deep-Dive: Protecting Microservices from Traffic Spikes & DDoS
+
+Rate limiting restricts the frequency of client API calls over a given timeframe. **Sliding Window Counter** rate limiting provides smooth traffic shaping by evaluating requests across a rolling time window, avoiding the burst vulnerabilities of fixed-window algorithms.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 68 Project
+
+### 1. Rate Limiting Stack (`Day-68/`)
+- [ratelimit/sliding_window.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-68/ratelimit/sliding_window.go) — `SlidingWindowLimiter` supporting per-client IP tracking and HTTP 429 middleware.
+- [ratelimit/sliding_window_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-68/ratelimit/sliding_window_test.go) — Unit tests proving request capping and window reset expiration.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-68/main.go) — Burst traffic rate limiter HTTP demonstration.
+
+---
+
+# 📘 Day 68 Interview Questions & Answers
+
+## ❓ Q1: What is the Sliding Window rate limiting algorithm?
+### ✅ Answer:
+An algorithm that tracks request timestamps within a moving time window (e.g. last 60 seconds), evicting expired entries to accurately calculate current request velocity.
+
+## ❓ Q2: Why is Sliding Window superior to Fixed Window?
+### ✅ Answer:
+Fixed Window allows double the rate limit at window boundary resets (e.g. 100 requests at 10:59:59 and 100 requests at 11:00:01). Sliding Window prevents boundary bursts.
+
+## ❓ Q3: What HTTP status code and headers should be returned when rate limited?
+### ✅ Answer:
+Return `HTTP 429 Too Many Requests` along with `Retry-After: <seconds>` and rate limit headers (`X-RateLimit-Limit`, `X-RateLimit-Remaining`).
+
+## ❓ Q4: How do you scale Rate Limiting in distributed multi-node clusters?
+### ✅ Answer:
+Use a centralized in-memory datastore like **Redis** with atomic Lua scripts or `sliding-window-log` data structures.
+
+## ❓ Q5: What is the Token Bucket algorithm?
+### ✅ Answer:
+An algorithm where tokens are continuously added to a bucket at a fixed fill rate. Each incoming request consumes a token; if the bucket is empty, requests are rejected.
+
+---
+
+# 📚 Day 68 Summary
+Today I completed **Day 68 Distributed Rate Limiting**:
+- Implemented a thread-safe sliding window rate limiter in Go.
+- Enforced HTTP 429 protection middleware for API client requests.
+
+---
+
+# ✅ Day 69 — Dead Letter Queue (DLQ) & Poison Message Handler
+
+---
+
+# 📖 Deep-Dive: Queue Resiliency & Unprocessable Message Isolation
+
+When asynchronous queue consumers encounter malformed data or permanent dependencies errors (**Poison Messages**), continuous retries can block the entire consumer pipeline. A **Dead Letter Queue (DLQ)** intercepts messages exceeding retry thresholds, isolating them for inspection while keeping main processing queues healthy.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 69 Project
+
+### 1. DLQ Handler Stack (`Day-69/`)
+- [dlq/dlq_handler.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-69/dlq/dlq_handler.go) — `DLQHandler` queue worker supporting exponential retries and automated DLQ routing.
+- [dlq/dlq_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-69/dlq/dlq_test.go) — Unit test suite verifying poison message detection and isolation.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-69/main.go) — Asynchronous DLQ worker pipeline demo.
+
+---
+
+# 📘 Day 69 Interview Questions & Answers
+
+## ❓ Q1: What is a Dead Letter Queue (DLQ)?
+### ✅ Answer:
+A secondary queue where unprocessable, malformed, or repeatedly failing messages are routed after exhausting maximum retry attempts.
+
+## ❓ Q2: What is a Poison Message?
+### ✅ Answer:
+A message containing invalid syntax, unparseable payloads, or trigger logic that consistently causes consumer application crashes.
+
+## ❓ Q3: Why is exponential backoff critical before sending to DLQ?
+### ✅ Answer:
+To prevent overloading recovering downstream databases during transient network outages, giving services time to heal before declaring permanent failure.
+
+## ❓ Q4: How do you inspect and re-drive messages from a DLQ?
+### ✅ Answer:
+Operators fix the root cause (e.g. deploy schema patch), then invoke a re-drive tool that reads messages from the DLQ and re-enqueues them into the main processing queue.
+
+## ❓ Q5: Should DLQ messages trigger alerts?
+### ✅ Answer:
+Yes! DLQ message growth indicates unhandled edge cases or persistent downstream failures, requiring immediate PagerDuty/Slack operational alerts.
+
+---
+
+# 📚 Day 69 Summary
+Today I completed **Day 69 Dead Letter Queue (DLQ)**:
+- Built an asynchronous queue worker with configurable retry limits.
+- Isolated poison messages into a Dead Letter Queue without blocking valid event processing.
+
+---
+
+# ✅ Day 70 — Production Microservices Integration Capstone Project
+
+---
+
+# 📖 Deep-Dive: Comprehensive Enterprise Microservices Architecture
+
+Day 70 unifies all advanced microservices patterns—**Saga Orchestration**, **Transactional Outbox**, **CQRS Read Projections**, **Bulkhead Isolation**, **Distributed Tracing**, and **DLQ Poison Message Handling**—into a single production-grade Order Fulfillment System.
+
+---
+
+# 🛠️ Implementation Walkthrough — Day 70 Project
+
+### 1. System Integration Stack (`Day-70/`)
+- [system/orchestrator.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-70/system/orchestrator.go) — `EnterpriseSystem` orchestrating multi-service fulfillment and resilience safeguards.
+- [system/system_test.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-70/system/system_test.go) — Integration tests asserting event persistence, CQRS view projection, and DLQ routing.
+- [main.go](file:///Users/dnyaneshwarkokate/go-90-days-challenge/Day-70/main.go) — Capstone Enterprise System entrypoint runner.
+
+---
+
+# 📘 Day 70 Interview Questions & Answers
+
+## ❓ Q1: How do Saga, Outbox, and CQRS interact in an enterprise microservice?
+### ✅ Answer:
+- **Saga**: Manages multi-service business steps and compensation.
+- **Outbox**: Guarantees atomic event publishing for each step.
+- **CQRS**: Emits events to update read-optimized views for UI dashboards.
+
+## ❓ Q2: How does Bulkhead isolation protect a Capstone microservices system?
+### ✅ Answer:
+It guarantees that an outage in one downstream service (e.g. Payment Gateway) cannot consume all application thread pools or crash independent services (e.g. Order Search).
+
+## ❓ Q3: How do you verify event consistency across distributed systems?
+### ✅ Answer:
+Using idempotent message processing, outbox table transaction records, distributed trace correlation, and periodic reconciliation batch jobs.
+
+## ❓ Q4: What is Graceful Degradation in microservices?
+### ✅ Answer:
+Designing fallback modes (e.g. returning cached recommendations or queuing orders for offline processing) when non-critical downstream dependencies fail.
+
+## ❓ Q5: What are the 3 pillars of Microservice Observability?
+### ✅ Answer:
+1. **Metrics**: Quantitative numerical telemetry (Prometheus counters, gauges).
+2. **Logs**: Structured event records (Zap, Zerolog).
+3. **Traces**: Distributed request DAG graphs (OpenTelemetry, Jaeger).
+
+---
+
+# 📚 Day 70 Summary
+Today I completed **Day 70 Microservices Integration Capstone**:
+- Built an enterprise order fulfillment system integrating Saga, Outbox, CQRS, Tracing, and DLQ handling.
+- Verified system resilience and metric reporting across all integrated components.
+
+---
+
 # ⭐ Challenge Progress
 ✅ Day 01 Completed  
 ✅ Day 02 Completed  
@@ -21020,4 +21281,9 @@ Today I completed **Day 65 Bulkhead Pattern**:
 ✅ Day 63 Completed  
 ✅ Day 64 Completed  
 ✅ Day 65 Completed  
-🚀 Next: Day 66 - Advanced Backend & Resilience Patterns
+✅ Day 66 Completed  
+✅ Day 67 Completed  
+✅ Day 68 Completed  
+✅ Day 69 Completed  
+✅ Day 70 Completed  
+🚀 Next: Day 71 - Microservices Projects & Architecture
